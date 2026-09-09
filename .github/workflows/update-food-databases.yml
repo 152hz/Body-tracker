@@ -1,0 +1,217 @@
+name: Update food databases
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 20 * * 0'
+  push:
+    paths:
+      - '.github/workflows/update-food-databases.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-tfda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download and build TFDA local database
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv
+          import io
+          import json
+          import re
+          import urllib.request
+          import zipfile
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          URL = "https://data.fda.gov.tw/data/opendata/export/20/csv"
+
+          req = urllib.request.Request(
+              URL,
+              headers={
+                  "User-Agent": "Mozilla/5.0 BodyTrackerFoodDB/1.0",
+                  "Accept": "*/*",
+              },
+          )
+          with urllib.request.urlopen(req, timeout=120) as resp:
+              blob = resp.read()
+
+          if not zipfile.is_zipfile(io.BytesIO(blob)):
+              raise RuntimeError("TFDA response is not a ZIP file")
+
+          def decode_bytes(b):
+              for enc in ("utf-8-sig", "utf-8", "cp950", "big5"):
+                  try:
+                      return b.decode(enc)
+                  except UnicodeDecodeError:
+                      pass
+              return b.decode("utf-8", errors="replace")
+
+          def norm(s):
+              return re.sub(r"[\s\u3000]+", "", str(s or "")).lower()
+
+          def num(v):
+              m = re.search(r"-?\d+(?:\.\d+)?", str(v or "").replace(",", ""))
+              return float(m.group()) if m else None
+
+          foods = {}
+          with zipfile.ZipFile(io.BytesIO(blob)) as zf:
+              csv_names = [
+                  n for n in zf.namelist()
+                  if n.lower().endswith(".csv") and not n.endswith("/")
+              ]
+
+              if not csv_names:
+                  raise RuntimeError("No CSV found inside TFDA ZIP")
+
+              for name in csv_names:
+                  text = decode_bytes(zf.read(name))
+                  rows = csv.reader(io.StringIO(text))
+
+                  try:
+                      headers = next(rows)
+                  except StopIteration:
+                      continue
+
+                  headers = [
+                      str(h).strip().lstrip("\ufeff")
+                      for h in headers
+                  ]
+
+                  lookup = {
+                      norm(h): i
+                      for i, h in enumerate(headers)
+                  }
+
+                  def idx(*names):
+                      for n in names:
+                          if norm(n) in lookup:
+                              return lookup[norm(n)]
+                      return -1
+
+                  i_cat = idx("食品分類")
+                  i_id = idx("整合編號")
+                  i_name = idx("樣品名稱")
+                  i_alias = idx("俗名")
+                  i_item = idx("分析項")
+                  i_per100 = idx("每100克含量")
+                  i_perunit = idx("每單位含量")
+                  i_unitweight = idx("每單位重")
+
+                  if min(i_name, i_item, i_per100) < 0:
+                      continue
+
+                  for row in rows:
+
+                      def get(i):
+                          if i >= 0 and i < len(row):
+                              return row[i].strip()
+                          return ""
+
+                      analysis_item = get(i_item)
+
+                      if (
+                          "熱量" not in analysis_item
+                          and "energy" not in analysis_item.lower()
+                      ):
+                          continue
+
+                      food_name = get(i_name)
+
+                      if not food_name:
+                          continue
+
+                      alias = get(i_alias)
+
+                      per100 = num(get(i_per100))
+                      perunit = num(get(i_perunit))
+                      unitweight = num(get(i_unitweight))
+
+                      if perunit is not None and perunit > 0:
+                          cal = perunit
+                          unit = "每單位"
+                      else:
+                          cal = per100
+                          unit = "每100g"
+
+                      if cal is None or cal <= 0:
+                          continue
+
+                      integrate_id = get(i_id) or food_name
+                      key = integrate_id + "|" + food_name
+
+                      foods[key] = {
+                          "id": "tfda:" + integrate_id,
+                          "name": food_name,
+                          "alias": alias,
+                          "cal": round(cal, 1),
+                          "cal100": (
+                              round(per100, 1)
+                              if per100 is not None
+                              else None
+                          ),
+                          "unitWeight": unitweight,
+                          "unit": unit,
+                          "category": get(i_cat),
+                          "quality": "official",
+                          "source": "TFDA"
+                      }
+
+          items = list(foods.values())
+
+          items.sort(
+              key=lambda x: (
+                  x.get("category") or "",
+                  x.get("name") or ""
+              )
+          )
+
+          out = {
+              "meta": {
+                  "name": "衛生福利部食品藥物管理署－食品營養成分資料集（本地快取）",
+                  "status": "ok",
+                  "generatedAt": datetime.now(timezone.utc).isoformat(),
+                  "source": URL,
+                  "count": len(items)
+              },
+              "items": items
+          }
+
+          Path("tfda-foods.json").write_text(
+              json.dumps(
+                  out,
+                  ensure_ascii=False,
+                  separators=(",", ":")
+              ),
+              encoding="utf-8"
+          )
+
+          print(f"Generated {len(items)} TFDA foods")
+          PY
+
+      - name: Commit updated database
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add tfda-foods.json
+
+          if git diff --cached --quiet; then
+            echo "No database changes"
+          else
+            git commit -m "Update TFDA food database"
+            git push
+          fi
