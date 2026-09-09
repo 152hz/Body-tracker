@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>我的體態紀錄</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;background:#f6f5f2;color:#272727}
+.app{max-width:760px;margin:auto;padding:20px 16px 90px}.hero{background:#222;color:#fff;border-radius:28px;padding:24px 22px;margin-bottom:14px}
+h1{margin:0 0 5px;font-size:28px}.muted{opacity:.68;font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.stat{background:#ffffff12;border-radius:18px;padding:14px}.stat b{display:block;font-size:23px;margin-top:3px}
+.card{background:white;border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 3px 15px #00000008}h2{font-size:18px;margin:0 0 14px}
+input,select,button{font:inherit}input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:13px;background:#fff}label{font-size:12px;color:#777;display:block;margin:9px 0 5px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:14px;padding:12px 15px;background:#222;color:white;cursor:pointer}.btn.light{background:#eee;color:#222}.actions{display:flex;gap:8px;margin-top:12px}.actions .btn{flex:1}
+.progress{height:13px;background:#eee;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#222;border-radius:20px;transition:.3s}.meal{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee}.meal:last-child{border:0}.meal small{color:#888;display:block}.del{border:0;background:#f1f1f1;border-radius:9px;padding:5px 8px}
+#chart{width:100%;height:180px;background:#fafafa;border-radius:16px}.empty{text-align:center;color:#999;padding:20px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<section class="hero">
+  <div class="muted">PERSONAL BODY TRACKER</div>
+  <h1>我的體態紀錄 🐷</h1>
+  <div class="muted">把每天的體重與吃的東西記下來</div>
+  <div class="grid">
+    <div class="stat"><span class="muted">目前體重</span><b id="w">— kg</b></div>
+    <div class="stat"><span class="muted">BMI</span><b id="bmi">—</b></div>
+    <div class="stat"><span class="muted">BMR</span><b id="bmr">— kcal</b></div>
+    <div class="stat"><span class="muted">TDEE</span><b id="tdee">— kcal</b></div>
+  </div>
+</section>
+
+<section class="card">
+<h2>⚙️ 我的資料</h2>
+<div class="row">
+<div><label>身高 cm</label><input id="height" type="number" step=".1"></div>
+<div><label>體重 kg</label><input id="weight" type="number" step=".1"></div>
+</div>
+<div class="row">
+<div><label>年齡</label><input id="age" type="number"></div>
+<div><label>性別</label><select id="sex"><option value="female">女性</option><option value="male">男性</option></select></div>
+</div>
+<label>活動量</label>
+<select id="activity">
+<option value="1.2">久坐／很少運動 ×1.2</option>
+<option value="1.375">輕度活動 ×1.375</option>
+<option value="1.55">中度活動 ×1.55</option>
+<option value="1.725">高度活動 ×1.725</option>
+</select>
+<div class="row">
+<div><label>目標體重 kg</label><input id="goal" type="number" step=".1"></div>
+<div><label>今日日期</label><input id="date" type="date"></div>
+</div>
+<div class="actions"><button class="btn" onclick="saveProfile()">儲存資料</button><button class="btn light" onclick="resetAll()">清除全部</button></div>
+</section>
+
+<section class="card">
+<h2>🎯 今日熱量</h2>
+<div style="display:flex;justify-content:space-between;margin-bottom:9px"><b id="todayCal">0 kcal</b><span class="muted" id="remain">TDEE —</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p class="muted" style="margin-bottom:0">以 TDEE 作為參考，不代表醫療上的減重處方。</p>
+</section>
+
+<section class="card">
+<h2>🍱 新增一餐</h2>
+<div class="row">
+<div><label>餐別</label><select id="mealType"><option>早餐</option><option>午餐</option><option>晚餐</option><option>點心／飲料</option></select></div>
+<div><label>熱量 kcal</label><input id="cal" type="number" min="0"></div>
+</div>
+<label>吃了什麼</label><input id="food" placeholder="例如：雞胸肉便當、無糖拿鐵">
+<div class="actions"><button class="btn" onclick="addMeal()">＋ 加入紀錄</button></div>
+<div id="meals"></div>
+</section>
+
+<section class="card">
+<h2>⚖️ 體重紀錄</h2>
+<div class="row"><div><label>日期</label><input id="logDate" type="date"></div><div><label>體重 kg</label><input id="logWeight" type="number" step=".1"></div></div>
+<div class="actions"><button class="btn" onclick="addWeight()">＋ 記錄體重</button></div>
+<canvas id="chart"></canvas>
+</section>
+</div>
+
+<script>
+const KEY="bodyTrackerV1";
+let data=JSON.parse(localStorage.getItem(KEY)||'{"profile":{},"meals":[],"weights":[]}');
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+$("date").value=today(); $("logDate").value=today();
+
+function calc(){
+ const h=+$("height").value,w=+$("weight").value,a=+$("age").value;
+ if(!h||!w||!a)return null;
+ const bmi=w/((h/100)**2);
+ const bmr=$("sex").value==="female"?10*w+6.25*h-5*a-161:10*w+6.25*h-5*a+5;
+ const tdee=bmr*(+$("activity").value);
+ return {bmi,bmr,tdee};
+}
+function render(){
+ const p=data.profile;
+ if(p.height)$("height").value=p.height;if(p.weight)$("weight").value=p.weight;if(p.age)$("age").value=p.age;
+ if(p.sex)$("sex").value=p.sex;if(p.activity)$("activity").value=p.activity;if(p.goal)$("goal").value=p.goal;
+ const c=calc();
+ $("w").textContent=p.weight?`${(+p.weight).toFixed(1)} kg`:"— kg";
+ $("bmi").textContent=c?c.bmi.toFixed(1):"—";
+ $("bmr").textContent=c?Math.round(c.bmr)+" kcal":"— kcal";
+ $("tdee").textContent=c?Math.round(c.tdee)+" kcal":"— kcal";
+ const d=$("date").value||today();
+ const ms=data.meals.filter(x=>x.date===d), total=ms.reduce((s,x)=>s+x.cal,0);
+ $("todayCal").textContent=total+" kcal";
+ $("remain").textContent=c?"參考 TDEE "+Math.round(c.tdee)+" kcal":"請先填資料";
+ $("bar").style.width=c?Math.min(100,total/c.tdee*100)+"%":"0%";
+ $("meals").innerHTML=ms.length?ms.map((x,i)=>`<div class="meal"><div><b>${x.type} · ${x.cal} kcal</b><small>${x.food||"未填食物"}</small></div><button class="del" onclick="delMeal(${data.meals.indexOf(x)})">刪除</button></div>`).join(""):'<div class="empty">今天還沒有飲食紀錄</div>';
+ draw();
+ localStorage.setItem(KEY,JSON.stringify(data));
+}
+function saveProfile(){data.profile={height:$("height").value,weight:$("weight").value,age:$("age").value,sex:$("sex").value,activity:$("activity").value,goal:$("goal").value};render()}
+function addMeal(){const cal=+$("cal").value;if(!cal)return alert("請輸入熱量");data.meals.push({date:$("date").value||today(),type:$("mealType").value,cal,food:$("food").value});$("cal").value="";$("food").value="";render()}
+function delMeal(i){data.meals.splice(i,1);render()}
+function addWeight(){const w=+$("logWeight").value;if(!w)return alert("請輸入體重");data.weights.push({date:$("logDate").value||today(),weight:w});data.weights.sort((a,b)=>a.date.localeCompare(b.date));$("weight").value=w;data.profile.weight=w;render();$("logWeight").value=""}
+function draw(){
+ const c=$("chart"),ctx=c.getContext("2d"),dpr=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+ const arr=data.weights.slice(-14);if(arr.length<2){ctx.fillStyle="#999";ctx.font="13px sans-serif";ctx.fillText("記錄至少 2 次體重後會顯示趨勢",16,35);return}
+ const vals=arr.map(x=>x.weight),min=Math.min(...vals)-1,max=Math.max(...vals)+1;
+ ctx.strokeStyle="#222";ctx.lineWidth=2;ctx.beginPath();
+ arr.forEach((x,i)=>{const px=20+i*(w-40)/(arr.length-1),py=15+(max-x.weight)/(max-min)*(h-40);i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke();
+ ctx.fillStyle="#222";arr.forEach((x,i)=>{const px=20+i*(w-40)/(arr.length-1),py=15+(max-x.weight)/(max-min)*(h-40);ctx.beginPath();ctx.arc(px,py,4,0,7);ctx.fill()});
+ ctx.fillStyle="#777";ctx.font="11px sans-serif";ctx.fillText(vals[0].toFixed(1)+" kg",8,15);ctx.fillText(vals[vals.length-1].toFixed(1)+" kg",w-55,h-8);
+}
+function resetAll(){if(confirm("確定要清除所有紀錄嗎？")){localStorage.removeItem(KEY);location.reload()}}
+["height","weight","age","sex","activity","goal","date"].forEach(id=>$(id).addEventListener("input",()=>{data.profile={...data.profile,height:$("height").value,weight:$("weight").value,age:$("age").value,sex:$("sex").value,activity:$("activity").value,goal:$("goal").value};render()}));
+render();
+</script>
+</body></html>
