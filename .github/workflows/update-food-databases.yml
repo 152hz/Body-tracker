@@ -14,7 +14,7 @@ permissions:
 jobs:
   update-food-databases:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -175,7 +175,7 @@ jobs:
           python - <<'PY'
           import json
           import re
-          import time
+          from concurrent.futures import ThreadPoolExecutor, as_completed
           from datetime import datetime, timezone
           from pathlib import Path
           from urllib.parse import urljoin, urlparse, parse_qs
@@ -186,14 +186,13 @@ jobs:
           FASTFOOD_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=cf6c72c0-d165-456c-9721-56579014ad93&mid=b9f0aa7c-8b7e-4eb0-8017-f3c0a2e93a39"
           DRINK_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=e4be779e-3d89-46c4-ae3f-082701ee32cd&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce"
 
-          session = requests.Session()
-          session.headers.update({
-              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36 BodyTrackerFoodDB/1.0",
+          HEADERS = {
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36 BodyTrackerFoodDB/1.1",
               "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.6",
-          })
+          }
 
-          def get(url, timeout=30):
-              r = session.get(url, timeout=timeout)
+          def get(url):
+              r = requests.get(url, headers=HEADERS, timeout=(5, 12))
               r.raise_for_status()
               r.encoding = r.apparent_encoding or "utf-8"
               return r.text
@@ -219,91 +218,25 @@ jobs:
           def collect_links(html, base, kind):
               soup = BeautifulSoup(html, "html.parser")
               out = []
+              seen = set()
               for a in soup.find_all("a", href=True):
-                  href = urljoin(base, a["href"])
-                  if link_kind(href) != kind:
+                  href = urljoin(base, a["href"]).split("#")[0]
+                  if link_kind(href) != kind or href in seen:
                       continue
                   label = clean(a.get_text(" ", strip=True))
                   if not label:
                       continue
+                  seen.add(href)
                   out.append((label, href))
-              seen = set()
-              dedup = []
-              for label, href in out:
-                  key = href.split("#")[0]
-                  if key in seen:
-                      continue
-                  seen.add(key)
-                  dedup.append((label, key))
-              return dedup
+              return out
 
           def discover_brand_links(list_url):
-              candidates = [list_url]
-              # 某些頁面會用 query string 分頁；不同版本參數不同，全部嘗試但會去重。
-              for n in range(2, 21):
-                  candidates += [
-                      list_url + f"&page={n}",
-                      list_url + f"&Page={n}",
-                      list_url + f"&pageindex={n}",
-                  ]
-              found = []
-              fingerprints = set()
-              for i, url in enumerate(candidates):
-                  try:
-                      html = get(url)
-                      fp = hash(re.sub(r"\s+", "", html))
-                      if fp in fingerprints and i > 0:
-                          continue
-                      fingerprints.add(fp)
-                      found.extend(collect_links(html, url, "brand"))
-                  except Exception as e:
-                      if i == 0:
-                          print("List fetch failed:", url, e)
-                  time.sleep(0.04)
-              seen = set()
-              out = []
-              for label, href in found:
-                  q = parse_qs(urlparse(href).query)
-                  cid = (q.get("company_id") or [""])[0]
-                  if not cid or cid in seen:
-                      continue
-                  seen.add(cid)
-                  out.append((label, href))
-              return out
+              # 穩定版：只抓官方頁面實際回傳的業者連結，不再猜 50+ 種分頁網址。
+              return collect_links(get(list_url), list_url, "brand")
 
           def discover_product_links(brand_url):
-              candidates = [brand_url]
-              for n in range(2, 16):
-                  candidates += [
-                      brand_url + f"&page={n}",
-                      brand_url + f"&Page={n}",
-                      brand_url + f"&pageindex={n}",
-                  ]
-              found = []
-              fingerprints = set()
-              for i, url in enumerate(candidates):
-                  try:
-                      html = get(url)
-                      fp = hash(re.sub(r"\s+", "", html))
-                      if fp in fingerprints and i > 0:
-                          continue
-                      fingerprints.add(fp)
-                      found.extend(collect_links(html, url, "product"))
-                  except Exception:
-                      pass
-                  time.sleep(0.03)
-              seen = set()
-              out = []
-              for label, href in found:
-                  q = parse_qs(urlparse(href).query)
-                  itemno = (q.get("itemno") or [""])[0]
-                  cid = (q.get("company_id") or [""])[0]
-                  key = cid + "|" + itemno
-                  if not itemno or key in seen:
-                      continue
-                  seen.add(key)
-                  out.append((label, href))
-              return out
+              # 穩定版：只抓業者頁實際回傳的產品連結，避免每品牌暴力嘗試 40+ 個網址。
+              return collect_links(get(brand_url), brand_url, "product")
 
           def extract_table_variants(soup):
               variants = []
@@ -318,7 +251,7 @@ jobs:
 
                   header_i = None
                   cal_i = None
-                  for ri, cells in enumerate(rows[:4]):
+                  for ri, cells in enumerate(rows[:5]):
                       for ci, cell in enumerate(cells):
                           if "熱量" in cell:
                               header_i = ri
@@ -329,7 +262,7 @@ jobs:
                   if cal_i is None:
                       continue
 
-                  for cells in rows[(header_i or 0)+1:]:
+                  for cells in rows[(header_i or 0) + 1:]:
                       if cal_i >= len(cells):
                           continue
                       cal = num(cells[cal_i])
@@ -347,7 +280,6 @@ jobs:
               text = soup.get_text(" ", strip=True)
               variants = []
 
-              # 現調飲料常見格式：容量：700 熱量（大卡）：475
               pat = re.compile(
                   r"容量\s*[:：]\s*(.{1,45}?)\s*熱量\s*[（(]?\s*大卡\s*[）)]?\s*[:：]\s*(\d+(?:\.\d+)?)",
                   re.I,
@@ -355,17 +287,26 @@ jobs:
               for m in pat.finditer(text):
                   variants.append((clean(m.group(1)), float(m.group(2))))
 
-              # 速食表格被轉成純文字時，例如：約102克 約260大卡
-              if not variants and "熱量" in text:
-                  m = re.search(r"(?:每一份量.{0,120}?)?(約?\s*\d+(?:\.\d+)?\s*(?:克|g|ml|毫升|份|個|塊|杯))?.{0,80}?約?\s*(\d+(?:\.\d+)?)\s*(?:大卡|kcal)", text, re.I)
-                  if m:
-                      variants.append((clean(m.group(1) or "每份"), float(m.group(2))))
+              # 兼容「約102克 約260大卡」「熱量 260 kcal」等格式。
+              if not variants and ("熱量" in text or "kcal" in text.lower() or "大卡" in text):
+                  patterns = [
+                      r"(?:每一份量.{0,120}?)?(約?\s*\d+(?:\.\d+)?\s*(?:克|g|ml|毫升|份|個|塊|杯))?.{0,80}?約?\s*(\d+(?:\.\d+)?)\s*(?:大卡|kcal)",
+                      r"熱量\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:大卡|kcal)?",
+                  ]
+                  for pattern in patterns:
+                      m = re.search(pattern, text, re.I)
+                      if not m:
+                          continue
+                      if len(m.groups()) >= 2:
+                          variants.append((clean(m.group(1) or "每份"), float(m.group(2))))
+                      else:
+                          variants.append(("每份", float(m.group(1))))
+                      break
               return variants
 
           def extract_variants(html):
               soup = BeautifulSoup(html, "html.parser")
-              variants = extract_table_variants(soup)
-              variants += extract_text_variants(soup)
+              variants = extract_table_variants(soup) + extract_text_variants(soup)
               out = []
               seen = set()
               for size, cal in variants:
@@ -386,6 +327,20 @@ jobs:
               except Exception:
                   return []
 
+          def fetch_products_for_brand(brand, brand_url):
+              try:
+                  return brand, discover_product_links(brand_url), None
+              except Exception as e:
+                  return brand, [], repr(e)
+
+          def fetch_product(product):
+              brand, product_name, product_url, kind = product
+              try:
+                  html = get(product_url)
+                  return product, extract_variants(html), None
+              except Exception as e:
+                  return product, [], repr(e)
+
           def crawl(list_url, kind, out_path, label):
               existing = load_existing(out_path)
               by_key = {}
@@ -398,40 +353,66 @@ jobs:
                       by_key[(brand, name, size, round(float(cal), 2))] = x
 
               brands = discover_brand_links(list_url)
-              print(label, "brands discovered:", len(brands))
-              fetched_products = 0
+              print(label, "brands discovered:", len(brands), flush=True)
 
-              for bi, (brand, brand_url) in enumerate(brands, 1):
-                  products = discover_product_links(brand_url)
-                  print(f"[{label}] {bi}/{len(brands)} {brand}: {len(products)} product links")
-                  for product_name, product_url in products:
-                      try:
-                          html = get(product_url)
-                          variants = extract_variants(html)
-                      except Exception as e:
-                          print("Product fetch failed:", product_url, e)
+              all_products = []
+              with ThreadPoolExecutor(max_workers=8) as pool:
+                  futures = [pool.submit(fetch_products_for_brand, brand, url) for brand, url in brands]
+                  for fut in as_completed(futures):
+                      brand, products, err = fut.result()
+                      if err:
+                          print(f"[{label}] brand failed: {brand}: {err}", flush=True)
                           continue
+                      print(f"[{label}] {brand}: {len(products)} product links", flush=True)
+                      for product_name, product_url in products:
+                          all_products.append((brand, product_name, product_url, kind))
 
-                      fetched_products += 1
-                      for size, cal in variants:
-                          display_name = product_name
-                          if size and size not in ("每份", "份") and size not in display_name:
-                              display_name = f"{product_name}（{size}）"
-                          item = {
-                              "id": f"{kind}:{parse_qs(urlparse(product_url).query).get('company_id',[''])[0]}:{parse_qs(urlparse(product_url).query).get('itemno',[''])[0]}:{size or 'default'}",
-                              "brand": brand,
-                              "store": brand,
-                              "name": display_name,
-                              "cal": round(float(cal), 2),
-                              "unit": "杯" if kind == "drinkshop" else "份",
-                              "size": size,
-                              "quality": "official-public",
-                              "source": "臺北市食材登錄平台",
-                              "sourceUrl": product_url,
-                              "updatedAt": datetime.now(timezone.utc).date().isoformat(),
-                          }
-                          by_key[(brand, display_name, size, round(float(cal), 2))] = item
-                      time.sleep(0.05)
+              # URL 去重，避免同一商品重複請求。
+              uniq = []
+              seen_urls = set()
+              for product in all_products:
+                  if product[2] in seen_urls:
+                      continue
+                  seen_urls.add(product[2])
+                  uniq.append(product)
+              all_products = uniq
+              print(label, "unique product pages:", len(all_products), flush=True)
+
+              fetched_products = 0
+              failed_products = 0
+              with ThreadPoolExecutor(max_workers=12) as pool:
+                  futures = [pool.submit(fetch_product, p) for p in all_products]
+                  for n, fut in enumerate(as_completed(futures), 1):
+                      product, variants, err = fut.result()
+                      brand, product_name, product_url, _ = product
+                      if err:
+                          failed_products += 1
+                      else:
+                          fetched_products += 1
+                          q = parse_qs(urlparse(product_url).query)
+                          cid = (q.get("company_id") or [""])[0]
+                          itemno = (q.get("itemno") or [""])[0]
+                          for size, cal in variants:
+                              display_name = product_name
+                              if size and size not in ("每份", "份") and size not in display_name:
+                                  display_name = f"{product_name}（{size}）"
+                              item = {
+                                  "id": f"{kind}:{cid}:{itemno}:{size or 'default'}",
+                                  "brand": brand,
+                                  "store": brand,
+                                  "name": display_name,
+                                  "cal": round(float(cal), 2),
+                                  "unit": "杯" if kind == "drinkshop" else "份",
+                                  "size": size,
+                                  "quality": "official-public",
+                                  "source": "臺北市食材登錄平台",
+                                  "sourceUrl": product_url,
+                                  "updatedAt": datetime.now(timezone.utc).date().isoformat(),
+                              }
+                              by_key[(brand, display_name, size, round(float(cal), 2))] = item
+
+                      if n % 50 == 0 or n == len(all_products):
+                          print(f"[{label}] progress: {n}/{len(all_products)}", flush=True)
 
               items = list(by_key.values())
               items.sort(key=lambda x: (x.get("brand") or "", x.get("name") or "", x.get("size") or ""))
@@ -443,24 +424,26 @@ jobs:
                       "source": list_url,
                       "count": len(items),
                       "brandsDiscovered": len(brands),
+                      "productPagesDiscovered": len(all_products),
                       "productPagesFetched": fetched_products,
-                      "note": "資料來自公開熱量標示。現調飲品熱量可能是正常糖、最高值或特定杯型；實際依門市配方與客製甜度/配料而變。"
+                      "productPagesFailed": failed_products,
+                      "crawlMode": "stable",
+                      "note": "穩定模式只抓官方頁面當下直接回傳的業者/商品連結，不暴力猜分頁；既有資料會保留。現調飲品熱量依杯型、甜度、配料而異。"
                   },
                   "items": items
               }
               Path(out_path).write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-              print(label, "items written:", len(items))
+              print(label, "items written:", len(items), flush=True)
 
-          # 任何一邊抓取失敗，都保留原本 JSON，不讓整個工作流程報廢。
           try:
               crawl(FASTFOOD_LIST, "fastfood", "fastfood-foods.json", "台灣西式連鎖速食公開熱量資料庫")
           except Exception as e:
-              print("Fast-food crawl failed; keeping existing file:", repr(e))
+              print("Fast-food crawl failed; keeping existing file:", repr(e), flush=True)
 
           try:
               crawl(DRINK_LIST, "drinkshop", "drink-shop-foods.json", "台灣連鎖飲冰品公開熱量資料庫")
           except Exception as e:
-              print("Drink-shop crawl failed; keeping existing file:", repr(e))
+              print("Drink-shop crawl failed; keeping existing file:", repr(e), flush=True)
           PY
 
       - name: Commit updated databases
