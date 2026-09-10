@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "name": "台灣速食連鎖公開熱量資料庫",
+    "status": "seed",
+    "note": "初始種子資料；執行 GitHub Action 後會以公開來源重新建立/擴充。",
+    "sources": [
+      "臺北市食材登錄平台－西式連鎖速食專區",
+      "各品牌官方公開營養資訊"
+    ],
+    "updatedAt": "2026-09-10"
+  },
+  "items": [
+    {
+      "id": "ff-mcd-hamburger",
+      "brand": "麥當勞",
+      "store": "麥當勞",
+      "name": "漢堡",
+      "cal": 260,
+      "unit": "份",
+      "size": "約102g",
+      "quality": "official-public",
+      "source": "臺北市食材登錄平台",
+      "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?company_id=12411160&fid=df2a1a9a-6c79-4efd-942c-4acfcf11b659&itemno=146&mid=b9f0aa7c-8b7e-4eb0-8017-f3c0a2e93a39"
+    },
+    {
+      "id": "ff-mcd-smoky-crispy",
+      "brand": "麥當勞",
+      "store": "麥當勞",
+      "name": "煙燻勁脆鷄腿堡",
+      "cal": 561.46,
+      "unit": "份",
+      "quality": "official-public",
+      "source": "麥當勞官方",
+      "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/whats-hot/0902-McCrispy.html"
+    },
+    {
+      "id": "ff-mcd-cajun-crispy",
+      "brand": "麥當勞",
+      "store": "麥當勞",
+      "name": "肯瓊勁脆鷄腿堡",
+      "cal": 571.96,
+      "unit": "份",
+      "quality": "official-public",
+      "source": "麥當勞官方",
+      "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/whats-hot/0902-McCrispy.html"
+    },
+    {
+      "id": "ff-mos-burger",
+      "brand": "摩斯漢堡",
+      "store": "摩斯漢堡",
+      "name": "摩斯漢堡(原味/辣味)(牛)",
+      "cal": 433.9,
+      "unit": "份",
+      "quality": "official-public",
+      "source": "摩斯漢堡官方",
+      "sourceUrl": "https://www.mos.com.tw/menu/set_detail.aspx?id=M000203"
+    },
+    {
+      "id": "ff-mos-cheese",
+      "brand": "摩斯漢堡",
+      "store": "摩斯漢堡",
+      "name": "摩斯吉士漢堡(原味/辣味)(牛)",
+      "cal": 478.9,
+      "unit": "份",
+      "quality": "official-public",
+      "source": "摩斯漢堡官方",
+      "sourceUrl": "https://www.mos.com.tw/menu/set_detail.aspx?id=M000202"
+    },
+    {
+      "id": "ff-mos-hotdog",
+      "brand": "摩斯漢堡",
+      "store": "摩斯漢堡",
+      "name": "摩斯熱狗堡",
+      "cal": 278.4,
+      "unit": "份",
+      "quality": "official-public",
+      "source": "摩斯漢堡官方",
+      "sourceUrl": "https://www.mos.com.tw/menu/set_detail.aspx?id=M000035"
+    }
+  ]
+}
