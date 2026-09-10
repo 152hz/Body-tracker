@@ -1,4 +1,4 @@
-name: Update food databases
+name: Update food databases v4
 
 on:
   workflow_dispatch:
@@ -10,6 +10,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-food-databases
+  cancel-in-progress: true
 
 jobs:
   update-food-databases:
@@ -184,7 +188,7 @@ jobs:
           from bs4 import BeautifulSoup
 
           FASTFOOD_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=cf6c72c0-d165-456c-9721-56579014ad93&mid=b9f0aa7c-8b7e-4eb0-8017-f3c0a2e93a39"
-          DRINK_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=e4be779e-3d89-46c4-ae3f-082701ee32cd&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce"
+          DRINK_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=c5e8fab7-daed-4ae3-98f6-4919b1487c00&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce"
 
           HEADERS = {
               "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36 BodyTrackerFoodDB/1.1",
@@ -446,15 +450,51 @@ jobs:
               print("Drink-shop crawl failed; keeping existing file:", repr(e), flush=True)
           PY
 
-      - name: Commit updated databases
+      - name: Commit updated databases (retry safe)
         shell: bash
         run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tfda-foods.json fastfood-foods.json drink-shop-foods.json
-          if git diff --cached --quiet; then
-            echo "No database changes"
-          else
+
+          # 把本次產生的資料先保存到 Git 工作目錄之外。
+          DB_TMP="$RUNNER_TEMP/bodytracker-db"
+          rm -rf "$DB_TMP"
+          mkdir -p "$DB_TMP"
+          cp tfda-foods.json "$DB_TMP/tfda-foods.json"
+          cp fastfood-foods.json "$DB_TMP/fastfood-foods.json"
+          cp drink-shop-foods.json "$DB_TMP/drink-shop-foods.json"
+
+          # 若 Action 執行期間 main 又被更新，就重新以最新 main 為基底再提交。
+          # 最多重試 5 次，避免 non-fast-forward / fetch first。
+          for attempt in 1 2 3 4 5; do
+            echo "Push attempt $attempt/5"
+
+            git fetch origin main
+            git reset --hard origin/main
+
+            cp "$DB_TMP/tfda-foods.json" tfda-foods.json
+            cp "$DB_TMP/fastfood-foods.json" fastfood-foods.json
+            cp "$DB_TMP/drink-shop-foods.json" drink-shop-foods.json
+
+            git add tfda-foods.json fastfood-foods.json drink-shop-foods.json
+
+            if git diff --cached --quiet; then
+              echo "No database changes"
+              exit 0
+            fi
+
             git commit -m "Update food databases"
-            git push
-          fi
+
+            if git push origin HEAD:main; then
+              echo "Database update pushed successfully"
+              exit 0
+            fi
+
+            echo "main changed during push; retrying on latest main..."
+            sleep $((attempt * 2))
+          done
+
+          echo "Failed to push after 5 attempts" >&2
+          exit 1
