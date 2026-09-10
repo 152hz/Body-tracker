@@ -12,8 +12,10 @@ permissions:
   contents: write
 
 jobs:
-  update-tfda:
+  update-food-databases:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,7 +25,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Download and build TFDA local database
+      - name: Install scraper dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Update TFDA database
         shell: bash
         run: |
           python - <<'PY'
@@ -68,32 +73,20 @@ jobs:
 
           foods = {}
           with zipfile.ZipFile(io.BytesIO(blob)) as zf:
-              csv_names = [
-                  n for n in zf.namelist()
-                  if n.lower().endswith(".csv") and not n.endswith("/")
-              ]
-
+              csv_names = [n for n in zf.namelist() if n.lower().endswith(".csv") and not n.endswith("/")]
               if not csv_names:
                   raise RuntimeError("No CSV found inside TFDA ZIP")
 
               for name in csv_names:
                   text = decode_bytes(zf.read(name))
                   rows = csv.reader(io.StringIO(text))
-
                   try:
                       headers = next(rows)
                   except StopIteration:
                       continue
 
-                  headers = [
-                      str(h).strip().lstrip("\ufeff")
-                      for h in headers
-                  ]
-
-                  lookup = {
-                      norm(h): i
-                      for i, h in enumerate(headers)
-                  }
+                  headers = [str(h).strip().lstrip("\ufeff") for h in headers]
+                  lookup = {norm(h): i for i, h in enumerate(headers)}
 
                   def idx(*names):
                       for n in names:
@@ -114,27 +107,18 @@ jobs:
                       continue
 
                   for row in rows:
-
                       def get(i):
-                          if i >= 0 and i < len(row):
-                              return row[i].strip()
-                          return ""
+                          return row[i].strip() if i >= 0 and i < len(row) else ""
 
                       analysis_item = get(i_item)
-
-                      if (
-                          "熱量" not in analysis_item
-                          and "energy" not in analysis_item.lower()
-                      ):
+                      if "熱量" not in analysis_item and "energy" not in analysis_item.lower():
                           continue
 
                       food_name = get(i_name)
-
                       if not food_name:
                           continue
 
                       alias = get(i_alias)
-
                       per100 = num(get(i_per100))
                       perunit = num(get(i_perunit))
                       unitweight = num(get(i_unitweight))
@@ -151,17 +135,12 @@ jobs:
 
                       integrate_id = get(i_id) or food_name
                       key = integrate_id + "|" + food_name
-
                       foods[key] = {
                           "id": "tfda:" + integrate_id,
                           "name": food_name,
                           "alias": alias,
                           "cal": round(cal, 1),
-                          "cal100": (
-                              round(per100, 1)
-                              if per100 is not None
-                              else None
-                          ),
+                          "cal100": round(per100, 1) if per100 is not None else None,
                           "unitWeight": unitweight,
                           "unit": unit,
                           "category": get(i_cat),
@@ -170,13 +149,7 @@ jobs:
                       }
 
           items = list(foods.values())
-
-          items.sort(
-              key=lambda x: (
-                  x.get("category") or "",
-                  x.get("name") or ""
-              )
-          )
+          items.sort(key=lambda x: (x.get("category") or "", x.get("name") or ""))
 
           out = {
               "meta": {
@@ -190,28 +163,315 @@ jobs:
           }
 
           Path("tfda-foods.json").write_text(
-              json.dumps(
-                  out,
-                  ensure_ascii=False,
-                  separators=(",", ":")
-              ),
+              json.dumps(out, ensure_ascii=False, separators=(",", ":")),
               encoding="utf-8"
           )
-
           print(f"Generated {len(items)} TFDA foods")
           PY
 
-      - name: Commit updated database
+      - name: Update fast-food and drink-shop public calorie databases
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          import time
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from urllib.parse import urljoin, urlparse, parse_qs
+
+          import requests
+          from bs4 import BeautifulSoup
+
+          FASTFOOD_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=cf6c72c0-d165-456c-9721-56579014ad93&mid=b9f0aa7c-8b7e-4eb0-8017-f3c0a2e93a39"
+          DRINK_LIST = "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=e4be779e-3d89-46c4-ae3f-082701ee32cd&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce"
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36 BodyTrackerFoodDB/1.0",
+              "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.6",
+          })
+
+          def get(url, timeout=30):
+              r = session.get(url, timeout=timeout)
+              r.raise_for_status()
+              r.encoding = r.apparent_encoding or "utf-8"
+              return r.text
+
+          def clean(s):
+              return re.sub(r"\s+", " ", str(s or "")).strip()
+
+          def num(s):
+              m = re.search(r"\d+(?:\.\d+)?", str(s or "").replace(",", ""))
+              return float(m.group()) if m else None
+
+          def link_kind(href):
+              try:
+                  q = parse_qs(urlparse(href).query)
+                  if "company_id" in q and "itemno" in q:
+                      return "product"
+                  if "company_id" in q:
+                      return "brand"
+              except Exception:
+                  pass
+              return None
+
+          def collect_links(html, base, kind):
+              soup = BeautifulSoup(html, "html.parser")
+              out = []
+              for a in soup.find_all("a", href=True):
+                  href = urljoin(base, a["href"])
+                  if link_kind(href) != kind:
+                      continue
+                  label = clean(a.get_text(" ", strip=True))
+                  if not label:
+                      continue
+                  out.append((label, href))
+              seen = set()
+              dedup = []
+              for label, href in out:
+                  key = href.split("#")[0]
+                  if key in seen:
+                      continue
+                  seen.add(key)
+                  dedup.append((label, key))
+              return dedup
+
+          def discover_brand_links(list_url):
+              candidates = [list_url]
+              # 某些頁面會用 query string 分頁；不同版本參數不同，全部嘗試但會去重。
+              for n in range(2, 21):
+                  candidates += [
+                      list_url + f"&page={n}",
+                      list_url + f"&Page={n}",
+                      list_url + f"&pageindex={n}",
+                  ]
+              found = []
+              fingerprints = set()
+              for i, url in enumerate(candidates):
+                  try:
+                      html = get(url)
+                      fp = hash(re.sub(r"\s+", "", html))
+                      if fp in fingerprints and i > 0:
+                          continue
+                      fingerprints.add(fp)
+                      found.extend(collect_links(html, url, "brand"))
+                  except Exception as e:
+                      if i == 0:
+                          print("List fetch failed:", url, e)
+                  time.sleep(0.04)
+              seen = set()
+              out = []
+              for label, href in found:
+                  q = parse_qs(urlparse(href).query)
+                  cid = (q.get("company_id") or [""])[0]
+                  if not cid or cid in seen:
+                      continue
+                  seen.add(cid)
+                  out.append((label, href))
+              return out
+
+          def discover_product_links(brand_url):
+              candidates = [brand_url]
+              for n in range(2, 16):
+                  candidates += [
+                      brand_url + f"&page={n}",
+                      brand_url + f"&Page={n}",
+                      brand_url + f"&pageindex={n}",
+                  ]
+              found = []
+              fingerprints = set()
+              for i, url in enumerate(candidates):
+                  try:
+                      html = get(url)
+                      fp = hash(re.sub(r"\s+", "", html))
+                      if fp in fingerprints and i > 0:
+                          continue
+                      fingerprints.add(fp)
+                      found.extend(collect_links(html, url, "product"))
+                  except Exception:
+                      pass
+                  time.sleep(0.03)
+              seen = set()
+              out = []
+              for label, href in found:
+                  q = parse_qs(urlparse(href).query)
+                  itemno = (q.get("itemno") or [""])[0]
+                  cid = (q.get("company_id") or [""])[0]
+                  key = cid + "|" + itemno
+                  if not itemno or key in seen:
+                      continue
+                  seen.add(key)
+                  out.append((label, href))
+              return out
+
+          def extract_table_variants(soup):
+              variants = []
+              for table in soup.find_all("table"):
+                  rows = []
+                  for tr in table.find_all("tr"):
+                      cells = [clean(x.get_text(" ", strip=True)) for x in tr.find_all(["th", "td"])]
+                      if cells:
+                          rows.append(cells)
+                  if not rows:
+                      continue
+
+                  header_i = None
+                  cal_i = None
+                  for ri, cells in enumerate(rows[:4]):
+                      for ci, cell in enumerate(cells):
+                          if "熱量" in cell:
+                              header_i = ri
+                              cal_i = ci
+                              break
+                      if cal_i is not None:
+                          break
+                  if cal_i is None:
+                      continue
+
+                  for cells in rows[(header_i or 0)+1:]:
+                      if cal_i >= len(cells):
+                          continue
+                      cal = num(cells[cal_i])
+                      if cal is None or cal < 0 or cal > 5000:
+                          continue
+                      size = ""
+                      for ci, cell in enumerate(cells):
+                          if ci != cal_i and cell and "熱量" not in cell:
+                              size = cell
+                              break
+                      variants.append((size, cal))
+              return variants
+
+          def extract_text_variants(soup):
+              text = soup.get_text(" ", strip=True)
+              variants = []
+
+              # 現調飲料常見格式：容量：700 熱量（大卡）：475
+              pat = re.compile(
+                  r"容量\s*[:：]\s*(.{1,45}?)\s*熱量\s*[（(]?\s*大卡\s*[）)]?\s*[:：]\s*(\d+(?:\.\d+)?)",
+                  re.I,
+              )
+              for m in pat.finditer(text):
+                  variants.append((clean(m.group(1)), float(m.group(2))))
+
+              # 速食表格被轉成純文字時，例如：約102克 約260大卡
+              if not variants and "熱量" in text:
+                  m = re.search(r"(?:每一份量.{0,120}?)?(約?\s*\d+(?:\.\d+)?\s*(?:克|g|ml|毫升|份|個|塊|杯))?.{0,80}?約?\s*(\d+(?:\.\d+)?)\s*(?:大卡|kcal)", text, re.I)
+                  if m:
+                      variants.append((clean(m.group(1) or "每份"), float(m.group(2))))
+              return variants
+
+          def extract_variants(html):
+              soup = BeautifulSoup(html, "html.parser")
+              variants = extract_table_variants(soup)
+              variants += extract_text_variants(soup)
+              out = []
+              seen = set()
+              for size, cal in variants:
+                  key = (clean(size), round(float(cal), 2))
+                  if key in seen:
+                      continue
+                  seen.add(key)
+                  out.append(key)
+              return out
+
+          def load_existing(path):
+              p = Path(path)
+              if not p.exists():
+                  return []
+              try:
+                  raw = json.loads(p.read_text(encoding="utf-8"))
+                  return raw if isinstance(raw, list) else raw.get("items", [])
+              except Exception:
+                  return []
+
+          def crawl(list_url, kind, out_path, label):
+              existing = load_existing(out_path)
+              by_key = {}
+              for x in existing:
+                  brand = clean(x.get("brand") or x.get("store"))
+                  name = clean(x.get("name"))
+                  size = clean(x.get("size"))
+                  cal = x.get("cal")
+                  if brand and name and cal is not None:
+                      by_key[(brand, name, size, round(float(cal), 2))] = x
+
+              brands = discover_brand_links(list_url)
+              print(label, "brands discovered:", len(brands))
+              fetched_products = 0
+
+              for bi, (brand, brand_url) in enumerate(brands, 1):
+                  products = discover_product_links(brand_url)
+                  print(f"[{label}] {bi}/{len(brands)} {brand}: {len(products)} product links")
+                  for product_name, product_url in products:
+                      try:
+                          html = get(product_url)
+                          variants = extract_variants(html)
+                      except Exception as e:
+                          print("Product fetch failed:", product_url, e)
+                          continue
+
+                      fetched_products += 1
+                      for size, cal in variants:
+                          display_name = product_name
+                          if size and size not in ("每份", "份") and size not in display_name:
+                              display_name = f"{product_name}（{size}）"
+                          item = {
+                              "id": f"{kind}:{parse_qs(urlparse(product_url).query).get('company_id',[''])[0]}:{parse_qs(urlparse(product_url).query).get('itemno',[''])[0]}:{size or 'default'}",
+                              "brand": brand,
+                              "store": brand,
+                              "name": display_name,
+                              "cal": round(float(cal), 2),
+                              "unit": "杯" if kind == "drinkshop" else "份",
+                              "size": size,
+                              "quality": "official-public",
+                              "source": "臺北市食材登錄平台",
+                              "sourceUrl": product_url,
+                              "updatedAt": datetime.now(timezone.utc).date().isoformat(),
+                          }
+                          by_key[(brand, display_name, size, round(float(cal), 2))] = item
+                      time.sleep(0.05)
+
+              items = list(by_key.values())
+              items.sort(key=lambda x: (x.get("brand") or "", x.get("name") or "", x.get("size") or ""))
+              out = {
+                  "meta": {
+                      "name": label,
+                      "status": "ok" if items else "empty",
+                      "generatedAt": datetime.now(timezone.utc).isoformat(),
+                      "source": list_url,
+                      "count": len(items),
+                      "brandsDiscovered": len(brands),
+                      "productPagesFetched": fetched_products,
+                      "note": "資料來自公開熱量標示。現調飲品熱量可能是正常糖、最高值或特定杯型；實際依門市配方與客製甜度/配料而變。"
+                  },
+                  "items": items
+              }
+              Path(out_path).write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+              print(label, "items written:", len(items))
+
+          # 任何一邊抓取失敗，都保留原本 JSON，不讓整個工作流程報廢。
+          try:
+              crawl(FASTFOOD_LIST, "fastfood", "fastfood-foods.json", "台灣西式連鎖速食公開熱量資料庫")
+          except Exception as e:
+              print("Fast-food crawl failed; keeping existing file:", repr(e))
+
+          try:
+              crawl(DRINK_LIST, "drinkshop", "drink-shop-foods.json", "台灣連鎖飲冰品公開熱量資料庫")
+          except Exception as e:
+              print("Drink-shop crawl failed; keeping existing file:", repr(e))
+          PY
+
+      - name: Commit updated databases
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add tfda-foods.json
-
+          git add tfda-foods.json fastfood-foods.json drink-shop-foods.json
           if git diff --cached --quiet; then
             echo "No database changes"
           else
-            git commit -m "Update TFDA food database"
+            git commit -m "Update food databases"
             git push
           fi
