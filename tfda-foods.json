@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "name": "衛生福利部食品藥物管理署－食品營養成分資料集（本地快取）",
+    "status": "pending-update",
+    "generatedAt": null,
+    "source": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+    "note": "首次加入 GitHub 後，由 update-food-databases.yml 自動下載官方 ZIP 並產生本地 JSON。"
+  },
+  "items": []
+}
