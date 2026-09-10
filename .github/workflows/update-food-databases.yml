@@ -447,14 +447,21 @@ jobs:
           PY
 
       - name: Commit updated databases
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tfda-foods.json fastfood-foods.json drink-shop-foods.json
-          if git diff --cached --quiet; then
-            echo "No database changes"
-          else
-            git commit -m "Update food databases"
-            git push
-          fi
+  shell: bash
+  run: |
+    git config user.name "github-actions[bot]"
+    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+    git add tfda-foods.json fastfood-foods.json drink-shop-foods.json
+
+    if git diff --cached --quiet; then
+      echo "No database changes"
+    else
+      git commit -m "Update food databases"
+
+      # 先取得執行期間 main 上的新修改
+      git pull --rebase origin main
+
+      # 再把資料庫更新送回去
+      git push origin main
+    fi
