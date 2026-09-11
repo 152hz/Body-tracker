@@ -1,4 +1,4 @@
-name: Update all food databases v6
+name: Update all food databases v7 safe merge
 
 on:
   workflow_dispatch:
@@ -15,12 +15,22 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout
+      # ============================================================
+      # 1. 下載完整 Git 歷史
+      #    fetch-depth: 0 很重要
+      #    因為 v7 會回頭找「以前筆數最多的 JSON」
+      # ============================================================
+      - name: Checkout full history
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      # ============================================================
+      # 2. Python
+      # ============================================================
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -31,11 +41,116 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 lxml pandas
 
-      - name: Build food databases
+      # ============================================================
+      # 3. 先從 Git 歷史救回「每個資料庫曾經最大的版本」
+      #
+      #    例如：
+      #    fastfood 現在只有 10 筆
+      #    但 Git 歷史以前有 300 筆
+      #
+      #    → v7 會用 300 筆當保護基底
+      # ============================================================
+      - name: Recover largest historical databases
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          FILES = [
+              "convenience-foods.json",
+              "fastfood-foods.json",
+              "drink-shop-foods.json",
+              "taipei-foods.json",
+              "tfda-foods.json",
+              "official-chain-foods.json",
+          ]
+
+          os.makedirs(".safe-baseline", exist_ok=True)
+
+          def load_json_bytes(raw):
+              try:
+                  data = json.loads(raw.decode("utf-8-sig"))
+                  return data if isinstance(data, list) else []
+              except Exception:
+                  return []
+
+          for filename in FILES:
+              best = []
+              best_commit = None
+
+              # 先看目前工作目錄
+              if os.path.exists(filename):
+                  try:
+                      with open(filename, "r", encoding="utf-8-sig") as f:
+                          current = json.load(f)
+
+                      if isinstance(current, list):
+                          best = current
+                          best_commit = "CURRENT"
+                  except Exception:
+                      pass
+
+              # 再翻 Git 歷史
+              try:
+                  commits = subprocess.check_output(
+                      [
+                          "git",
+                          "log",
+                          "--all",
+                          "--format=%H",
+                          "--",
+                          filename,
+                      ],
+                      text=True,
+                  ).splitlines()
+              except Exception:
+                  commits = []
+
+              # 不需要無限翻
+              # 取最近 100 個有修改過這個檔案的 commit
+              for commit in commits[:100]:
+                  try:
+                      raw = subprocess.check_output(
+                          ["git", "show", f"{commit}:{filename}"],
+                          stderr=subprocess.DEVNULL,
+                      )
+                  except Exception:
+                      continue
+
+                  data = load_json_bytes(raw)
+
+                  if len(data) > len(best):
+                      best = data
+                      best_commit = commit
+
+              out = os.path.join(".safe-baseline", filename)
+
+              with open(out, "w", encoding="utf-8") as f:
+                  json.dump(
+                      best,
+                      f,
+                      ensure_ascii=False,
+                      indent=2,
+                  )
+
+              print(
+                  f"{filename}: baseline={len(best)} "
+                  f"source={best_commit}"
+              )
+          PY
+
+      # ============================================================
+      # 4. 建立／更新資料庫
+      # ============================================================
+      - name: Build and safely merge food databases
+        shell: bash
         run: |
           python - <<'PY'
           import io
           import json
+          import os
           import re
           import zipfile
           from urllib.parse import urljoin
@@ -44,526 +159,1005 @@ jobs:
           import requests
           from bs4 import BeautifulSoup
 
+
+          # ========================================================
+          # 基本設定
+          # ========================================================
+
           HEADERS = {
               "User-Agent": (
                   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) "
-                  "AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1"
+                  "AppleWebKit/605.1.15 Version/18.0 "
+                  "Mobile/15E148 Safari/604.1"
               ),
-              "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8"
+              "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
           }
 
           SESSION = requests.Session()
           SESSION.headers.update(HEADERS)
 
-          def clean(v):
-              if v is None:
-                  return ""
-              return re.sub(r"\s+", " ", str(v)).strip()
 
-          def parse_num(v):
-              if v is None:
+          def clean(value):
+              if value is None:
+                  return ""
+
+              return re.sub(
+                  r"\s+",
+                  " ",
+                  str(value),
+              ).strip()
+
+
+          # --------------------------------------------------------
+          # 搜尋正規化
+          #
+          # 雞 / 鷄 / 鸡
+          # 臺 / 台
+          # 全形空白等
+          # --------------------------------------------------------
+          def normalize(value):
+              s = clean(value).lower()
+
+              replacements = {
+                  "鷄": "雞",
+                  "鸡": "雞",
+                  "臺": "台",
+                  "（": "(",
+                  "）": ")",
+                  "－": "-",
+                  "　": " ",
+              }
+
+              for old, new in replacements.items():
+                  s = s.replace(old, new)
+
+              s = re.sub(r"\s+", "", s)
+
+              return s
+
+
+          def parse_num(value):
+              if value is None:
                   return None
-              s = str(v).replace(",", "").strip()
-              m = re.search(r"-?\d+(?:\.\d+)?", s)
-              if not m:
+
+              text = (
+                  str(value)
+                  .replace(",", "")
+                  .strip()
+              )
+
+              match = re.search(
+                  r"-?\d+(?:\.\d+)?",
+                  text,
+              )
+
+              if not match:
                   return None
+
               try:
-                  return float(m.group())
+                  return float(match.group())
               except Exception:
                   return None
 
-          def norm_key(s):
-              return re.sub(r"\s+", "", clean(s)).lower()
 
-          def unique_list(items):
-              out = []
-              seen = set()
-              for x in items:
-                  x = clean(x)
-                  if not x:
-                      continue
-                  k = x.lower()
-                  if k in seen:
-                      continue
-                  seen.add(k)
-                  out.append(x)
-              return out
-
-          def safe_get(url, timeout=25):
+          def safe_get(url, timeout=30):
               try:
-                  r = SESSION.get(url, timeout=timeout)
+                  r = SESSION.get(
+                      url,
+                      timeout=timeout,
+                  )
+
                   r.raise_for_status()
+
                   return r
+
               except Exception as e:
-                  print("GET failed:", url, e)
+                  print(
+                      "GET FAILED:",
+                      url,
+                      e,
+                  )
+
                   return None
 
+
+          def load_json(path):
+              if not os.path.exists(path):
+                  return []
+
+              try:
+                  with open(
+                      path,
+                      "r",
+                      encoding="utf-8-sig",
+                  ) as f:
+                      data = json.load(f)
+
+                  if isinstance(data, list):
+                      return data
+
+              except Exception as e:
+                  print(
+                      "JSON load failed:",
+                      path,
+                      e,
+                  )
+
+              return []
+
+
           def save_json(path, data):
-              with open(path, "w", encoding="utf-8") as f:
-                  json.dump(data, f, ensure_ascii=False, indent=2)
+              with open(
+                  path,
+                  "w",
+                  encoding="utf-8",
+              ) as f:
+                  json.dump(
+                      data,
+                      f,
+                      ensure_ascii=False,
+                      indent=2,
+                  )
 
-          # =========================================================
-          # 1. TFDA 食品營養成分資料
-          # =========================================================
-          print("=== TFDA ===")
 
-          tfda_url = "https://data.fda.gov.tw/data/opendata/export/20/csv"
-          r = safe_get(tfda_url, timeout=60)
+          def unique_strings(values):
+              result = []
+              seen = set()
 
-          tfda_foods = []
+              for value in values:
+                  value = clean(value)
+
+                  if not value:
+                      continue
+
+                  key = normalize(value)
+
+                  if key in seen:
+                      continue
+
+                  seen.add(key)
+                  result.append(value)
+
+              return result
+
+
+          # ========================================================
+          # 合併邏輯
+          #
+          # 核心原則：
+          #
+          # baseline 永遠保留
+          # 新抓到的資料只負責補資料
+          # 不可以因為爬蟲失敗把舊資料洗掉
+          # ========================================================
+
+          def item_key(item):
+              brand = (
+                  item.get("brand")
+                  or item.get("store")
+                  or ""
+              )
+
+              name = (
+                  item.get("name")
+                  or item.get("product")
+                  or ""
+              )
+
+              return (
+                  normalize(brand),
+                  normalize(name),
+              )
+
+
+          def info_score(item):
+              score = 0
+
+              for key in [
+                  "calories",
+                  "protein",
+                  "carbs",
+                  "fat",
+                  "serving",
+              ]:
+                  value = item.get(key)
+
+                  if value not in [
+                      None,
+                      "",
+                  ]:
+                      score += 1
+
+              if item.get("sourceUrl"):
+                  score += 1
+
+              return score
+
+
+          def merge_item(old, new):
+              """
+              保留舊資料，
+              但新資料有更完整欄位時補進去。
+              """
+
+              result = dict(old)
+
+              for key, value in new.items():
+                  if value in [
+                      None,
+                      "",
+                      [],
+                  ]:
+                      continue
+
+                  old_value = result.get(key)
+
+                  if old_value in [
+                      None,
+                      "",
+                      [],
+                  ]:
+                      result[key] = value
+
+
+              # aliases 特別合併
+              aliases = []
+
+              if isinstance(
+                  old.get("aliases"),
+                  list,
+              ):
+                  aliases += old["aliases"]
+
+              if isinstance(
+                  new.get("aliases"),
+                  list,
+              ):
+                  aliases += new["aliases"]
+
+              result["aliases"] = unique_strings(
+                  aliases
+              )
+
+
+              # 如果新資料明顯比較完整，
+              # calories / macros 可以採新資料
+              if info_score(new) > info_score(old):
+
+                  for key in [
+                      "calories",
+                      "protein",
+                      "carbs",
+                      "fat",
+                      "serving",
+                      "source",
+                      "sourceType",
+                      "sourceUrl",
+                  ]:
+
+                      value = new.get(key)
+
+                      if value not in [
+                          None,
+                          "",
+                      ]:
+                          result[key] = value
+
+              return result
+
+
+          def safe_merge(
+              baseline,
+              new_items,
+          ):
+              merged = {}
+
+              # 先放 baseline
+              for item in baseline:
+                  if not isinstance(item, dict):
+                      continue
+
+                  key = item_key(item)
+
+                  if not key[1]:
+                      continue
+
+                  merged[key] = item
+
+
+              # 再把新資料加進去
+              for item in new_items:
+                  if not isinstance(item, dict):
+                      continue
+
+                  key = item_key(item)
+
+                  if not key[1]:
+                      continue
+
+                  if key in merged:
+                      merged[key] = merge_item(
+                          merged[key],
+                          item,
+                      )
+                  else:
+                      merged[key] = item
+
+              return list(
+                  merged.values()
+              )
+
+
+          # ========================================================
+          # 載入安全基底
+          # ========================================================
+
+          baseline = {}
+
+          filenames = [
+              "convenience-foods.json",
+              "fastfood-foods.json",
+              "drink-shop-foods.json",
+              "taipei-foods.json",
+              "tfda-foods.json",
+              "official-chain-foods.json",
+          ]
+
+          for filename in filenames:
+
+              path = os.path.join(
+                  ".safe-baseline",
+                  filename,
+              )
+
+              baseline[filename] = load_json(
+                  path
+              )
+
+              print(
+                  "SAFE BASELINE",
+                  filename,
+                  len(baseline[filename]),
+              )
+
+
+          # ========================================================
+          # 5. TFDA
+          # ========================================================
+
+          print("\n=== TFDA ===")
+
+          new_tfda = []
+
+          tfda_url = (
+              "https://data.fda.gov.tw/"
+              "data/opendata/export/20/csv"
+          )
+
+          r = safe_get(
+              tfda_url,
+              timeout=60,
+          )
 
           if r:
-              try:
-                  z = zipfile.ZipFile(io.BytesIO(r.content))
-                  csv_name = z.namelist()[0]
 
-                  with z.open(csv_name) as f:
-                      raw = f.read()
+              try:
+                  z = zipfile.ZipFile(
+                      io.BytesIO(r.content)
+                  )
+
+                  csv_names = [
+                      n
+                      for n in z.namelist()
+                      if n.lower().endswith(".csv")
+                  ]
+
+                  if not csv_names:
+                      csv_names = z.namelist()
+
+                  csv_name = csv_names[0]
+
+                  raw = z.read(csv_name)
 
                   text = None
-                  for enc in ["utf-8-sig", "utf-8", "cp950", "big5"]:
+
+                  for encoding in [
+                      "utf-8-sig",
+                      "utf-8",
+                      "cp950",
+                      "big5",
+                  ]:
+
                       try:
-                          text = raw.decode(enc)
+                          text = raw.decode(
+                              encoding
+                          )
                           break
                       except Exception:
                           pass
 
                   if text is None:
-                      raise RuntimeError("TFDA CSV decode failed")
+                      raise RuntimeError(
+                          "TFDA decode failed"
+                      )
 
-                  df = pd.read_csv(io.StringIO(text))
+                  df = pd.read_csv(
+                      io.StringIO(text)
+                  )
+
 
                   def find_col(*keywords):
-                      for c in df.columns:
-                          cc = str(c)
-                          if all(k in cc for k in keywords):
-                              return c
+
+                      for column in df.columns:
+
+                          c = str(column)
+
+                          if all(
+                              keyword in c
+                              for keyword in keywords
+                          ):
+                              return column
+
                       return None
+
 
                   food_col = (
                       find_col("樣品名稱")
                       or find_col("食品名稱")
                       or find_col("名稱")
                   )
-                  alias_col = find_col("俗名") or find_col("別名")
-                  category_col = find_col("食品分類") or find_col("分類")
-                  nutrient_col = find_col("分析項")
+
+                  alias_col = (
+                      find_col("俗名")
+                      or find_col("別名")
+                  )
+
+                  category_col = (
+                      find_col("食品分類")
+                      or find_col("分類")
+                  )
+
+                  nutrient_col = (
+                      find_col("分析項")
+                  )
+
                   per100_col = (
                       find_col("每100克")
                       or find_col("每100公克")
                       or find_col("每100")
                   )
 
-                  tmp = {}
 
-                  if food_col and nutrient_col and per100_col:
+                  temp = {}
+
+
+                  if (
+                      food_col
+                      and nutrient_col
+                      and per100_col
+                  ):
+
                       for _, row in df.iterrows():
-                          name = clean(row.get(food_col))
+
+                          name = clean(
+                              row.get(food_col)
+                          )
+
                           if not name:
                               continue
 
-                          alias = clean(row.get(alias_col)) if alias_col else ""
-                          category = clean(row.get(category_col)) if category_col else ""
+                          key = normalize(name)
 
-                          key = norm_key(name)
+                          alias = (
+                              clean(
+                                  row.get(alias_col)
+                              )
+                              if alias_col
+                              else ""
+                          )
 
-                          if key not in tmp:
-                              tmp[key] = {
+                          category = (
+                              clean(
+                                  row.get(category_col)
+                              )
+                              if category_col
+                              else ""
+                          )
+
+                          if key not in temp:
+
+                              temp[key] = {
                                   "name": name,
-                                  "aliases": [alias] if alias else [],
+                                  "brand": "",
+                                  "aliases": (
+                                      [alias]
+                                      if alias
+                                      else []
+                                  ),
                                   "category": category,
-                                  "source": "TFDA",
-                                  "sourceType": "official",
-                                  "per100g": True,
                                   "calories": None,
                                   "protein": None,
                                   "carbs": None,
-                                  "fat": None
+                                  "fat": None,
+                                  "per100g": True,
+                                  "source": "TFDA",
+                                  "sourceType": "official",
                               }
-                          else:
-                              if alias:
-                                  tmp[key]["aliases"] = unique_list(
-                                      tmp[key].get("aliases", []) + [alias]
-                                  )
 
-                          nutrient = clean(row.get(nutrient_col))
-                          value = parse_num(row.get(per100_col))
+                          nutrient = clean(
+                              row.get(
+                                  nutrient_col
+                              )
+                          )
+
+                          value = parse_num(
+                              row.get(
+                                  per100_col
+                              )
+                          )
 
                           if value is None:
                               continue
 
                           if "熱量" in nutrient:
-                              tmp[key]["calories"] = value
-                          elif "蛋白質" in nutrient or "粗蛋白" in nutrient:
-                              tmp[key]["protein"] = value
-                          elif "總碳水化合物" in nutrient or "碳水化合物" in nutrient:
-                              tmp[key]["carbs"] = value
-                          elif "總脂肪" in nutrient or "粗脂肪" in nutrient or "脂肪" in nutrient:
-                              tmp[key]["fat"] = value
+                              temp[key]["calories"] = value
 
-                  tfda_foods = [
-                      x for x in tmp.values()
-                      if x.get("calories") is not None
+                          elif "蛋白質" in nutrient:
+                              temp[key]["protein"] = value
+
+                          elif (
+                              "碳水化合物"
+                              in nutrient
+                          ):
+                              temp[key]["carbs"] = value
+
+                          elif "脂肪" in nutrient:
+                              temp[key]["fat"] = value
+
+
+                  new_tfda = [
+                      item
+                      for item in temp.values()
+                      if item.get(
+                          "calories"
+                      ) is not None
                   ]
 
               except Exception as e:
-                  print("TFDA parse failed:", e)
 
-          save_json("tfda-foods.json", tfda_foods)
-          print("TFDA foods:", len(tfda_foods))
+                  print(
+                      "TFDA PARSE FAILED:",
+                      e,
+                  )
 
-          # =========================================================
-          # 2. 臺北市食材登錄平台
-          # =========================================================
-          print("=== Taipei FoodTracer ===")
 
-          BASE = "https://foodtracer.taipei.gov.tw"
+          print(
+              "New TFDA:",
+              len(new_tfda),
+          )
 
-          start_urls = [
-              f"{BASE}/Front/Home",
-              (
-                  f"{BASE}/Front/Restaurant/List?"
-                  "mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce"
-                  "&fid=26dba213-3227-4c44-a65b-d7f59abf2d35"
-              ),
-              (
-                  f"{BASE}/Front/Restaurant/List?"
-                  "mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce"
-                  "&fid=c5e8fab7-daed-4ae3-98f6-4919b1487c00"
-              )
-          ]
 
-          discovered_lists = set()
-          discovered_pages = set()
+          # ========================================================
+          # 6. 台北市 FoodTracer
+          # ========================================================
 
-          def discover_links(url):
-              r = safe_get(url)
-              if not r:
-                  return
+          print(
+              "\n=== Taipei FoodTracer ==="
+          )
 
-              soup = BeautifulSoup(r.text, "lxml")
+          new_taipei = []
 
-              for a in soup.find_all("a", href=True):
-                  href = clean(a.get("href"))
-                  if not href:
-                      continue
+          # 優先使用台北資料開放平台 CSV
+          taipei_csv = (
+              "https://data.taipei/api/frontstage/"
+              "tpeod/dataset/resource.download?"
+              "rid=29869b6f-1cd3-4ce8-8c78-eb85aeea8583"
+          )
 
-                  full = urljoin(BASE, href)
+          r = safe_get(
+              taipei_csv,
+              timeout=90,
+          )
 
-                  if "fid=" in full and "/Front/" in full:
-                      discovered_lists.add(full)
+          if r:
 
-                  if (
-                      "/Front/Restaurant/" in full
-                      or "/Front/Product/" in full
-                      or "RestaurantDetail" in full
-                      or "ProductDetail" in full
+              try:
+
+                  raw = r.content
+
+                  text = None
+
+                  for encoding in [
+                      "utf-8-sig",
+                      "utf-8",
+                      "cp950",
+                      "big5",
+                  ]:
+
+                      try:
+                          text = raw.decode(
+                              encoding
+                          )
+                          break
+                      except Exception:
+                          pass
+
+                  if text is None:
+                      raise RuntimeError(
+                          "Taipei CSV decode failed"
+                      )
+
+
+                  df = pd.read_csv(
+                      io.StringIO(text)
+                  )
+
+                  print(
+                      "Taipei columns:",
+                      list(df.columns),
+                  )
+
+
+                  def match_column(
+                      columns,
+                      keywords,
                   ):
-                      discovered_pages.add(full)
 
-          for u in start_urls:
-              discover_links(u)
+                      for column in columns:
 
-          for u in list(discovered_lists)[:100]:
-              discover_links(u)
+                          c = normalize(column)
 
-          print("FoodTracer detail pages:", len(discovered_pages))
+                          for keyword in keywords:
 
-          taipei_foods = []
+                              if normalize(keyword) in c:
+                                  return column
 
-          def extract_brand(soup):
-              selectors = [
-                  "h1",
-                  "h2",
-                  ".title",
-                  ".brand",
-                  ".restaurant-name",
-                  ".store-name",
-                  ".product-title"
-              ]
+                      return None
 
-              for sel in selectors:
-                  el = soup.select_one(sel)
-                  if el:
-                      txt = clean(el.get_text(" ", strip=True))
-                      if txt:
-                          return txt
-              return ""
 
-          def parse_table_rows(soup, brand, source_url):
-              items = []
+                  cols = list(df.columns)
 
-              for table in soup.find_all("table"):
-                  rows = table.find_all("tr")
-                  if len(rows) < 2:
-                      continue
+                  brand_col = match_column(
+                      cols,
+                      [
+                          "品牌名稱",
+                          "品牌",
+                          "商號名稱",
+                          "公司名稱",
+                      ],
+                  )
 
-                  headers = [
-                      clean(c.get_text(" ", strip=True))
-                      for c in rows[0].find_all(["th", "td"])
-                  ]
+                  product_col = match_column(
+                      cols,
+                      [
+                          "產品名稱",
+                          "商品名稱",
+                          "品名",
+                          "餐點名稱",
+                      ],
+                  )
 
-                  for tr in rows[1:]:
-                      cells = [
-                          clean(c.get_text(" ", strip=True))
-                          for c in tr.find_all(["th", "td"])
-                      ]
+                  calorie_col = match_column(
+                      cols,
+                      [
+                          "熱量",
+                          "卡路里",
+                      ],
+                  )
 
-                      if len(cells) < 2:
-                          continue
+                  serving_col = match_column(
+                      cols,
+                      [
+                          "份量",
+                          "每份",
+                          "重量",
+                          "容量",
+                      ],
+                  )
 
-                      joined = " | ".join(cells)
+                  link_col = match_column(
+                      cols,
+                      [
+                          "網址",
+                          "連結",
+                          "link",
+                      ],
+                  )
 
-                      name = clean(cells[0])
-                      if not name or len(name) > 120:
-                          continue
 
-                      calories = None
-                      protein = None
-                      carbs = None
-                      fat = None
-                      serving = ""
+                  if product_col:
 
-                      for idx, val in enumerate(cells):
-                          h = headers[idx] if idx < len(headers) else ""
+                      for _, row in df.iterrows():
 
-                          if calories is None and (
-                              "熱量" in h
-                              or "大卡" in val
-                              or "kcal" in val.lower()
-                          ):
-                              n = parse_num(val)
-                              if n is not None and 0 < n < 5000:
-                                  calories = n
+                          name = clean(
+                              row.get(
+                                  product_col
+                              )
+                          )
 
-                          if "蛋白" in h:
-                              protein = parse_num(val)
+                          if not name:
+                              continue
 
-                          if "碳水" in h:
-                              carbs = parse_num(val)
+                          brand = (
+                              clean(
+                                  row.get(
+                                      brand_col
+                                  )
+                              )
+                              if brand_col
+                              else ""
+                          )
 
-                          if "脂肪" in h:
-                              fat = parse_num(val)
+                          calories = (
+                              parse_num(
+                                  row.get(
+                                      calorie_col
+                                  )
+                              )
+                              if calorie_col
+                              else None
+                          )
 
-                          if (
-                              "份量" in h
-                              or "重量" in h
-                              or "容量" in h
-                              or "公克" in val
-                              or "毫升" in val
-                              or "ml" in val.lower()
-                          ):
-                              if len(val) <= 60:
-                                  serving = val
+                          serving = (
+                              clean(
+                                  row.get(
+                                      serving_col
+                                  )
+                              )
+                              if serving_col
+                              else ""
+                          )
 
-                      if calories is None:
-                          # 沒有表頭時，做一次寬鬆判斷
-                          for val in cells[1:]:
-                              if "大卡" in val or "kcal" in val.lower():
-                                  n = parse_num(val)
-                                  if n is not None and 0 < n < 5000:
-                                      calories = n
-                                      break
+                          source_url = (
+                              clean(
+                                  row.get(
+                                      link_col
+                                  )
+                              )
+                              if link_col
+                              else ""
+                          )
 
-                      if calories is None:
-                          continue
+                          new_taipei.append(
+                              {
+                                  "name": name,
+                                  "brand": brand,
+                                  "store": brand,
+                                  "aliases": [],
+                                  "calories": calories,
+                                  "protein": None,
+                                  "carbs": None,
+                                  "fat": None,
+                                  "serving": serving,
+                                  "source": "臺北市食材登錄平台",
+                                  "sourceType": "official-public",
+                                  "sourceUrl": source_url,
+                              }
+                          )
 
-                      items.append({
-                          "name": name,
-                          "brand": brand,
-                          "store": brand,
-                          "aliases": [],
-                          "calories": calories,
-                          "protein": protein,
-                          "carbs": carbs,
-                          "fat": fat,
-                          "serving": serving,
-                          "source": "臺北市食材登錄平台",
-                          "sourceType": "official",
-                          "sourceUrl": source_url
-                      })
+              except Exception as e:
 
-              return items
+                  print(
+                      "TAIPEI CSV FAILED:",
+                      e,
+                  )
 
-          for i, url in enumerate(list(discovered_pages)[:700]):
-              r = safe_get(url, timeout=20)
-              if not r:
-                  continue
 
-              soup = BeautifulSoup(r.text, "lxml")
-              brand = extract_brand(soup)
+          print(
+              "New Taipei:",
+              len(new_taipei),
+          )
 
-              taipei_foods.extend(
-                  parse_table_rows(soup, brand, url)
-              )
 
-              if i % 25 == 0:
-                  print("FoodTracer parsed:", i)
+          # ========================================================
+          # 7. 官方品牌
+          # ========================================================
 
-          # 去重
-          dedup_taipei = {}
+          print(
+              "\n=== Official brands ==="
+          )
 
-          for x in taipei_foods:
-              key = (
-                  norm_key(x.get("brand")),
-                  norm_key(x.get("name")),
-                  x.get("calories")
-              )
-              dedup_taipei[key] = x
+          new_official = []
 
-          taipei_foods = list(dedup_taipei.values())
 
-          save_json("taipei-foods.json", taipei_foods)
-          print("Taipei foods:", len(taipei_foods))
-
-          # =========================================================
-          # 3. 官方連鎖品牌資料
-          # =========================================================
-          print("=== Official chains ===")
-
-          official_chain_foods = []
-
-          def add_official_item(
+          def add_official(
               brand,
               name,
-              url,
+              url="",
               calories=None,
               protein=None,
               carbs=None,
               fat=None,
               serving="",
-              aliases=None
+              aliases=None,
           ):
+
               name = clean(name)
-              brand = clean(brand)
 
               if not name:
                   return
 
-              official_chain_foods.append({
-                  "name": name,
-                  "brand": brand,
-                  "store": brand,
-                  "aliases": unique_list(
-                      (aliases or [])
-                      + [brand]
-                  ),
-                  "calories": calories,
-                  "protein": protein,
-                  "carbs": carbs,
-                  "fat": fat,
-                  "serving": serving,
-                  "source": f"{brand} 官方",
-                  "sourceType": "official",
-                  "sourceUrl": url
-              })
+              new_official.append(
+                  {
+                      "name": name,
+                      "brand": brand,
+                      "store": brand,
+                      "aliases": unique_strings(
+                          (aliases or [])
+                          + [brand]
+                      ),
+                      "calories": calories,
+                      "protein": protein,
+                      "carbs": carbs,
+                      "fat": fat,
+                      "serving": serving,
+                      "source": (
+                          f"{brand} 官方"
+                      ),
+                      "sourceType": "official",
+                      "sourceUrl": url,
+                  }
+              )
 
-          # ---------------------------------------------------------
-          # 麥當勞
-          # ---------------------------------------------------------
-          print("McDonald's...")
 
-          mcd_menu = "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
-          r = safe_get(mcd_menu)
+          # ========================================================
+          # 麥當勞官方
+          # ========================================================
+
+          print("McDonald's")
+
+          mcd_url = (
+              "https://www.mcdonalds.com/"
+              "tw/zh-tw/full-menu.html"
+          )
+
+          r = safe_get(mcd_url)
 
           if r:
-              soup = BeautifulSoup(r.text, "lxml")
+
+              soup = BeautifulSoup(
+                  r.text,
+                  "lxml",
+              )
 
               links = set()
 
-              for a in soup.find_all("a", href=True):
-                  href = clean(a["href"])
+              for a in soup.find_all(
+                  "a",
+                  href=True,
+              ):
+
+                  href = clean(
+                      a.get("href")
+                  )
 
                   if "/product/" in href:
-                      links.add(urljoin(mcd_menu, href))
 
-              print("McDonald's product links:", len(links))
+                      links.add(
+                          urljoin(
+                              mcd_url,
+                              href,
+                          )
+                      )
 
-              for url in list(links)[:250]:
-                  pr = safe_get(url, timeout=20)
+
+              print(
+                  "McDonald's product pages:",
+                  len(links),
+              )
+
+
+              for product_url in list(links)[:300]:
+
+                  pr = safe_get(
+                      product_url,
+                      timeout=20,
+                  )
+
                   if not pr:
                       continue
 
-                  psoup = BeautifulSoup(pr.text, "lxml")
+                  psoup = BeautifulSoup(
+                      pr.text,
+                      "lxml",
+                  )
 
                   title = ""
 
-                  for sel in [
+                  for selector in [
                       "h1",
-                      ".product-name",
                       ".cmp-title__text",
-                      "title"
+                      ".product-name",
+                      "title",
                   ]:
-                      el = psoup.select_one(sel)
+
+                      el = psoup.select_one(
+                          selector
+                      )
 
                       if el:
-                          title = clean(el.get_text(" ", strip=True))
+
+                          title = clean(
+                              el.get_text(
+                                  " ",
+                                  strip=True,
+                              )
+                          )
+
                           if title:
                               break
 
-                  if not title:
-                      continue
 
                   title = re.sub(
                       r"\s*\|\s*McDonald.*$",
                       "",
                       title,
-                      flags=re.I
+                      flags=re.I,
                   ).strip()
 
+
+                  if not title:
+                      continue
+
+
                   page_text = clean(
-                      psoup.get_text(" ", strip=True)
+                      psoup.get_text(
+                          " ",
+                          strip=True,
+                      )
                   )
 
-                  calories = None
-                  protein = None
-                  carbs = None
-                  fat = None
 
-                  patterns = {
-                      "calories": [
-                          r"熱量[^0-9]{0,20}(\d+(?:\.\d+)?)",
-                          r"(\d+(?:\.\d+)?)\s*(?:大卡|kcal)"
-                      ],
-                      "protein": [
-                          r"蛋白質[^0-9]{0,20}(\d+(?:\.\d+)?)"
-                      ],
-                      "carbs": [
-                          r"碳水化合物[^0-9]{0,20}(\d+(?:\.\d+)?)"
-                      ],
-                      "fat": [
-                          r"脂肪[^0-9]{0,20}(\d+(?:\.\d+)?)"
+                  def find_value(
+                      patterns,
+                  ):
+
+                      for pattern in patterns:
+
+                          match = re.search(
+                              pattern,
+                              page_text,
+                              re.I,
+                          )
+
+                          if match:
+                              return parse_num(
+                                  match.group(1)
+                              )
+
+                      return None
+
+
+                  calories = find_value(
+                      [
+                          r"熱量[^0-9]{0,25}(\d+(?:\.\d+)?)",
+                          r"(\d+(?:\.\d+)?)\s*(?:大卡|kcal)",
                       ]
-                  }
+                  )
 
-                  for p in patterns["calories"]:
-                      m = re.search(p, page_text, re.I)
-                      if m:
-                          calories = parse_num(m.group(1))
-                          break
+                  protein = find_value(
+                      [
+                          r"蛋白質[^0-9]{0,25}(\d+(?:\.\d+)?)",
+                      ]
+                  )
 
-                  for p in patterns["protein"]:
-                      m = re.search(p, page_text, re.I)
-                      if m:
-                          protein = parse_num(m.group(1))
-                          break
+                  carbs = find_value(
+                      [
+                          r"碳水化合物[^0-9]{0,25}(\d+(?:\.\d+)?)",
+                      ]
+                  )
 
-                  for p in patterns["carbs"]:
-                      m = re.search(p, page_text, re.I)
-                      if m:
-                          carbs = parse_num(m.group(1))
-                          break
+                  fat = find_value(
+                      [
+                          r"脂肪[^0-9]{0,25}(\d+(?:\.\d+)?)",
+                      ]
+                  )
 
-                  for p in patterns["fat"]:
-                      m = re.search(p, page_text, re.I)
-                      if m:
-                          fat = parse_num(m.group(1))
-                          break
 
-                  add_official_item(
+                  add_official(
                       "麥當勞",
                       title,
-                      url,
+                      product_url,
                       calories,
                       protein,
                       carbs,
@@ -571,368 +1165,181 @@ jobs:
                       aliases=[
                           "McDonald's",
                           "McDonalds",
+                          "MCD",
                           "麥當",
-                          "MCD"
-                      ]
+                      ],
                   )
 
-          # ---------------------------------------------------------
-          # MOS 摩斯漢堡
-          # ---------------------------------------------------------
-          print("MOS Burger...")
 
-          mos_urls = [
-              "https://www.mos.com.tw/menu/",
-              "https://www.mos.com.tw/menu/main.php"
+          # ========================================================
+          # 麥脆雞搜尋保險
+          #
+          # 就算官方頁面當天結構改掉，
+          # 至少名稱還能被搜尋到。
+          # ========================================================
+
+          mccrispy_backup = [
+              "原味麥脆鷄腿",
+              "辣味麥脆鷄腿",
+              "原味麥脆鷄腿（大腿）",
+              "原味麥脆鷄腿（棒腿）",
+              "辣味麥脆鷄腿（大腿）",
+              "辣味麥脆鷄腿（棒腿）",
+              "麥脆鷄腿2塊",
+              "麥脆鷄腿6塊分享盒",
           ]
 
-          mos_links = set()
+          for name in mccrispy_backup:
 
-          for start in mos_urls:
-              r = safe_get(start)
-
-              if not r:
-                  continue
-
-              soup = BeautifulSoup(r.text, "lxml")
-
-              for a in soup.find_all("a", href=True):
-                  href = clean(a["href"])
-                  txt = clean(a.get_text(" ", strip=True))
-
-                  if (
-                      "menu" in href.lower()
-                      or "product" in href.lower()
-                      or "detail" in href.lower()
-                  ):
-                      full = urljoin(start, href)
-                      mos_links.add(full)
-
-                  if txt and len(txt) < 70:
-                      # 若列表頁本身有品名，先保留品名
-                      if any(
-                          k in txt
-                          for k in [
-                              "堡",
-                              "吐司",
-                              "雞",
-                              "牛",
-                              "米漢堡",
-                              "咖啡",
-                              "紅茶",
-                              "薯"
-                          ]
-                      ):
-                          add_official_item(
-                              "摩斯漢堡",
-                              txt,
-                              start,
-                              aliases=[
-                                  "MOS",
-                                  "MOS Burger",
-                                  "摩斯"
-                              ]
-                          )
-
-          for url in list(mos_links)[:200]:
-              r = safe_get(url, timeout=20)
-              if not r:
-                  continue
-
-              soup = BeautifulSoup(r.text, "lxml")
-              text = clean(soup.get_text(" ", strip=True))
-
-              title = ""
-
-              for sel in ["h1", "h2", ".title", ".product-title", "title"]:
-                  el = soup.select_one(sel)
-                  if el:
-                      title = clean(el.get_text(" ", strip=True))
-                      if title:
-                          break
-
-              if not title:
-                  continue
-
-              calories = None
-              protein = None
-              carbs = None
-              fat = None
-
-              m = re.search(r"熱量[^0-9]{0,20}(\d+(?:\.\d+)?)", text)
-              if m:
-                  calories = parse_num(m.group(1))
-
-              m = re.search(r"蛋白質[^0-9]{0,20}(\d+(?:\.\d+)?)", text)
-              if m:
-                  protein = parse_num(m.group(1))
-
-              m = re.search(r"碳水化合物[^0-9]{0,20}(\d+(?:\.\d+)?)", text)
-              if m:
-                  carbs = parse_num(m.group(1))
-
-              m = re.search(r"脂肪[^0-9]{0,20}(\d+(?:\.\d+)?)", text)
-              if m:
-                  fat = parse_num(m.group(1))
-
-              add_official_item(
-                  "摩斯漢堡",
-                  title,
-                  url,
-                  calories,
-                  protein,
-                  carbs,
-                  fat,
+              add_official(
+                  "麥當勞",
+                  name,
+                  mcd_url,
                   aliases=[
-                      "MOS",
-                      "MOS Burger",
-                      "摩斯"
-                  ]
+                      "麥脆雞",
+                      "麥脆鷄",
+                      "McCrispy",
+                      "麥當勞",
+                  ],
               )
 
-          # ---------------------------------------------------------
-          # 漢堡王
-          # ---------------------------------------------------------
-          print("Burger King...")
 
-          bk_start_urls = [
-              "https://www.burgerking.com.tw/",
-              "https://www.burgerking.com.tw/menu"
-          ]
+          # ========================================================
+          # 把台北公開資料裡的連鎖品牌補入官方品牌資料庫
+          # ========================================================
 
-          for start in bk_start_urls:
-              r = safe_get(start)
-
-              if not r:
-                  continue
-
-              soup = BeautifulSoup(r.text, "lxml")
-
-              for el in soup.find_all(
-                  ["h1", "h2", "h3", "h4", "a", "div", "span"]
-              ):
-                  txt = clean(el.get_text(" ", strip=True))
-
-                  if not txt or len(txt) > 70:
-                      continue
-
-                  if any(
-                      k in txt
-                      for k in [
-                          "華堡",
-                          "牛肉堡",
-                          "雞堡",
-                          "薯條",
-                          "雞塊",
-                          "洋蔥圈",
-                          "漢堡"
-                      ]
-                  ):
-                      add_official_item(
-                          "漢堡王",
-                          txt,
-                          start,
-                          aliases=[
-                              "Burger King",
-                              "BK"
-                          ]
-                      )
-
-          # ---------------------------------------------------------
-          # KFC
-          # ---------------------------------------------------------
-          print("KFC...")
-
-          kfc_urls = [
-              "https://www.kfcclub.com.tw/",
-              "https://www.kfcclub.com.tw/menu"
-          ]
-
-          for start in kfc_urls:
-              r = safe_get(start)
-
-              if not r:
-                  continue
-
-              soup = BeautifulSoup(r.text, "lxml")
-
-              for el in soup.find_all(
-                  ["h1", "h2", "h3", "h4", "a", "div", "span"]
-              ):
-                  txt = clean(el.get_text(" ", strip=True))
-
-                  if not txt or len(txt) > 70:
-                      continue
-
-                  if any(
-                      k in txt
-                      for k in [
-                          "咔啦",
-                          "炸雞",
-                          "蛋撻",
-                          "雞腿堡",
-                          "雞塊",
-                          "薯條",
-                          "雞米花"
-                      ]
-                  ):
-                      add_official_item(
-                          "肯德基",
-                          txt,
-                          start,
-                          aliases=[
-                              "KFC",
-                              "肯德基"
-                          ]
-                      )
-
-          # ---------------------------------------------------------
-          # SUBWAY
-          # ---------------------------------------------------------
-          print("SUBWAY...")
-
-          subway_urls = [
-              "https://www.subway.com/zh-TW/MenuNutrition/Menu",
-              "https://www.subway.com/zh-TW"
-          ]
-
-          for start in subway_urls:
-              r = safe_get(start)
-
-              if not r:
-                  continue
-
-              soup = BeautifulSoup(r.text, "lxml")
-
-              for el in soup.find_all(
-                  ["h1", "h2", "h3", "h4", "a", "div", "span"]
-              ):
-                  txt = clean(el.get_text(" ", strip=True))
-
-                  if not txt or len(txt) > 80:
-                      continue
-
-                  if any(
-                      k in txt
-                      for k in [
-                          "火雞",
-                          "鮪魚",
-                          "照燒雞",
-                          "牛肉",
-                          "培根",
-                          "潛艇堡",
-                          "沙拉"
-                      ]
-                  ):
-                      add_official_item(
-                          "SUBWAY",
-                          txt,
-                          start,
-                          aliases=[
-                              "Subway",
-                              "賽百味"
-                          ]
-                      )
-
-          # =========================================================
-          # 4. 把 FoodTracer 中各品牌資料補進官方品牌層
-          # =========================================================
-          official_brands = {
-              "麥當勞": ["麥當勞", "mcdonald"],
-              "摩斯漢堡": ["摩斯", "mos"],
-              "漢堡王": ["漢堡王", "burger king"],
-              "肯德基": ["肯德基", "kfc"],
-              "SUBWAY": ["subway", "賽百味"]
+          BRAND_RULES = {
+              "麥當勞": [
+                  "麥當勞",
+                  "mcdonald",
+              ],
+              "肯德基": [
+                  "肯德基",
+                  "kfc",
+              ],
+              "摩斯漢堡": [
+                  "摩斯",
+                  "mos",
+              ],
+              "漢堡王": [
+                  "漢堡王",
+                  "burgerking",
+              ],
+              "SUBWAY": [
+                  "subway",
+                  "賽百味",
+              ],
+              "必勝客": [
+                  "必勝客",
+                  "pizza hut",
+              ],
+              "達美樂": [
+                  "達美樂",
+                  "domino",
+              ],
+              "拿坡里": [
+                  "拿坡里",
+              ],
+              "頂呱呱": [
+                  "頂呱呱",
+                  "tkk",
+              ],
+              "21風味館": [
+                  "21風味館",
+                  "21plus",
+              ],
           }
 
-          for x in taipei_foods:
-              txt = (
-                  clean(x.get("brand"))
-                  + " "
-                  + clean(x.get("name"))
-              ).lower()
 
-              matched_brand = None
+          for item in new_taipei:
 
-              for brand, kws in official_brands.items():
-                  if any(k.lower() in txt for k in kws):
-                      matched_brand = brand
+              haystack = normalize(
+                  (
+                      item.get(
+                          "brand",
+                          ""
+                      )
+                      + " "
+                      + item.get(
+                          "name",
+                          ""
+                      )
+                  )
+              )
+
+              matched = None
+
+              for brand, keywords in BRAND_RULES.items():
+
+                  if any(
+                      normalize(keyword)
+                      in haystack
+                      for keyword
+                      in keywords
+                  ):
+
+                      matched = brand
                       break
 
-              if matched_brand:
-                  official_chain_foods.append({
-                      **x,
-                      "brand": matched_brand,
-                      "store": matched_brand,
-                      "sourceType": "official-public"
-                  })
 
-          # =========================================================
-          # 5. 去重官方品牌
-          # =========================================================
-          dedup_official = {}
+              if matched:
 
-          for x in official_chain_foods:
-              key = (
-                  norm_key(x.get("brand")),
-                  norm_key(x.get("name"))
-              )
+                  copied = dict(item)
 
-              if key not in dedup_official:
-                  dedup_official[key] = x
-                  continue
+                  copied["brand"] = matched
+                  copied["store"] = matched
 
-              old = dedup_official[key]
+                  copied["aliases"] = unique_strings(
+                      copied.get(
+                          "aliases",
+                          []
+                      )
+                      + [matched]
+                  )
 
-              # 有熱量資料的優先
-              old_score = sum(
-                  old.get(k) is not None
-                  for k in ["calories", "protein", "carbs", "fat"]
-              )
+                  new_official.append(
+                      copied
+                  )
 
-              new_score = sum(
-                  x.get(k) is not None
-                  for k in ["calories", "protein", "carbs", "fat"]
-              )
-
-              if new_score > old_score:
-                  dedup_official[key] = x
-
-          official_chain_foods = list(dedup_official.values())
-
-          save_json(
-              "official-chain-foods.json",
-              official_chain_foods
-          )
 
           print(
-              "Official chain foods:",
-              len(official_chain_foods)
+              "New official:",
+              len(new_official),
           )
 
-          # =========================================================
-          # 6. 維持舊 fastfood / drink 檔相容性
-          # =========================================================
-          fast_keywords = [
+
+          # ========================================================
+          # 8. 從新資料建立速食／手搖補充資料
+          # ========================================================
+
+          FAST_KEYWORDS = [
               "麥當勞",
+              "mcdonald",
               "肯德基",
-              "漢堡王",
+              "kfc",
               "摩斯",
               "mos",
+              "漢堡王",
+              "burgerking",
               "subway",
+              "賽百味",
               "必勝客",
+              "pizzahut",
               "達美樂",
+              "domino",
               "拿坡里",
               "頂呱呱",
+              "21風味館",
               "21plus",
-              "21風味館"
           ]
 
-          drink_keywords = [
+
+          DRINK_KEYWORDS = [
               "50嵐",
+              "五十嵐",
               "coco",
-              "麻古",
               "清心",
+              "麻古",
               "迷客夏",
               "可不可",
               "龜記",
@@ -941,122 +1348,362 @@ jobs:
               "大苑子",
               "comebuy",
               "五桐號",
-              "得正"
+              "得正",
+              "再睡5分鐘",
+              "鶴茶樓",
+              "萬波",
+              "春水堂",
+              "一沐日",
+              "八曜和茶",
+              "先喝道",
           ]
 
-          fastfood_foods = []
-          drink_foods = []
 
-          combined = taipei_foods + official_chain_foods
+          new_fastfood = []
+          new_drinks = []
 
-          for x in combined:
-              txt = (
-                  clean(x.get("brand"))
-                  + " "
-                  + clean(x.get("store"))
-                  + " "
-                  + clean(x.get("name"))
-              ).lower()
 
-              if any(k.lower() in txt for k in fast_keywords):
-                  fastfood_foods.append(x)
+          for item in (
+              new_taipei
+              + new_official
+          ):
 
-              if any(k.lower() in txt for k in drink_keywords):
-                  drink_foods.append(x)
-
-          # 再去重一次
-          def dedup_items(items):
-              result = {}
-              for x in items:
-                  key = (
-                      norm_key(x.get("brand")),
-                      norm_key(x.get("name")),
-                      x.get("calories")
+              text = normalize(
+                  (
+                      item.get(
+                          "brand",
+                          ""
+                      )
+                      + " "
+                      + item.get(
+                          "store",
+                          ""
+                      )
+                      + " "
+                      + item.get(
+                          "name",
+                          ""
+                      )
                   )
-                  result[key] = x
-              return list(result.values())
+              )
 
-          fastfood_foods = dedup_items(fastfood_foods)
-          drink_foods = dedup_items(drink_foods)
 
-          save_json(
-              "fastfood-foods.json",
-              fastfood_foods
+              if any(
+                  normalize(keyword)
+                  in text
+                  for keyword
+                  in FAST_KEYWORDS
+              ):
+
+                  new_fastfood.append(
+                      item
+                  )
+
+
+              if any(
+                  normalize(keyword)
+                  in text
+                  for keyword
+                  in DRINK_KEYWORDS
+              ):
+
+                  new_drinks.append(
+                      item
+                  )
+
+
+          # ========================================================
+          # 9. SAFE MERGE
+          # ========================================================
+
+          final_tfda = safe_merge(
+              baseline[
+                  "tfda-foods.json"
+              ],
+              new_tfda,
           )
 
-          save_json(
-              "drink-shop-foods.json",
-              drink_foods
+          final_taipei = safe_merge(
+              baseline[
+                  "taipei-foods.json"
+              ],
+              new_taipei,
           )
+
+          final_official = safe_merge(
+              baseline[
+                  "official-chain-foods.json"
+              ],
+              new_official,
+          )
+
+          final_fastfood = safe_merge(
+              baseline[
+                  "fastfood-foods.json"
+              ],
+              new_fastfood,
+          )
+
+          final_drinks = safe_merge(
+              baseline[
+                  "drink-shop-foods.json"
+              ],
+              new_drinks,
+          )
+
+
+          # 超商 v7 暫時不重抓
+          # 完整保留歷史最大版本
+          final_convenience = baseline[
+              "convenience-foods.json"
+          ]
+
+
+          # ========================================================
+          # 10. 最後安全檢查
+          #
+          # 任何 final 比 baseline 少
+          # → 直接報錯
+          # → 不准 commit
+          # ========================================================
+
+          finals = {
+              "convenience-foods.json":
+                  final_convenience,
+
+              "fastfood-foods.json":
+                  final_fastfood,
+
+              "drink-shop-foods.json":
+                  final_drinks,
+
+              "taipei-foods.json":
+                  final_taipei,
+
+              "tfda-foods.json":
+                  final_tfda,
+
+              "official-chain-foods.json":
+                  final_official,
+          }
+
 
           print(
-              "Fastfood foods:",
-              len(fastfood_foods)
+              "\n=== SAFETY CHECK ==="
           )
+
+
+          for filename, data in finals.items():
+
+              old_count = len(
+                  baseline[filename]
+              )
+
+              new_count = len(data)
+
+              print(
+                  f"{filename}: "
+                  f"{old_count} -> {new_count}"
+              )
+
+              if new_count < old_count:
+
+                  raise RuntimeError(
+                      f"SAFETY STOP: "
+                      f"{filename} shrank "
+                      f"from {old_count} "
+                      f"to {new_count}"
+                  )
+
+
+          # ========================================================
+          # 11. 寫入
+          # ========================================================
+
+          for filename, data in finals.items():
+
+              save_json(
+                  filename,
+                  data,
+              )
+
 
           print(
-              "Drink foods:",
-              len(drink_foods)
+              "\n=== FINAL COUNTS ==="
           )
 
-          print("=== DONE ===")
+          for filename, data in finals.items():
+
+              print(
+                  f"{filename}: "
+                  f"{len(data)}"
+              )
+
+          print(
+              "\nSAFE MERGE COMPLETE"
+          )
+
           PY
 
+      # ============================================================
+      # 5. 顯示更新後筆數
+      # ============================================================
+      - name: Show database counts
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+
+          files = [
+              "convenience-foods.json",
+              "fastfood-foods.json",
+              "drink-shop-foods.json",
+              "taipei-foods.json",
+              "tfda-foods.json",
+              "official-chain-foods.json",
+          ]
+
+          print("")
+          print("==============================")
+          print(" FOOD DATABASE COUNTS")
+          print("==============================")
+
+          for filename in files:
+
+              try:
+                  with open(
+                      filename,
+                      "r",
+                      encoding="utf-8-sig",
+                  ) as f:
+
+                      data = json.load(f)
+
+                  print(
+                      f"{filename}: {len(data)}"
+                  )
+
+              except Exception as e:
+
+                  print(
+                      f"{filename}: ERROR {e}"
+                  )
+
+          print("==============================")
+          PY
+
+      # ============================================================
+      # 6. 暫存產出的安全資料
+      # ============================================================
       - name: Save generated databases
+        shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/fooddb"
 
-          cp tfda-foods.json "$RUNNER_TEMP/fooddb/"
-          cp taipei-foods.json "$RUNNER_TEMP/fooddb/"
-          cp official-chain-foods.json "$RUNNER_TEMP/fooddb/"
+          cp convenience-foods.json "$RUNNER_TEMP/fooddb/"
           cp fastfood-foods.json "$RUNNER_TEMP/fooddb/"
           cp drink-shop-foods.json "$RUNNER_TEMP/fooddb/"
+          cp taipei-foods.json "$RUNNER_TEMP/fooddb/"
+          cp tfda-foods.json "$RUNNER_TEMP/fooddb/"
+          cp official-chain-foods.json "$RUNNER_TEMP/fooddb/"
 
+      # ============================================================
+      # 7. Retry-safe commit
+      #
+      # 如果你剛好同時在 GitHub 改 index.html，
+      # Action push 發生衝突，
+      # 它會重新抓 main 再重試。
+      # ============================================================
       - name: Commit updated databases retry safe
         shell: bash
         run: |
           set -e
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config \
+            user.name \
+            "github-actions[bot]"
+
+          git config \
+            user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
 
           for attempt in 1 2 3 4 5
           do
+
+            echo ""
             echo "Push attempt $attempt"
 
             git fetch origin main
             git reset --hard origin/main
 
-            cp "$RUNNER_TEMP/fooddb/tfda-foods.json" .
-            cp "$RUNNER_TEMP/fooddb/taipei-foods.json" .
-            cp "$RUNNER_TEMP/fooddb/official-chain-foods.json" .
-            cp "$RUNNER_TEMP/fooddb/fastfood-foods.json" .
-            cp "$RUNNER_TEMP/fooddb/drink-shop-foods.json" .
+            cp \
+              "$RUNNER_TEMP/fooddb/convenience-foods.json" \
+              .
+
+            cp \
+              "$RUNNER_TEMP/fooddb/fastfood-foods.json" \
+              .
+
+            cp \
+              "$RUNNER_TEMP/fooddb/drink-shop-foods.json" \
+              .
+
+            cp \
+              "$RUNNER_TEMP/fooddb/taipei-foods.json" \
+              .
+
+            cp \
+              "$RUNNER_TEMP/fooddb/tfda-foods.json" \
+              .
+
+            cp \
+              "$RUNNER_TEMP/fooddb/official-chain-foods.json" \
+              .
+
 
             git add \
-              tfda-foods.json \
-              taipei-foods.json \
-              official-chain-foods.json \
+              convenience-foods.json \
               fastfood-foods.json \
-              drink-shop-foods.json
+              drink-shop-foods.json \
+              taipei-foods.json \
+              tfda-foods.json \
+              official-chain-foods.json
+
 
             if git diff --cached --quiet
             then
-              echo "No changes"
+
+              echo "No database changes."
               exit 0
+
             fi
 
-            git commit -m "Update food databases v6"
+
+            git commit \
+              -m "Update food databases v7 safe merge"
+
 
             if git push origin HEAD:main
             then
-              echo "Push succeeded"
+
+              echo ""
+              echo "Push succeeded."
               exit 0
+
             fi
 
-            echo "Push conflict, retrying..."
+
+            echo ""
+            echo "Push conflict."
+            echo "Retrying in 5 seconds..."
+
             sleep 5
+
           done
 
-          echo "Push failed after retries"
+
+          echo ""
+          echo "Push failed after 5 retries."
+
           exit 1
