@@ -1,4 +1,4 @@
-name: Update all food databases v7 safe merge
+name: Update all food databases v8 expanded safe merge
 
 on:
   workflow_dispatch:
@@ -18,45 +18,31 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      # ============================================================
-      # 1. 下載完整 Git 歷史
-      #    fetch-depth: 0 很重要
-      #    因為 v7 會回頭找「以前筆數最多的 JSON」
-      # ============================================================
       - name: Checkout full history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # ============================================================
-      # 2. Python
-      # ============================================================
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install packages
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 lxml pandas
+        run: pip install requests pandas
 
-      # ============================================================
-      # 3. 先從 Git 歷史救回「每個資料庫曾經最大的版本」
-      #
-      #    例如：
-      #    fastfood 現在只有 10 筆
-      #    但 Git 歷史以前有 300 筆
-      #
-      #    → v7 會用 300 筆當保護基底
-      # ============================================================
-      - name: Recover largest historical databases
+      - name: Build expanded databases safely
         shell: bash
         run: |
           python - <<'PY'
+          import io
           import json
           import os
+          import re
           import subprocess
+          import zipfile
+          import pandas as pd
+          import requests
 
           FILES = [
               "convenience-foods.json",
@@ -65,186 +51,123 @@ jobs:
               "taipei-foods.json",
               "tfda-foods.json",
               "official-chain-foods.json",
+              "school-foods.json"
           ]
 
-          os.makedirs(".safe-baseline", exist_ok=True)
+          S = requests.Session()
+          S.headers.update({
+              "User-Agent":
+                  "Mozilla/5.0 AppleWebKit/537.36 Chrome/140 Safari/537.36",
+              "Accept-Language":
+                  "zh-TW,zh;q=0.9,en;q=0.7"
+          })
 
-          def load_json_bytes(raw):
-              try:
-                  data = json.loads(raw.decode("utf-8-sig"))
-                  return data if isinstance(data, list) else []
-              except Exception:
-                  return []
+          def clean(v):
+              if v is None:
+                  return ""
 
-          for filename in FILES:
-              best = []
-              best_commit = None
-
-              # 先看目前工作目錄
-              if os.path.exists(filename):
-                  try:
-                      with open(filename, "r", encoding="utf-8-sig") as f:
-                          current = json.load(f)
-
-                      if isinstance(current, list):
-                          best = current
-                          best_commit = "CURRENT"
-                  except Exception:
-                      pass
-
-              # 再翻 Git 歷史
-              try:
-                  commits = subprocess.check_output(
-                      [
-                          "git",
-                          "log",
-                          "--all",
-                          "--format=%H",
-                          "--",
-                          filename,
-                      ],
-                      text=True,
-                  ).splitlines()
-              except Exception:
-                  commits = []
-
-              # 不需要無限翻
-              # 取最近 100 個有修改過這個檔案的 commit
-              for commit in commits[:100]:
-                  try:
-                      raw = subprocess.check_output(
-                          ["git", "show", f"{commit}:{filename}"],
-                          stderr=subprocess.DEVNULL,
-                      )
-                  except Exception:
-                      continue
-
-                  data = load_json_bytes(raw)
-
-                  if len(data) > len(best):
-                      best = data
-                      best_commit = commit
-
-              out = os.path.join(".safe-baseline", filename)
-
-              with open(out, "w", encoding="utf-8") as f:
-                  json.dump(
-                      best,
-                      f,
-                      ensure_ascii=False,
-                      indent=2,
-                  )
-
-              print(
-                  f"{filename}: baseline={len(best)} "
-                  f"source={best_commit}"
-              )
-          PY
-
-      # ============================================================
-      # 4. 建立／更新資料庫
-      # ============================================================
-      - name: Build and safely merge food databases
-        shell: bash
-        run: |
-          python - <<'PY'
-          import io
-          import json
-          import os
-          import re
-          import zipfile
-          from urllib.parse import urljoin
-
-          import pandas as pd
-          import requests
-          from bs4 import BeautifulSoup
-
-
-          # ========================================================
-          # 基本設定
-          # ========================================================
-
-          HEADERS = {
-              "User-Agent": (
-                  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) "
-                  "AppleWebKit/605.1.15 Version/18.0 "
-                  "Mobile/15E148 Safari/604.1"
-              ),
-              "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
-          }
-
-          SESSION = requests.Session()
-          SESSION.headers.update(HEADERS)
-
-
-          def clean(value):
-              if value is None:
+              if isinstance(v, float) and pd.isna(v):
                   return ""
 
               return re.sub(
                   r"\s+",
                   " ",
-                  str(value),
+                  str(v)
               ).strip()
 
-
-          # --------------------------------------------------------
-          # 搜尋正規化
-          #
-          # 雞 / 鷄 / 鸡
-          # 臺 / 台
-          # 全形空白等
-          # --------------------------------------------------------
-          def normalize(value):
-              s = clean(value).lower()
+          def norm(v):
+              s = clean(v).lower()
 
               replacements = {
                   "鷄": "雞",
                   "鸡": "雞",
                   "臺": "台",
-                  "（": "(",
-                  "）": ")",
-                  "－": "-",
                   "　": " ",
+                  "（": "(",
+                  "）": ")"
               }
 
-              for old, new in replacements.items():
-                  s = s.replace(old, new)
+              for a, b in replacements.items():
+                  s = s.replace(a, b)
 
-              s = re.sub(r"\s+", "", s)
-
-              return s
-
-
-          def parse_num(value):
-              if value is None:
-                  return None
-
-              text = (
-                  str(value)
-                  .replace(",", "")
-                  .strip()
+              return re.sub(
+                  r"[\s\-_]+",
+                  "",
+                  s
               )
 
-              match = re.search(
+          def num(v):
+              if v is None:
+                  return None
+
+              m = re.search(
                   r"-?\d+(?:\.\d+)?",
-                  text,
+                  str(v).replace(",", "")
               )
 
-              if not match:
-                  return None
+              return (
+                  float(m.group())
+                  if m
+                  else None
+              )
 
+          def load_bytes(raw):
               try:
-                  return float(match.group())
+                  x = json.loads(
+                      raw.decode("utf-8-sig")
+                  )
+
+                  return (
+                      x
+                      if isinstance(x, list)
+                      else x.get("items", [])
+                  )
+
               except Exception:
-                  return None
+                  return []
 
-
-          def safe_get(url, timeout=30):
+          def load(path):
               try:
-                  r = SESSION.get(
+                  with open(
+                      path,
+                      encoding="utf-8-sig"
+                  ) as f:
+
+                      x = json.load(f)
+
+                      return (
+                          x
+                          if isinstance(x, list)
+                          else x.get("items", [])
+                      )
+
+              except Exception:
+                  return []
+
+          def save(path, x):
+              with open(
+                  path,
+                  "w",
+                  encoding="utf-8"
+              ) as f:
+
+                  json.dump(
+                      x,
+                      f,
+                      ensure_ascii=False,
+                      indent=2
+                  )
+
+          def safe_get(
+              url,
+              timeout=90,
+              **kw
+          ):
+              try:
+                  r = S.get(
                       url,
                       timeout=timeout,
+                      **kw
                   )
 
                   r.raise_for_status()
@@ -253,290 +176,370 @@ jobs:
 
               except Exception as e:
                   print(
-                      "GET FAILED:",
+                      "GET FAILED",
                       url,
-                      e,
+                      e
                   )
 
                   return None
 
-
-          def load_json(path):
-              if not os.path.exists(path):
-                  return []
-
-              try:
-                  with open(
-                      path,
-                      "r",
-                      encoding="utf-8-sig",
-                  ) as f:
-                      data = json.load(f)
-
-                  if isinstance(data, list):
-                      return data
-
-              except Exception as e:
-                  print(
-                      "JSON load failed:",
-                      path,
-                      e,
-                  )
-
-              return []
-
-
-          def save_json(path, data):
-              with open(
-                  path,
-                  "w",
-                  encoding="utf-8",
-              ) as f:
-                  json.dump(
-                      data,
-                      f,
-                      ensure_ascii=False,
-                      indent=2,
-                  )
-
-
-          def unique_strings(values):
-              result = []
-              seen = set()
-
-              for value in values:
-                  value = clean(value)
-
-                  if not value:
-                      continue
-
-                  key = normalize(value)
-
-                  if key in seen:
-                      continue
-
-                  seen.add(key)
-                  result.append(value)
-
-              return result
-
-
-          # ========================================================
-          # 合併邏輯
-          #
-          # 核心原則：
-          #
-          # baseline 永遠保留
-          # 新抓到的資料只負責補資料
-          # 不可以因為爬蟲失敗把舊資料洗掉
-          # ========================================================
-
-          def item_key(item):
-              brand = (
-                  item.get("brand")
-                  or item.get("store")
-                  or ""
-              )
-
-              name = (
-                  item.get("name")
-                  or item.get("product")
-                  or ""
-              )
-
-              return (
-                  normalize(brand),
-                  normalize(name),
-              )
-
-
-          def info_score(item):
-              score = 0
-
-              for key in [
-                  "calories",
-                  "protein",
-                  "carbs",
-                  "fat",
-                  "serving",
-              ]:
-                  value = item.get(key)
-
-                  if value not in [
-                      None,
-                      "",
-                  ]:
-                      score += 1
-
-              if item.get("sourceUrl"):
-                  score += 1
-
-              return score
-
-
-          def merge_item(old, new):
-              """
-              保留舊資料，
-              但新資料有更完整欄位時補進去。
-              """
-
-              result = dict(old)
-
-              for key, value in new.items():
-                  if value in [
-                      None,
-                      "",
-                      [],
-                  ]:
-                      continue
-
-                  old_value = result.get(key)
-
-                  if old_value in [
-                      None,
-                      "",
-                      [],
-                  ]:
-                      result[key] = value
-
-
-              # aliases 特別合併
-              aliases = []
-
-              if isinstance(
-                  old.get("aliases"),
-                  list,
-              ):
-                  aliases += old["aliases"]
-
-              if isinstance(
-                  new.get("aliases"),
-                  list,
-              ):
-                  aliases += new["aliases"]
-
-              result["aliases"] = unique_strings(
-                  aliases
-              )
-
-
-              # 如果新資料明顯比較完整，
-              # calories / macros 可以採新資料
-              if info_score(new) > info_score(old):
-
-                  for key in [
-                      "calories",
-                      "protein",
-                      "carbs",
-                      "fat",
-                      "serving",
-                      "source",
-                      "sourceType",
-                      "sourceUrl",
-                  ]:
-
-                      value = new.get(key)
-
-                      if value not in [
-                          None,
-                          "",
-                      ]:
-                          result[key] = value
-
-              return result
-
-
-          def safe_merge(
-              baseline,
-              new_items,
-          ):
-              merged = {}
-
-              # 先放 baseline
-              for item in baseline:
-                  if not isinstance(item, dict):
-                      continue
-
-                  key = item_key(item)
-
-                  if not key[1]:
-                      continue
-
-                  merged[key] = item
-
-
-              # 再把新資料加進去
-              for item in new_items:
-                  if not isinstance(item, dict):
-                      continue
-
-                  key = item_key(item)
-
-                  if not key[1]:
-                      continue
-
-                  if key in merged:
-                      merged[key] = merge_item(
-                          merged[key],
-                          item,
-                      )
-                  else:
-                      merged[key] = item
-
-              return list(
-                  merged.values()
-              )
-
-
-          # ========================================================
-          # 載入安全基底
-          # ========================================================
+          # ==================================================
+          # 找出 Git 歷史中每個資料庫筆數最多的版本
+          # ==================================================
 
           baseline = {}
 
-          filenames = [
-              "convenience-foods.json",
-              "fastfood-foods.json",
-              "drink-shop-foods.json",
-              "taipei-foods.json",
-              "tfda-foods.json",
-              "official-chain-foods.json",
-          ]
+          for fn in FILES:
+              best = load(fn)
+              source = "current"
 
-          for filename in filenames:
+              try:
+                  commits = subprocess.check_output(
+                      [
+                          "git",
+                          "log",
+                          "--all",
+                          "--format=%H",
+                          "--",
+                          fn
+                      ],
+                      text=True
+                  ).splitlines()
 
-              path = os.path.join(
-                  ".safe-baseline",
-                  filename,
-              )
+              except Exception:
+                  commits = []
 
-              baseline[filename] = load_json(
-                  path
-              )
+              for c in commits[:120]:
+
+                  try:
+                      raw = subprocess.check_output(
+                          [
+                              "git",
+                              "show",
+                              f"{c}:{fn}"
+                          ],
+                          stderr=subprocess.DEVNULL
+                      )
+
+                      arr = load_bytes(raw)
+
+                  except Exception:
+                      continue
+
+                  if len(arr) > len(best):
+                      best = arr
+                      source = c[:8]
+
+              baseline[fn] = best
 
               print(
-                  "SAFE BASELINE",
-                  filename,
-                  len(baseline[filename]),
+                  f"BASELINE {fn}: "
+                  f"{len(best)} ({source})"
               )
 
+          # ==================================================
+          # 安全合併
+          # ==================================================
 
-          # ========================================================
-          # 5. TFDA
-          # ========================================================
+          def key(x):
+              return (
+                  norm(
+                      x.get("brand")
+                      or x.get("store")
+                      or ""
+                  ),
+                  norm(
+                      x.get("name")
+                      or x.get("product")
+                      or ""
+                  )
+              )
 
-          print("\n=== TFDA ===")
+          def present(v):
+              return (
+                  v is not None
+                  and v != ""
+                  and not (
+                      isinstance(v, float)
+                      and pd.isna(v)
+                  )
+              )
+
+          def merge_item(old, new):
+              out = dict(old)
+
+              for k, v in new.items():
+
+                  # 沒有資料就不要寫入
+                  # 特別避免 null 被當成 0
+                  if not present(v):
+                      continue
+
+                  if k == "aliases":
+                      vals = []
+
+                      for z in (
+                          old.get("aliases", []),
+                          new.get("aliases", [])
+                      ):
+                          vals += (
+                              z
+                              if isinstance(z, list)
+                              else ([z] if z else [])
+                          )
+
+                      seen = set()
+                      out[k] = []
+
+                      for a in vals:
+                          n = norm(a)
+
+                          if (
+                              n
+                              and n not in seen
+                          ):
+                              seen.add(n)
+                              out[k].append(
+                                  clean(a)
+                              )
+
+                  elif (
+                      not present(out.get(k))
+                      or k in (
+                          "calories",
+                          "protein",
+                          "carbs",
+                          "fat",
+                          "serving"
+                      )
+                  ):
+                      out[k] = v
+
+              return out
+
+          def merge(base, new):
+              d = {}
+
+              for x in base:
+                  if (
+                      isinstance(x, dict)
+                      and key(x)[1]
+                  ):
+                      d[key(x)] = x
+
+              for x in new:
+                  if (
+                      not isinstance(x, dict)
+                      or not key(x)[1]
+                  ):
+                      continue
+
+                  k = key(x)
+
+                  if k in d:
+                      d[k] = merge_item(
+                          d[k],
+                          x
+                      )
+
+                  else:
+                      d[k] = x
+
+              return list(
+                  d.values()
+              )
+
+          # ==================================================
+          # 臺北市食材登錄
+          # 使用官方完整 CSV
+          # ==================================================
+
+          new_taipei = []
+
+          TAIPEI = (
+              "https://data.taipei/"
+              "api/frontstage/tpeod/"
+              "dataset/resource.download?"
+              "rid=29869b6f-1cd3-4ce8-8c78-eb85aeea8583"
+          )
+
+          r = safe_get(TAIPEI)
+
+          if r:
+
+              text = None
+
+              for enc in (
+                  "utf-8-sig",
+                  "utf-8",
+                  "cp950",
+                  "big5"
+              ):
+
+                  try:
+                      text = r.content.decode(enc)
+                      break
+
+                  except Exception:
+                      pass
+
+              if text:
+
+                  try:
+                      df = pd.read_csv(
+                          io.StringIO(text),
+                          dtype=str,
+                          keep_default_na=False
+                      )
+
+                      print(
+                          "TAIPEI COLUMNS:",
+                          list(df.columns)
+                      )
+
+                      def col(name):
+                          for c in df.columns:
+
+                              if (
+                                  norm(c)
+                                  == norm(name)
+                              ):
+                                  return c
+
+                          return None
+
+                      c_company = col(
+                          "公司名稱"
+                      )
+
+                      c_brand = col(
+                          "品牌名稱"
+                      )
+
+                      c_product = col(
+                          "產品名稱"
+                      )
+
+                      c_serv = col(
+                          "每一份量"
+                      )
+
+                      c_cal = col(
+                          "熱量大卡"
+                      )
+
+                      c_url = col(
+                          "相關資訊連結"
+                      )
+
+                      if not c_product:
+                          raise RuntimeError(
+                              "找不到官方欄位：產品名稱"
+                          )
+
+                      for _, row in df.iterrows():
+
+                          name = clean(
+                              row.get(c_product)
+                          )
+
+                          if not name:
+                              continue
+
+                          brand = (
+                              clean(
+                                  row.get(c_brand)
+                              )
+                              if c_brand
+                              else ""
+                          )
+
+                          company = (
+                              clean(
+                                  row.get(c_company)
+                              )
+                              if c_company
+                              else ""
+                          )
+
+                          cal = (
+                              num(
+                                  row.get(c_cal)
+                              )
+                              if c_cal
+                              else None
+                          )
+
+                          new_taipei.append({
+                              "name": name,
+
+                              "brand":
+                                  brand or company,
+
+                              "store":
+                                  brand or company,
+
+                              "aliases": [
+                                  x
+                                  for x in [
+                                      company,
+                                      brand
+                                  ]
+                                  if x
+                              ],
+
+                              "calories": cal,
+
+                              # 沒有資料就是 None
+                              # 絕對不填 0
+                              "protein": None,
+                              "carbs": None,
+                              "fat": None,
+
+                              "serving":
+                                  clean(
+                                      row.get(c_serv)
+                                  )
+                                  if c_serv
+                                  else "",
+
+                              "quality":
+                                  "official-public",
+
+                              "source":
+                                  "臺北市食材登錄平台",
+
+                              "sourceType":
+                                  "official-public",
+
+                              "sourceUrl":
+                                  clean(
+                                      row.get(c_url)
+                                  )
+                                  if c_url
+                                  else TAIPEI
+                          })
+
+                  except Exception as e:
+                      print(
+                          "TAIPEI PARSE FAILED",
+                          e
+                      )
+
+          print(
+              "NEW TAIPEI",
+              len(new_taipei)
+          )
+
+          # ==================================================
+          # TFDA 食品營養成分
+          # ==================================================
 
           new_tfda = []
 
-          tfda_url = (
+          r = safe_get(
               "https://data.fda.gov.tw/"
               "data/opendata/export/20/csv"
-          )
-
-          r = safe_get(
-              tfda_url,
-              timeout=60,
           )
 
           if r:
@@ -546,773 +549,350 @@ jobs:
                       io.BytesIO(r.content)
                   )
 
-                  csv_names = [
+                  names = [
                       n
                       for n in z.namelist()
-                      if n.lower().endswith(".csv")
-                  ]
+                      if n.lower().endswith(
+                          ".csv"
+                      )
+                  ] or z.namelist()
 
-                  if not csv_names:
-                      csv_names = z.namelist()
-
-                  csv_name = csv_names[0]
-
-                  raw = z.read(csv_name)
+                  raw = z.read(
+                      names[0]
+                  )
 
                   text = None
 
-                  for encoding in [
+                  for enc in (
                       "utf-8-sig",
                       "utf-8",
                       "cp950",
-                      "big5",
-                  ]:
+                      "big5"
+                  ):
 
                       try:
-                          text = raw.decode(
-                              encoding
-                          )
+                          text = raw.decode(enc)
                           break
+
                       except Exception:
                           pass
 
-                  if text is None:
-                      raise RuntimeError(
-                          "TFDA decode failed"
-                      )
-
                   df = pd.read_csv(
-                      io.StringIO(text)
+                      io.StringIO(text),
+                      dtype=str,
+                      keep_default_na=False
                   )
 
-
-                  def find_col(*keywords):
-
-                      for column in df.columns:
-
-                          c = str(column)
+                  def find(*words):
+                      for c in df.columns:
 
                           if all(
-                              keyword in c
-                              for keyword in keywords
+                              w in str(c)
+                              for w in words
                           ):
-                              return column
+                              return c
 
-                      return None
-
-
-                  food_col = (
-                      find_col("樣品名稱")
-                      or find_col("食品名稱")
-                      or find_col("名稱")
+                  food = (
+                      find("樣品名稱")
+                      or find("食品名稱")
+                      or find("名稱")
                   )
 
-                  alias_col = (
-                      find_col("俗名")
-                      or find_col("別名")
+                  alias = (
+                      find("俗名")
+                      or find("別名")
                   )
 
-                  category_col = (
-                      find_col("食品分類")
-                      or find_col("分類")
+                  cat = (
+                      find("食品分類")
+                      or find("分類")
                   )
 
-                  nutrient_col = (
-                      find_col("分析項")
+                  nutrient = find(
+                      "分析項"
                   )
 
-                  per100_col = (
-                      find_col("每100克")
-                      or find_col("每100公克")
-                      or find_col("每100")
+                  per100 = (
+                      find("每100克")
+                      or find("每100公克")
+                      or find("每100")
                   )
 
-
-                  temp = {}
-
+                  tmp = {}
 
                   if (
-                      food_col
-                      and nutrient_col
-                      and per100_col
+                      food
+                      and nutrient
+                      and per100
                   ):
 
                       for _, row in df.iterrows():
 
                           name = clean(
-                              row.get(food_col)
+                              row.get(food)
                           )
 
                           if not name:
                               continue
 
-                          key = normalize(name)
+                          k = norm(name)
 
-                          alias = (
-                              clean(
-                                  row.get(alias_col)
-                              )
-                              if alias_col
-                              else ""
-                          )
-
-                          category = (
-                              clean(
-                                  row.get(category_col)
-                              )
-                              if category_col
-                              else ""
-                          )
-
-                          if key not in temp:
-
-                              temp[key] = {
+                          item = tmp.setdefault(
+                              k,
+                              {
                                   "name": name,
                                   "brand": "",
-                                  "aliases": (
-                                      [alias]
-                                      if alias
-                                      else []
-                                  ),
-                                  "category": category,
+                                  "store":
+                                      "食藥署資料庫",
+                                  "aliases": [],
+                                  "category":
+                                      clean(
+                                          row.get(cat)
+                                      )
+                                      if cat
+                                      else "",
                                   "calories": None,
                                   "protein": None,
                                   "carbs": None,
                                   "fat": None,
-                                  "per100g": True,
-                                  "source": "TFDA",
-                                  "sourceType": "official",
+                                  "serving":
+                                      "每100g",
+                                  "quality":
+                                      "official",
+                                  "source":
+                                      "TFDA",
+                                  "sourceType":
+                                      "official"
                               }
-
-                          nutrient = clean(
-                              row.get(
-                                  nutrient_col
-                              )
                           )
 
-                          value = parse_num(
-                              row.get(
-                                  per100_col
+                          if alias:
+
+                              alias_value = clean(
+                                  row.get(alias)
                               )
+
+                              if (
+                                  alias_value
+                                  and alias_value
+                                  not in item[
+                                      "aliases"
+                                  ]
+                              ):
+                                  item[
+                                      "aliases"
+                                  ].append(
+                                      alias_value
+                                  )
+
+                          n = clean(
+                              row.get(nutrient)
                           )
 
-                          if value is None:
+                          v = num(
+                              row.get(per100)
+                          )
+
+                          if v is None:
                               continue
 
-                          if "熱量" in nutrient:
-                              temp[key]["calories"] = value
+                          if "熱量" in n:
+                              item[
+                                  "calories"
+                              ] = v
 
-                          elif "蛋白質" in nutrient:
-                              temp[key]["protein"] = value
+                          elif "蛋白質" in n:
+                              item[
+                                  "protein"
+                              ] = v
 
                           elif (
                               "碳水化合物"
-                              in nutrient
+                              in n
                           ):
-                              temp[key]["carbs"] = value
+                              item[
+                                  "carbs"
+                              ] = v
 
-                          elif "脂肪" in nutrient:
-                              temp[key]["fat"] = value
-
+                          elif "脂肪" in n:
+                              item[
+                                  "fat"
+                              ] = v
 
                   new_tfda = [
-                      item
-                      for item in temp.values()
-                      if item.get(
-                          "calories"
-                      ) is not None
+                      x
+                      for x in tmp.values()
+
+                      if (
+                          x["calories"]
+                          is not None
+
+                          or any(
+                              x[k]
+                              is not None
+
+                              for k in (
+                                  "protein",
+                                  "carbs",
+                                  "fat"
+                              )
+                          )
+                      )
                   ]
 
               except Exception as e:
-
                   print(
-                      "TFDA PARSE FAILED:",
-                      e,
+                      "TFDA FAILED",
+                      e
                   )
 
-
           print(
-              "New TFDA:",
-              len(new_tfda),
+              "NEW TFDA",
+              len(new_tfda)
           )
 
+          # ==================================================
+          # 教育部校園食材登錄
+          #
+          # 這裡只補「品項名稱」
+          # 沒有可靠營養資料就維持 None
+          # ==================================================
 
-          # ========================================================
-          # 6. 台北市 FoodTracer
-          # ========================================================
+          new_school = []
 
-          print(
-              "\n=== Taipei FoodTracer ==="
+          OPENAPI = (
+              "https://fatraceschool.k12ea.gov.tw/"
+              "cateringservice/web/openapi_doc/"
+              "v1/openapi.json"
           )
 
-          new_taipei = []
-
-          # 優先使用台北資料開放平台 CSV
-          taipei_csv = (
-              "https://data.taipei/api/frontstage/"
-              "tpeod/dataset/resource.download?"
-              "rid=29869b6f-1cd3-4ce8-8c78-eb85aeea8583"
+          rr = safe_get(
+              OPENAPI,
+              timeout=30,
+              headers={
+                  "Referer":
+                      "https://fatraceschool.k12ea.gov.tw/"
+                      "cateringservice/web/"
+                      "openapi_doc/v1/index.html"
+              }
           )
 
-          r = safe_get(
-              taipei_csv,
-              timeout=90,
-          )
-
-          if r:
+          if rr:
 
               try:
-
-                  raw = r.content
-
-                  text = None
-
-                  for encoding in [
-                      "utf-8-sig",
-                      "utf-8",
-                      "cp950",
-                      "big5",
-                  ]:
-
-                      try:
-                          text = raw.decode(
-                              encoding
-                          )
-                          break
-                      except Exception:
-                          pass
-
-                  if text is None:
-                      raise RuntimeError(
-                          "Taipei CSV decode failed"
-                      )
-
-
-                  df = pd.read_csv(
-                      io.StringIO(text)
-                  )
+                  spec = rr.json()
 
                   print(
-                      "Taipei columns:",
-                      list(df.columns),
+                      "MOE OPENAPI paths",
+                      len(
+                          spec.get(
+                              "paths",
+                              {}
+                          )
+                      )
                   )
 
-
-                  def match_column(
-                      columns,
-                      keywords,
-                  ):
-
-                      for column in columns:
-
-                          c = normalize(column)
-
-                          for keyword in keywords:
-
-                              if normalize(keyword) in c:
-                                  return column
-
-                      return None
-
-
-                  cols = list(df.columns)
-
-                  brand_col = match_column(
-                      cols,
-                      [
-                          "品牌名稱",
-                          "品牌",
-                          "商號名稱",
-                          "公司名稱",
-                      ],
+                  blob = json.dumps(
+                      spec,
+                      ensure_ascii=False
                   )
 
-                  product_col = match_column(
-                      cols,
-                      [
-                          "產品名稱",
-                          "商品名稱",
-                          "品名",
-                          "餐點名稱",
-                      ],
+                  vals = re.findall(
+                      r'"([^"\\]{2,30})"',
+                      blob
                   )
 
-                  calorie_col = match_column(
-                      cols,
-                      [
-                          "熱量",
-                          "卡路里",
-                      ],
+                  bad = (
+                      "學校",
+                      "縣市",
+                      "日期",
+                      "供應商",
+                      "食材",
+                      "欄位",
+                      "參數",
+                      "說明",
+                      "錯誤",
+                      "成功",
+                      "午餐",
+                      "資料"
                   )
 
-                  serving_col = match_column(
-                      cols,
-                      [
-                          "份量",
-                          "每份",
-                          "重量",
-                          "容量",
-                      ],
-                  )
+                  for v in vals:
 
-                  link_col = match_column(
-                      cols,
-                      [
-                          "網址",
-                          "連結",
-                          "link",
-                      ],
-                  )
+                      v = clean(v)
 
+                      if not re.search(
+                          r"[\u4e00-\u9fff]",
+                          v
+                      ):
+                          continue
 
-                  if product_col:
+                      if any(
+                          b in v
+                          for b in bad
+                      ):
+                          continue
 
-                      for _, row in df.iterrows():
-
-                          name = clean(
-                              row.get(
-                                  product_col
-                              )
+                      if not any(
+                          k in v
+                          for k in (
+                              "飯",
+                              "麵",
+                              "雞",
+                              "豬",
+                              "牛",
+                              "魚",
+                              "蛋",
+                              "菜",
+                              "湯",
+                              "豆腐",
+                              "排",
+                              "粥",
+                              "瓜",
+                              "肉"
                           )
+                      ):
+                          continue
 
-                          if not name:
-                              continue
+                      new_school.append({
+                          "name": v,
+                          "brand": "",
+                          "store":
+                              "教育部校園菜色",
+                          "aliases": [],
 
-                          brand = (
-                              clean(
-                                  row.get(
-                                      brand_col
-                                  )
-                              )
-                              if brand_col
-                              else ""
-                          )
+                          # 不知道就是 None
+                          "calories": None,
+                          "protein": None,
+                          "carbs": None,
+                          "fat": None,
 
-                          calories = (
-                              parse_num(
-                                  row.get(
-                                      calorie_col
-                                  )
-                              )
-                              if calorie_col
-                              else None
-                          )
-
-                          serving = (
-                              clean(
-                                  row.get(
-                                      serving_col
-                                  )
-                              )
-                              if serving_col
-                              else ""
-                          )
-
-                          source_url = (
-                              clean(
-                                  row.get(
-                                      link_col
-                                  )
-                              )
-                              if link_col
-                              else ""
-                          )
-
-                          new_taipei.append(
-                              {
-                                  "name": name,
-                                  "brand": brand,
-                                  "store": brand,
-                                  "aliases": [],
-                                  "calories": calories,
-                                  "protein": None,
-                                  "carbs": None,
-                                  "fat": None,
-                                  "serving": serving,
-                                  "source": "臺北市食材登錄平台",
-                                  "sourceType": "official-public",
-                                  "sourceUrl": source_url,
-                              }
-                          )
+                          "serving": "",
+                          "quality": "index",
+                          "source":
+                              "教育部校園食材登錄平台2.0",
+                          "sourceType":
+                              "official-index",
+                          "sourceUrl":
+                              "https://fatraceschool.k12ea.gov.tw/"
+                      })
 
               except Exception as e:
-
                   print(
-                      "TAIPEI CSV FAILED:",
-                      e,
+                      "MOE OPENAPI PARSE FAILED",
+                      e
                   )
-
 
           print(
-              "New Taipei:",
-              len(new_taipei),
+              "NEW SCHOOL",
+              len(new_school)
           )
 
-
-          # ========================================================
-          # 7. 官方品牌
-          # ========================================================
-
-          print(
-              "\n=== Official brands ==="
-          )
-
-          new_official = []
-
-
-          def add_official(
-              brand,
-              name,
-              url="",
-              calories=None,
-              protein=None,
-              carbs=None,
-              fat=None,
-              serving="",
-              aliases=None,
-          ):
-
-              name = clean(name)
-
-              if not name:
-                  return
-
-              new_official.append(
-                  {
-                      "name": name,
-                      "brand": brand,
-                      "store": brand,
-                      "aliases": unique_strings(
-                          (aliases or [])
-                          + [brand]
-                      ),
-                      "calories": calories,
-                      "protein": protein,
-                      "carbs": carbs,
-                      "fat": fat,
-                      "serving": serving,
-                      "source": (
-                          f"{brand} 官方"
-                      ),
-                      "sourceType": "official",
-                      "sourceUrl": url,
-                  }
-              )
-
-
-          # ========================================================
-          # 麥當勞官方
-          # ========================================================
-
-          print("McDonald's")
-
-          mcd_url = (
-              "https://www.mcdonalds.com/"
-              "tw/zh-tw/full-menu.html"
-          )
-
-          r = safe_get(mcd_url)
-
-          if r:
-
-              soup = BeautifulSoup(
-                  r.text,
-                  "lxml",
-              )
-
-              links = set()
-
-              for a in soup.find_all(
-                  "a",
-                  href=True,
-              ):
-
-                  href = clean(
-                      a.get("href")
-                  )
-
-                  if "/product/" in href:
-
-                      links.add(
-                          urljoin(
-                              mcd_url,
-                              href,
-                          )
-                      )
-
-
-              print(
-                  "McDonald's product pages:",
-                  len(links),
-              )
-
-
-              for product_url in list(links)[:300]:
-
-                  pr = safe_get(
-                      product_url,
-                      timeout=20,
-                  )
-
-                  if not pr:
-                      continue
-
-                  psoup = BeautifulSoup(
-                      pr.text,
-                      "lxml",
-                  )
-
-                  title = ""
-
-                  for selector in [
-                      "h1",
-                      ".cmp-title__text",
-                      ".product-name",
-                      "title",
-                  ]:
-
-                      el = psoup.select_one(
-                          selector
-                      )
-
-                      if el:
-
-                          title = clean(
-                              el.get_text(
-                                  " ",
-                                  strip=True,
-                              )
-                          )
-
-                          if title:
-                              break
-
-
-                  title = re.sub(
-                      r"\s*\|\s*McDonald.*$",
-                      "",
-                      title,
-                      flags=re.I,
-                  ).strip()
-
-
-                  if not title:
-                      continue
-
-
-                  page_text = clean(
-                      psoup.get_text(
-                          " ",
-                          strip=True,
-                      )
-                  )
-
-
-                  def find_value(
-                      patterns,
-                  ):
-
-                      for pattern in patterns:
-
-                          match = re.search(
-                              pattern,
-                              page_text,
-                              re.I,
-                          )
-
-                          if match:
-                              return parse_num(
-                                  match.group(1)
-                              )
-
-                      return None
-
-
-                  calories = find_value(
-                      [
-                          r"熱量[^0-9]{0,25}(\d+(?:\.\d+)?)",
-                          r"(\d+(?:\.\d+)?)\s*(?:大卡|kcal)",
-                      ]
-                  )
-
-                  protein = find_value(
-                      [
-                          r"蛋白質[^0-9]{0,25}(\d+(?:\.\d+)?)",
-                      ]
-                  )
-
-                  carbs = find_value(
-                      [
-                          r"碳水化合物[^0-9]{0,25}(\d+(?:\.\d+)?)",
-                      ]
-                  )
-
-                  fat = find_value(
-                      [
-                          r"脂肪[^0-9]{0,25}(\d+(?:\.\d+)?)",
-                      ]
-                  )
-
-
-                  add_official(
-                      "麥當勞",
-                      title,
-                      product_url,
-                      calories,
-                      protein,
-                      carbs,
-                      fat,
-                      aliases=[
-                          "McDonald's",
-                          "McDonalds",
-                          "MCD",
-                          "麥當",
-                      ],
-                  )
-
-
-          # ========================================================
-          # 麥脆雞搜尋保險
-          #
-          # 就算官方頁面當天結構改掉，
-          # 至少名稱還能被搜尋到。
-          # ========================================================
-
-          mccrispy_backup = [
-              "原味麥脆鷄腿",
-              "辣味麥脆鷄腿",
-              "原味麥脆鷄腿（大腿）",
-              "原味麥脆鷄腿（棒腿）",
-              "辣味麥脆鷄腿（大腿）",
-              "辣味麥脆鷄腿（棒腿）",
-              "麥脆鷄腿2塊",
-              "麥脆鷄腿6塊分享盒",
-          ]
-
-          for name in mccrispy_backup:
-
-              add_official(
-                  "麥當勞",
-                  name,
-                  mcd_url,
-                  aliases=[
-                      "麥脆雞",
-                      "麥脆鷄",
-                      "McCrispy",
-                      "麥當勞",
-                  ],
-              )
-
-
-          # ========================================================
-          # 把台北公開資料裡的連鎖品牌補入官方品牌資料庫
-          # ========================================================
-
-          BRAND_RULES = {
-              "麥當勞": [
-                  "麥當勞",
-                  "mcdonald",
-              ],
-              "肯德基": [
-                  "肯德基",
-                  "kfc",
-              ],
-              "摩斯漢堡": [
-                  "摩斯",
-                  "mos",
-              ],
-              "漢堡王": [
-                  "漢堡王",
-                  "burgerking",
-              ],
-              "SUBWAY": [
-                  "subway",
-                  "賽百味",
-              ],
-              "必勝客": [
-                  "必勝客",
-                  "pizza hut",
-              ],
-              "達美樂": [
-                  "達美樂",
-                  "domino",
-              ],
-              "拿坡里": [
-                  "拿坡里",
-              ],
-              "頂呱呱": [
-                  "頂呱呱",
-                  "tkk",
-              ],
-              "21風味館": [
-                  "21風味館",
-                  "21plus",
-              ],
-          }
-
-
-          for item in new_taipei:
-
-              haystack = normalize(
-                  (
-                      item.get(
-                          "brand",
-                          ""
-                      )
-                      + " "
-                      + item.get(
-                          "name",
-                          ""
-                      )
-                  )
-              )
-
-              matched = None
-
-              for brand, keywords in BRAND_RULES.items():
-
-                  if any(
-                      normalize(keyword)
-                      in haystack
-                      for keyword
-                      in keywords
-                  ):
-
-                      matched = brand
-                      break
-
-
-              if matched:
-
-                  copied = dict(item)
-
-                  copied["brand"] = matched
-                  copied["store"] = matched
-
-                  copied["aliases"] = unique_strings(
-                      copied.get(
-                          "aliases",
-                          []
-                      )
-                      + [matched]
-                  )
-
-                  new_official.append(
-                      copied
-                  )
-
-
-          print(
-              "New official:",
-              len(new_official),
-          )
-
-
-          # ========================================================
-          # 8. 從新資料建立速食／手搖補充資料
-          # ========================================================
-
-          FAST_KEYWORDS = [
+          # ==================================================
+          # 從臺北大型資料庫建立速食分類
+          # ==================================================
+
+          fast_kw = [
               "麥當勞",
               "mcdonald",
               "肯德基",
@@ -1330,11 +910,14 @@ jobs:
               "拿坡里",
               "頂呱呱",
               "21風味館",
-              "21plus",
+              "21plus"
           ]
 
+          # ==================================================
+          # 手搖飲品牌
+          # ==================================================
 
-          DRINK_KEYWORDS = [
+          drink_kw = [
               "50嵐",
               "五十嵐",
               "coco",
@@ -1355,205 +938,160 @@ jobs:
               "春水堂",
               "一沐日",
               "八曜和茶",
-              "先喝道",
+              "先喝道"
           ]
 
+          def hit(x, kws):
 
-          new_fastfood = []
-          new_drinks = []
-
-
-          for item in (
-              new_taipei
-              + new_official
-          ):
-
-              text = normalize(
+              t = norm(
                   (
-                      item.get(
-                          "brand",
-                          ""
-                      )
-                      + " "
-                      + item.get(
-                          "store",
-                          ""
-                      )
-                      + " "
-                      + item.get(
-                          "name",
-                          ""
-                      )
+                      x.get("brand")
+                      or ""
+                  )
+                  + " "
+                  + (
+                      x.get("store")
+                      or ""
+                  )
+                  + " "
+                  + (
+                      x.get("name")
+                      or ""
                   )
               )
 
+              return any(
+                  norm(k) in t
+                  for k in kws
+              )
 
-              if any(
-                  normalize(keyword)
-                  in text
-                  for keyword
-                  in FAST_KEYWORDS
-              ):
-
-                  new_fastfood.append(
-                      item
-                  )
-
-
-              if any(
-                  normalize(keyword)
-                  in text
-                  for keyword
-                  in DRINK_KEYWORDS
-              ):
-
-                  new_drinks.append(
-                      item
-                  )
-
-
-          # ========================================================
-          # 9. SAFE MERGE
-          # ========================================================
-
-          final_tfda = safe_merge(
-              baseline[
-                  "tfda-foods.json"
-              ],
-              new_tfda,
-          )
-
-          final_taipei = safe_merge(
-              baseline[
-                  "taipei-foods.json"
-              ],
-              new_taipei,
-          )
-
-          final_official = safe_merge(
-              baseline[
-                  "official-chain-foods.json"
-              ],
-              new_official,
-          )
-
-          final_fastfood = safe_merge(
-              baseline[
-                  "fastfood-foods.json"
-              ],
-              new_fastfood,
-          )
-
-          final_drinks = safe_merge(
-              baseline[
-                  "drink-shop-foods.json"
-              ],
-              new_drinks,
-          )
-
-
-          # 超商 v7 暫時不重抓
-          # 完整保留歷史最大版本
-          final_convenience = baseline[
-              "convenience-foods.json"
+          new_fast = [
+              x
+              for x in new_taipei
+              if hit(
+                  x,
+                  fast_kw
+              )
           ]
 
+          new_drink = [
+              x
+              for x in new_taipei
+              if hit(
+                  x,
+                  drink_kw
+              )
+          ]
 
-          # ========================================================
-          # 10. 最後安全檢查
-          #
-          # 任何 final 比 baseline 少
-          # → 直接報錯
-          # → 不准 commit
-          # ========================================================
+          # 臺北公開資料中的速食品牌
+          # 同時補進官方品牌索引
+          new_official = new_fast[:]
+
+          # ==================================================
+          # 最終 SAFE MERGE
+          # ==================================================
 
           finals = {
               "convenience-foods.json":
-                  final_convenience,
+                  baseline[
+                      "convenience-foods.json"
+                  ],
 
               "fastfood-foods.json":
-                  final_fastfood,
+                  merge(
+                      baseline[
+                          "fastfood-foods.json"
+                      ],
+                      new_fast
+                  ),
 
               "drink-shop-foods.json":
-                  final_drinks,
+                  merge(
+                      baseline[
+                          "drink-shop-foods.json"
+                      ],
+                      new_drink
+                  ),
 
               "taipei-foods.json":
-                  final_taipei,
+                  merge(
+                      baseline[
+                          "taipei-foods.json"
+                      ],
+                      new_taipei
+                  ),
 
               "tfda-foods.json":
-                  final_tfda,
+                  merge(
+                      baseline[
+                          "tfda-foods.json"
+                      ],
+                      new_tfda
+                  ),
 
               "official-chain-foods.json":
-                  final_official,
+                  merge(
+                      baseline[
+                          "official-chain-foods.json"
+                      ],
+                      new_official
+                  ),
+
+              "school-foods.json":
+                  merge(
+                      baseline[
+                          "school-foods.json"
+                      ],
+                      new_school
+                  )
           }
 
+          # ==================================================
+          # 防縮水
+          # ==================================================
 
           print(
               "\n=== SAFETY CHECK ==="
           )
 
+          for fn, data in finals.items():
 
-          for filename, data in finals.items():
-
-              old_count = len(
-                  baseline[filename]
+              old = len(
+                  baseline[fn]
               )
 
-              new_count = len(data)
+              new = len(data)
 
               print(
-                  f"{filename}: "
-                  f"{old_count} -> {new_count}"
+                  f"{fn}: "
+                  f"{old} -> {new}"
               )
 
-              if new_count < old_count:
-
+              if new < old:
                   raise RuntimeError(
                       f"SAFETY STOP: "
-                      f"{filename} shrank "
-                      f"from {old_count} "
-                      f"to {new_count}"
+                      f"{fn} shrank"
                   )
 
-
-          # ========================================================
-          # 11. 寫入
-          # ========================================================
-
-          for filename, data in finals.items():
-
-              save_json(
-                  filename,
-                  data,
-              )
-
-
-          print(
-              "\n=== FINAL COUNTS ==="
-          )
-
-          for filename, data in finals.items():
-
-              print(
-                  f"{filename}: "
-                  f"{len(data)}"
+              save(
+                  fn,
+                  data
               )
 
           print(
-              "\nSAFE MERGE COMPLETE"
+              "\nV8 SAFE MERGE COMPLETE"
           )
 
           PY
 
-      # ============================================================
-      # 5. 顯示更新後筆數
-      # ============================================================
+      # ======================================================
+      # 顯示各資料庫筆數
+      # ======================================================
+
       - name: Show database counts
-        shell: bash
         run: |
           python - <<'PY'
           import json
-          import os
 
           files = [
               "convenience-foods.json",
@@ -1562,59 +1100,63 @@ jobs:
               "taipei-foods.json",
               "tfda-foods.json",
               "official-chain-foods.json",
+              "school-foods.json"
           ]
 
           print("")
-          print("==============================")
+          print("============================")
           print(" FOOD DATABASE COUNTS")
-          print("==============================")
+          print("============================")
 
-          for filename in files:
+          for f in files:
 
               try:
                   with open(
-                      filename,
-                      "r",
-                      encoding="utf-8-sig",
-                  ) as f:
+                      f,
+                      encoding="utf-8-sig"
+                  ) as h:
 
-                      data = json.load(f)
+                      x = json.load(h)
+
+                  data = (
+                      x
+                      if isinstance(x, list)
+                      else x.get(
+                          "items",
+                          []
+                      )
+                  )
 
                   print(
-                      f"{filename}: {len(data)}"
+                      f"{f}: "
+                      f"{len(data)}"
                   )
 
               except Exception as e:
 
                   print(
-                      f"{filename}: ERROR {e}"
+                      f"{f}: ERROR {e}"
                   )
 
-          print("==============================")
+          print("============================")
           PY
 
-      # ============================================================
-      # 6. 暫存產出的安全資料
-      # ============================================================
+      # ======================================================
+      # 暫存結果
+      # ======================================================
+
       - name: Save generated databases
-        shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/fooddb"
 
-          cp convenience-foods.json "$RUNNER_TEMP/fooddb/"
-          cp fastfood-foods.json "$RUNNER_TEMP/fooddb/"
-          cp drink-shop-foods.json "$RUNNER_TEMP/fooddb/"
-          cp taipei-foods.json "$RUNNER_TEMP/fooddb/"
-          cp tfda-foods.json "$RUNNER_TEMP/fooddb/"
-          cp official-chain-foods.json "$RUNNER_TEMP/fooddb/"
+          cp *-foods.json \
+            "$RUNNER_TEMP/fooddb/" \
+            2>/dev/null || true
 
-      # ============================================================
-      # 7. Retry-safe commit
-      #
-      # 如果你剛好同時在 GitHub 改 index.html，
-      # Action push 發生衝突，
-      # 它會重新抓 main 再重試。
-      # ============================================================
+      # ======================================================
+      # Retry-safe push
+      # ======================================================
+
       - name: Commit updated databases retry safe
         shell: bash
         run: |
@@ -1631,36 +1173,14 @@ jobs:
           for attempt in 1 2 3 4 5
           do
 
-            echo ""
             echo "Push attempt $attempt"
 
             git fetch origin main
             git reset --hard origin/main
 
             cp \
-              "$RUNNER_TEMP/fooddb/convenience-foods.json" \
+              "$RUNNER_TEMP/fooddb/"*-foods.json \
               .
-
-            cp \
-              "$RUNNER_TEMP/fooddb/fastfood-foods.json" \
-              .
-
-            cp \
-              "$RUNNER_TEMP/fooddb/drink-shop-foods.json" \
-              .
-
-            cp \
-              "$RUNNER_TEMP/fooddb/taipei-foods.json" \
-              .
-
-            cp \
-              "$RUNNER_TEMP/fooddb/tfda-foods.json" \
-              .
-
-            cp \
-              "$RUNNER_TEMP/fooddb/official-chain-foods.json" \
-              .
-
 
             git add \
               convenience-foods.json \
@@ -1668,42 +1188,28 @@ jobs:
               drink-shop-foods.json \
               taipei-foods.json \
               tfda-foods.json \
-              official-chain-foods.json
-
+              official-chain-foods.json \
+              school-foods.json
 
             if git diff --cached --quiet
             then
-
-              echo "No database changes."
+              echo "No changes"
               exit 0
-
             fi
 
-
             git commit \
-              -m "Update food databases v7 safe merge"
-
+              -m "Update food databases v8 expanded safe merge"
 
             if git push origin HEAD:main
             then
-
-              echo ""
-              echo "Push succeeded."
+              echo "Push succeeded"
               exit 0
-
             fi
 
-
-            echo ""
-            echo "Push conflict."
-            echo "Retrying in 5 seconds..."
-
+            echo "Push conflict, retrying..."
             sleep 5
 
           done
 
-
-          echo ""
-          echo "Push failed after 5 retries."
-
+          echo "Push failed after retries"
           exit 1
