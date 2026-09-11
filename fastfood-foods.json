@@ -304,5 +304,3659 @@
     "source": "漢堡王 官方",
     "sourceType": "official",
     "sourceUrl": "https://www.burgerking.com.tw/"
+  },
+  {
+    "name": "招牌醬油油麵",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 574.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約208g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=c351ce21-0426-4f33-843b-08700a1e967a&mid=d007b5e4-5c5d-4a6b-8016-cac7c053d562&company_id=22368753-1&itemno=1"
+  },
+  {
+    "name": "辣味味噌油麵",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 686.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=c351ce21-0426-4f33-843b-08700a1e967a&mid=d007b5e4-5c5d-4a6b-8016-cac7c053d562&company_id=22368753-1&itemno=2"
+  },
+  {
+    "name": "可口可樂",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 148.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=13"
+  },
+  {
+    "name": "雪碧汽水",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 148.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=14"
+  },
+  {
+    "name": "紅茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 26.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約300ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=32"
+  },
+  {
+    "name": "綠茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 1.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約300ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=33"
+  },
+  {
+    "name": "紅茶雪泥",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 493.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約360ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=34"
+  },
+  {
+    "name": "功夫奶茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 385.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=57"
+  },
+  {
+    "name": "功夫珍珠奶茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 479.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=59"
+  },
+  {
+    "name": "功夫奶綠",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 385.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=58"
+  },
+  {
+    "name": "功夫四季青茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 138.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約700g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=45"
+  },
+  {
+    "name": "蜂蜜紅茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 154.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=50"
+  },
+  {
+    "name": "功夫紅茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 137.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=46"
+  },
+  {
+    "name": "檸檬紅茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 198.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約660g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=76"
+  },
+  {
+    "name": "功夫蜜茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 154.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=87"
+  },
+  {
+    "name": "多多綠茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 190.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=84"
+  },
+  {
+    "name": "功夫綠茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 103.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=48"
+  },
+  {
+    "name": "蜂蜜綠茶",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 154.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=51"
+  },
+  {
+    "name": "蜂蜜檸檬",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 161.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=75"
+  },
+  {
+    "name": "多多檸檬",
+    "brand": "頂呱呱國際股份有限公司",
+    "store": "頂呱呱國際股份有限公司",
+    "aliases": [],
+    "calories": 252.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=85"
+  },
+  {
+    "name": "島嶼鳳梨水梨青 Formosa Pineapple Pear Turquoise Tea",
+    "brand": "柏元國際餐飲有限公司",
+    "store": "柏元國際餐飲有限公司",
+    "aliases": [],
+    "calories": 234.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約660ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=85006595&itemno=114"
+  },
+  {
+    "name": "島嶼鳳梨桂花青 Formosa Pineapple Osmanthus Turquoise Tea",
+    "brand": "柏元國際餐飲有限公司",
+    "store": "柏元國際餐飲有限公司",
+    "aliases": [],
+    "calories": 257.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約660ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=85006595&itemno=115"
+  },
+  {
+    "name": "摩斯漢堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 433.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約221.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=3"
+  },
+  {
+    "name": "摩斯吉士漢堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 476.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約233.9g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=4"
+  },
+  {
+    "name": "辣味摩斯漢堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 421.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約229.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=5"
+  },
+  {
+    "name": "辣味摩斯吉士漢堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 478.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約241.9g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=6"
+  },
+  {
+    "name": "摩斯鱈魚堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 508.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約151.9g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=7"
+  },
+  {
+    "name": "8.美式花生雙層脆雞堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 670.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約257g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=19"
+  },
+  {
+    "name": "18.花生安格斯牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 652.335,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約200g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=20"
+  },
+  {
+    "name": "摩斯雞塊6個",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 517.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約120g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=21"
+  },
+  {
+    "name": "22.重磅培根雙層牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 1190.08,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約370g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=23"
+  },
+  {
+    "name": "16.勁濃安格斯牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 572.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約199g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=24"
+  },
+  {
+    "name": "17.安格斯厚切牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 574.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約236g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=25"
+  },
+  {
+    "name": "1.皇家華堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 630.04,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約291g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=26"
+  },
+  {
+    "name": "1.辣味皇家華堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 640.59,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約291g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=27"
+  },
+  {
+    "name": "7.勁濃培根烤腿堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 468.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約187g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=35"
+  },
+  {
+    "name": "13.雙層田園華鱈魚堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 452.2596,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約233g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=39"
+  },
+  {
+    "name": "摩斯純淨天然水300ml",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約300g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=41"
+  },
+  {
+    "name": "摩斯純淨天然水550ml",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約550g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=42"
+  },
+  {
+    "name": "摩斯蘋果汁",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 104.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約200g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=44"
+  },
+  {
+    "name": "11.花生培根脆雞堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 692.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約170g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=45"
+  },
+  {
+    "name": "14.Q彈海老堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 409.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約188g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=48"
+  },
+  {
+    "name": "9.國王大雞堡(原味)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 634.656,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約223g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=54"
+  },
+  {
+    "name": "9.國王大雞堡(辣味)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 681.34,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約223g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=55"
+  },
+  {
+    "name": "15.Q彈海老烤牛堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 398.975,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=59"
+  },
+  {
+    "name": "12.華鱈魚堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 327.36,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約150g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=62"
+  },
+  {
+    "name": "洋蔥圈(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 176.9904,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約72g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=64"
+  },
+  {
+    "name": "洋蔥圈(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 247.7376,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約101g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=65"
+  },
+  {
+    "name": "洋蔥圈(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 318.7296,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約130g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=66"
+  },
+  {
+    "name": "薯條(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 236.555,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約111g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=67"
+  },
+  {
+    "name": "薯條(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 437.69,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約173g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=68"
+  },
+  {
+    "name": "薯條(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 602.14,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約238g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=69"
+  },
+  {
+    "name": "BK雞塊(4PC)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 225.472,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約4個g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=70"
+  },
+  {
+    "name": "BK雞塊(6PC)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 338.208,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約6個",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=72"
+  },
+  {
+    "name": "BK雞塊(10PC)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 563.68,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約10個",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=73"
+  },
+  {
+    "name": "辣薯球(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 202.59,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約90g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=74"
+  },
+  {
+    "name": "辣薯球(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 303.885,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約135g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=75"
+  },
+  {
+    "name": "辣薯球(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 405.18,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約180g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=76"
+  },
+  {
+    "name": "勁濃起司薯",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 379.38,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約208g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=80"
+  },
+  {
+    "name": "甜派",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 216.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約70g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=81"
+  },
+  {
+    "name": "激浪汽水(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 464.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=90"
+  },
+  {
+    "name": "激浪汽水(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 339.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=91"
+  },
+  {
+    "name": "激浪汽水(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 247.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=92"
+  },
+  {
+    "name": "百事可樂(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 408.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=93"
+  },
+  {
+    "name": "百事可樂(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 299.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=94"
+  },
+  {
+    "name": "百事可樂(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 217.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=95"
+  },
+  {
+    "name": "百事Black(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=96"
+  },
+  {
+    "name": "百事Black(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=97"
+  },
+  {
+    "name": "百事Black(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=98"
+  },
+  {
+    "name": "七喜(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 418.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=99"
+  },
+  {
+    "name": "七喜(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 307.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=100"
+  },
+  {
+    "name": "七喜(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 223.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=101"
+  },
+  {
+    "name": "華年達橘子味汽水(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 495.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約760ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=102"
+  },
+  {
+    "name": "華年達橘子味汽水(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 363.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=103"
+  },
+  {
+    "name": "華年達橘子味汽水(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 263.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=104"
+  },
+  {
+    "name": "微糖紅茶(大)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 206.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約650ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=105"
+  },
+  {
+    "name": "微糖紅茶(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 158.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=106"
+  },
+  {
+    "name": "柳橙汁(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 135.45,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=110"
+  },
+  {
+    "name": "微糖紅茶(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 103.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=113"
+  },
+  {
+    "name": "四季春青茶(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=115"
+  },
+  {
+    "name": "立頓熱紅茶",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約280g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=118"
+  },
+  {
+    "name": "熱美式研磨(小)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 9.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約190ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=119"
+  },
+  {
+    "name": "熱美式研磨(中)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 13.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約280ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=120"
+  },
+  {
+    "name": "冰美式研磨",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 14.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=121"
+  },
+  {
+    "name": "冰摩斯咖啡(M)",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 4.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約360g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=121"
+  },
+  {
+    "name": "熱拿鐵",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 138.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=123"
+  },
+  {
+    "name": "冰拿鐵",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 104.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=124"
+  },
+  {
+    "name": "熱卡布奇諾",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 133.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=126"
+  },
+  {
+    "name": "熱摩斯奶茶(M)",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 153.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=139"
+  },
+  {
+    "name": "2.小華堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 299.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約158.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=141"
+  },
+  {
+    "name": "2.小華堡(辣味)",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 305.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約158.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=142"
+  },
+  {
+    "name": "摩斯熱紅茶",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=142"
+  },
+  {
+    "name": "3.花生培根牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 457.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約137g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=143"
+  },
+  {
+    "name": "4.雙起士培根牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 490.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約147g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=144"
+  },
+  {
+    "name": "5.BBQ培根牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 387.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約126g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=145"
+  },
+  {
+    "name": "6.火烤雞腿培根堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 374.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約166g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=146"
+  },
+  {
+    "name": "10.經典脆雞堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 405.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約158g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=147"
+  },
+  {
+    "name": "19.四層牛無麵包堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 1195.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約432g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=148"
+  },
+  {
+    "name": "20.雙層牛無麵包堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 671.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約280g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=149"
+  },
+  {
+    "name": "21.雙層脆雞無麵包堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 548.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約283g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=150"
+  },
+  {
+    "name": "黃金QQ球3入",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 164.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約3顆",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=152"
+  },
+  {
+    "name": "黑醬安格斯牛肉堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 653.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=153"
+  },
+  {
+    "name": "黑醬烤雞腿堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 451.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約211g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=154"
+  },
+  {
+    "name": "小華堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 299.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約154g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=155"
+  },
+  {
+    "name": "捲捲德腸堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 471.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約170g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=157"
+  },
+  {
+    "name": "華鱈魚堡",
+    "brand": "台鋼漢堡王股份有限公司",
+    "store": "台鋼漢堡王股份有限公司",
+    "aliases": [],
+    "calories": 309.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約170g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=158"
+  },
+  {
+    "name": "摩斯特調紅茶歐蕾",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 128.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約450g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=173"
+  },
+  {
+    "name": "摩斯經典奶茶",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 150.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約370g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=247"
+  },
+  {
+    "name": "摩斯炸蝦堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 353.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約159.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=259"
+  },
+  {
+    "name": "摩斯玄米煎茶",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=304"
+  },
+  {
+    "name": "MOS熱狗",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 195.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約70g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=381"
+  },
+  {
+    "name": "摩斯抹茶歐蕾(冰)",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 224.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約600g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=396"
+  },
+  {
+    "name": "摩斯抹茶歐蕾(熱)",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 224.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=397"
+  },
+  {
+    "name": "摩斯貝果(附草莓醬)",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 247.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約90g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=402"
+  },
+  {
+    "name": "摩斯冰可可",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 297.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約473g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=421"
+  },
+  {
+    "name": "摩斯熱狗堡",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 278.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約139g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=df2a1a9a-6c79-4efd-942c-4acfcf11b659&mid=b9f0aa7c-8b7e-4eb0-8017-f3c0a2e93a39&company_id=23928945&itemno=64"
+  },
+  {
+    "name": "新摩斯玄米煎茶",
+    "brand": "安心食品服務股份有限公司",
+    "store": "安心食品服務股份有限公司",
+    "aliases": [],
+    "calories": 1.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0b7e6364-ef37-4754-bfbd-f5ad4665934f&mid=04b1af3a-66ec-4aa4-a437-2141b1ae9fac&company_id=23928945&itemno=48"
+  },
+  {
+    "name": "原味麥脆鷄腿",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "辣味麥脆鷄腿",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "原味麥脆鷄腿（大腿）",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "原味麥脆鷄腿（棒腿）",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "辣味麥脆鷄腿（大腿）",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "辣味麥脆鷄腿（棒腿）",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "麥脆鷄腿2塊",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "麥脆鷄腿6塊分享盒",
+    "brand": "麥當勞",
+    "store": "麥當勞",
+    "aliases": [
+      "麥脆雞",
+      "McCrispy",
+      "麥當勞"
+    ],
+    "calories": null,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "",
+    "source": "麥當勞 官方",
+    "sourceType": "official",
+    "sourceUrl": "https://www.mcdonalds.com/tw/zh-tw/full-menu.html"
+  },
+  {
+    "name": "招牌醬油油麵",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 574.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約208g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=c351ce21-0426-4f33-843b-08700a1e967a&mid=d007b5e4-5c5d-4a6b-8016-cac7c053d562&company_id=22368753-1&itemno=1"
+  },
+  {
+    "name": "辣味味噌油麵",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 686.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=c351ce21-0426-4f33-843b-08700a1e967a&mid=d007b5e4-5c5d-4a6b-8016-cac7c053d562&company_id=22368753-1&itemno=2"
+  },
+  {
+    "name": "可口可樂",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 148.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=13"
+  },
+  {
+    "name": "雪碧汽水",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 148.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=14"
+  },
+  {
+    "name": "紅茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 26.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約300ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=32"
+  },
+  {
+    "name": "綠茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 1.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約300ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=33"
+  },
+  {
+    "name": "紅茶雪泥",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 493.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約360ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=34"
+  },
+  {
+    "name": "功夫奶茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 385.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=57"
+  },
+  {
+    "name": "功夫珍珠奶茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 479.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=59"
+  },
+  {
+    "name": "功夫奶綠",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 385.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=58"
+  },
+  {
+    "name": "功夫四季青茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 138.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約700g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=45"
+  },
+  {
+    "name": "蜂蜜紅茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 154.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=50"
+  },
+  {
+    "name": "功夫紅茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 137.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=46"
+  },
+  {
+    "name": "檸檬紅茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 198.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約660g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=76"
+  },
+  {
+    "name": "功夫蜜茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 154.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=87"
+  },
+  {
+    "name": "多多綠茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 190.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=84"
+  },
+  {
+    "name": "功夫綠茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 103.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=48"
+  },
+  {
+    "name": "蜂蜜綠茶",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 154.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=51"
+  },
+  {
+    "name": "蜂蜜檸檬",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 161.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=75"
+  },
+  {
+    "name": "多多檸檬",
+    "brand": "頂呱呱",
+    "store": "頂呱呱",
+    "aliases": [
+      "頂呱呱"
+    ],
+    "calories": 252.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約500g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=22368753&itemno=85"
+  },
+  {
+    "name": "島嶼鳳梨水梨青 Formosa Pineapple Pear Turquoise Tea",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 234.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約660ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=85006595&itemno=114"
+  },
+  {
+    "name": "島嶼鳳梨桂花青 Formosa Pineapple Osmanthus Turquoise Tea",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 257.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約660ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=98e445de-1314-4f3c-99bb-0abd8d7c5296&mid=e85a79c7-cd54-4aa5-9719-c8a9d0e575ce&company_id=85006595&itemno=115"
+  },
+  {
+    "name": "摩斯漢堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 433.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約221.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=3"
+  },
+  {
+    "name": "摩斯吉士漢堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 476.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約233.9g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=4"
+  },
+  {
+    "name": "辣味摩斯漢堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 421.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約229.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=5"
+  },
+  {
+    "name": "辣味摩斯吉士漢堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 478.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約241.9g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=6"
+  },
+  {
+    "name": "摩斯鱈魚堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 508.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約151.9g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=7"
+  },
+  {
+    "name": "8.美式花生雙層脆雞堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 670.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約257g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=19"
+  },
+  {
+    "name": "18.花生安格斯牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 652.335,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約200g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=20"
+  },
+  {
+    "name": "摩斯雞塊6個",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 517.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約120g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=21"
+  },
+  {
+    "name": "22.重磅培根雙層牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 1190.08,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約370g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=23"
+  },
+  {
+    "name": "16.勁濃安格斯牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 572.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約199g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=24"
+  },
+  {
+    "name": "17.安格斯厚切牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 574.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約236g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=25"
+  },
+  {
+    "name": "1.皇家華堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 630.04,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約291g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=26"
+  },
+  {
+    "name": "1.辣味皇家華堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 640.59,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約291g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=27"
+  },
+  {
+    "name": "7.勁濃培根烤腿堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 468.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約187g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=35"
+  },
+  {
+    "name": "13.雙層田園華鱈魚堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 452.2596,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約233g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=39"
+  },
+  {
+    "name": "摩斯純淨天然水300ml",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約300g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=41"
+  },
+  {
+    "name": "摩斯純淨天然水550ml",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約550g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=42"
+  },
+  {
+    "name": "摩斯蘋果汁",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 104.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約200g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=44"
+  },
+  {
+    "name": "11.花生培根脆雞堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 692.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約170g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=45"
+  },
+  {
+    "name": "14.Q彈海老堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 409.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約188g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=48"
+  },
+  {
+    "name": "9.國王大雞堡(原味)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 634.656,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約223g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=54"
+  },
+  {
+    "name": "9.國王大雞堡(辣味)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 681.34,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約223g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=55"
+  },
+  {
+    "name": "15.Q彈海老烤牛堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 398.975,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=59"
+  },
+  {
+    "name": "12.華鱈魚堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 327.36,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約150g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=62"
+  },
+  {
+    "name": "洋蔥圈(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 176.9904,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約72g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=64"
+  },
+  {
+    "name": "洋蔥圈(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 247.7376,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約101g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=65"
+  },
+  {
+    "name": "洋蔥圈(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 318.7296,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約130g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=66"
+  },
+  {
+    "name": "薯條(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 236.555,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約111g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=67"
+  },
+  {
+    "name": "薯條(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 437.69,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約173g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=68"
+  },
+  {
+    "name": "薯條(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 602.14,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約238g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=69"
+  },
+  {
+    "name": "BK雞塊(4PC)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 225.472,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約4個g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=70"
+  },
+  {
+    "name": "BK雞塊(6PC)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 338.208,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約6個",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=72"
+  },
+  {
+    "name": "BK雞塊(10PC)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 563.68,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約10個",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=73"
+  },
+  {
+    "name": "辣薯球(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 202.59,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約90g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=74"
+  },
+  {
+    "name": "辣薯球(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 303.885,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約135g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=75"
+  },
+  {
+    "name": "辣薯球(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 405.18,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約180g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=76"
+  },
+  {
+    "name": "勁濃起司薯",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 379.38,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約208g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=80"
+  },
+  {
+    "name": "甜派",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 216.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約70g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=81"
+  },
+  {
+    "name": "激浪汽水(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 464.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=90"
+  },
+  {
+    "name": "激浪汽水(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 339.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=91"
+  },
+  {
+    "name": "激浪汽水(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 247.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=92"
+  },
+  {
+    "name": "百事可樂(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 408.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=93"
+  },
+  {
+    "name": "百事可樂(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 299.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=94"
+  },
+  {
+    "name": "百事可樂(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 217.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=95"
+  },
+  {
+    "name": "百事Black(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=96"
+  },
+  {
+    "name": "百事Black(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=97"
+  },
+  {
+    "name": "百事Black(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=98"
+  },
+  {
+    "name": "七喜(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 418.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約750ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=99"
+  },
+  {
+    "name": "七喜(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 307.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=100"
+  },
+  {
+    "name": "七喜(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 223.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=101"
+  },
+  {
+    "name": "華年達橘子味汽水(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 495.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約760ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=102"
+  },
+  {
+    "name": "華年達橘子味汽水(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 363.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=103"
+  },
+  {
+    "name": "華年達橘子味汽水(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 263.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=104"
+  },
+  {
+    "name": "微糖紅茶(大)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 206.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約650ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=105"
+  },
+  {
+    "name": "微糖紅茶(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 158.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=106"
+  },
+  {
+    "name": "柳橙汁(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 135.45,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=110"
+  },
+  {
+    "name": "微糖紅茶(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 103.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約430ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=113"
+  },
+  {
+    "name": "四季春青茶(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約590ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=115"
+  },
+  {
+    "name": "立頓熱紅茶",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約280g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=118"
+  },
+  {
+    "name": "熱美式研磨(小)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 9.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約190ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=119"
+  },
+  {
+    "name": "熱美式研磨(中)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 13.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約280ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=120"
+  },
+  {
+    "name": "冰美式研磨",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 14.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=121"
+  },
+  {
+    "name": "冰摩斯咖啡(M)",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 4.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約360g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=121"
+  },
+  {
+    "name": "熱拿鐵",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 138.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=123"
+  },
+  {
+    "name": "冰拿鐵",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 104.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=124"
+  },
+  {
+    "name": "熱卡布奇諾",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 133.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約340ml",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=126"
+  },
+  {
+    "name": "熱摩斯奶茶(M)",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 153.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=139"
+  },
+  {
+    "name": "2.小華堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 299.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約158.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=141"
+  },
+  {
+    "name": "2.小華堡(辣味)",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 305.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約158.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=142"
+  },
+  {
+    "name": "摩斯熱紅茶",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=142"
+  },
+  {
+    "name": "3.花生培根牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 457.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約137g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=143"
+  },
+  {
+    "name": "4.雙起士培根牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 490.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約147g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=144"
+  },
+  {
+    "name": "5.BBQ培根牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 387.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約126g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=145"
+  },
+  {
+    "name": "6.火烤雞腿培根堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 374.2,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約166g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=146"
+  },
+  {
+    "name": "10.經典脆雞堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 405.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約158g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=147"
+  },
+  {
+    "name": "19.四層牛無麵包堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 1195.6,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約432g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=148"
+  },
+  {
+    "name": "20.雙層牛無麵包堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 671.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約280g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=149"
+  },
+  {
+    "name": "21.雙層脆雞無麵包堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 548.8,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約283g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=150"
+  },
+  {
+    "name": "黃金QQ球3入",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 164.7,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約3顆",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=152"
+  },
+  {
+    "name": "黑醬安格斯牛肉堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 653.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=153"
+  },
+  {
+    "name": "黑醬烤雞腿堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 451.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約211g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=154"
+  },
+  {
+    "name": "小華堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 299.5,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約154g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=155"
+  },
+  {
+    "name": "捲捲德腸堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 471.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約170g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=157"
+  },
+  {
+    "name": "華鱈魚堡",
+    "brand": "漢堡王",
+    "store": "漢堡王",
+    "aliases": [
+      "漢堡王"
+    ],
+    "calories": 309.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約170g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=501110514&company_id=23309178&itemno=158"
+  },
+  {
+    "name": "摩斯特調紅茶歐蕾",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 128.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約450g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=173"
+  },
+  {
+    "name": "摩斯經典奶茶",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 150.3,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約370g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=247"
+  },
+  {
+    "name": "摩斯炸蝦堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 353.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約159.5g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=259"
+  },
+  {
+    "name": "摩斯玄米煎茶",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 0.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=304"
+  },
+  {
+    "name": "MOS熱狗",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 195.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約70g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=381"
+  },
+  {
+    "name": "摩斯抹茶歐蕾(冰)",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 224.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約600g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=396"
+  },
+  {
+    "name": "摩斯抹茶歐蕾(熱)",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 224.1,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約325g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=397"
+  },
+  {
+    "name": "摩斯貝果(附草莓醬)",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 247.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約90g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=402"
+  },
+  {
+    "name": "摩斯冰可可",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 297.9,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約473g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0183537c-655a-4e06-bb40-21b1058ea61c&mid=a2004c39-f803-49cc-867d-aa1732850fa6&hospital_id=1101150011-1&company_id=23928945&itemno=421"
+  },
+  {
+    "name": "摩斯熱狗堡",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 278.4,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約139g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=df2a1a9a-6c79-4efd-942c-4acfcf11b659&mid=b9f0aa7c-8b7e-4eb0-8017-f3c0a2e93a39&company_id=23928945&itemno=64"
+  },
+  {
+    "name": "新摩斯玄米煎茶",
+    "brand": "摩斯漢堡",
+    "store": "摩斯漢堡",
+    "aliases": [
+      "摩斯漢堡"
+    ],
+    "calories": 1.0,
+    "protein": null,
+    "carbs": null,
+    "fat": null,
+    "serving": "約220g",
+    "source": "臺北市食材登錄平台",
+    "sourceType": "official-public",
+    "sourceUrl": "https://foodtracer.health.gov.taipei/UniPages/CustPageView?fid=0b7e6364-ef37-4754-bfbd-f5ad4665934f&mid=04b1af3a-66ec-4aa4-a437-2141b1ae9fac&company_id=23928945&itemno=48"
   }
 ]
