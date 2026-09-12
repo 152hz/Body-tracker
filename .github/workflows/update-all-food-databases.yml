@@ -1,4 +1,4 @@
-name: Update all food databases v8 expanded safe merge
+name: Update all food databases v9 processed foods + school dishes
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Checkout full history
@@ -29,172 +29,112 @@ jobs:
           python-version: "3.12"
 
       - name: Install packages
-        run: pip install requests pandas
+        run: pip install requests pandas beautifulsoup4
 
-      - name: Build expanded databases safely
+      - name: Build and safely merge all food databases
         shell: bash
         run: |
           python - <<'PY'
-          import io
-          import json
-          import os
-          import re
-          import subprocess
-          import zipfile
+          import io, json, os, re, subprocess, zipfile
+          from urllib.parse import urljoin
           import pandas as pd
           import requests
+          from bs4 import BeautifulSoup
 
           FILES = [
               "convenience-foods.json",
               "fastfood-foods.json",
               "drink-shop-foods.json",
+              "processed-foods.json",
               "taipei-foods.json",
               "tfda-foods.json",
               "official-chain-foods.json",
-              "school-foods.json"
+              "school-foods.json",
           ]
 
           S = requests.Session()
           S.headers.update({
-              "User-Agent":
-                  "Mozilla/5.0 AppleWebKit/537.36 Chrome/140 Safari/537.36",
-              "Accept-Language":
-                  "zh-TW,zh;q=0.9,en;q=0.7"
+              "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/140 Safari/537.36",
+              "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.7",
           })
 
           def clean(v):
-              if v is None:
+              if v is None or (isinstance(v, float) and pd.isna(v)):
                   return ""
-
-              if isinstance(v, float) and pd.isna(v):
-                  return ""
-
-              return re.sub(
-                  r"\s+",
-                  " ",
-                  str(v)
-              ).strip()
+              return re.sub(r"\s+", " ", str(v)).strip()
 
           def norm(v):
               s = clean(v).lower()
-
-              replacements = {
-                  "鷄": "雞",
-                  "鸡": "雞",
-                  "臺": "台",
-                  "　": " ",
-                  "（": "(",
-                  "）": ")"
-              }
-
-              for a, b in replacements.items():
-                  s = s.replace(a, b)
-
-              return re.sub(
-                  r"[\s\-_]+",
-                  "",
-                  s
-              )
+              for a,b in {
+                  "鷄":"雞",
+                  "鸡":"雞",
+                  "臺":"台",
+                  "　":" ",
+                  "（":"(",
+                  "）":")"
+              }.items():
+                  s = s.replace(a,b)
+              return re.sub(r"[\s\-_]+", "", s)
 
           def num(v):
-              if v is None:
+              if v is None or clean(v)=="":
                   return None
-
-              m = re.search(
-                  r"-?\d+(?:\.\d+)?",
-                  str(v).replace(",", "")
-              )
-
-              return (
-                  float(m.group())
-                  if m
-                  else None
-              )
+              m = re.search(r"-?\d+(?:\.\d+)?", str(v).replace(",", ""))
+              return float(m.group()) if m else None
 
           def load_bytes(raw):
               try:
-                  x = json.loads(
-                      raw.decode("utf-8-sig")
-                  )
-
-                  return (
-                      x
-                      if isinstance(x, list)
-                      else x.get("items", [])
-                  )
-
+                  x = json.loads(raw.decode("utf-8-sig"))
+                  return x if isinstance(x,list) else x.get("items",[])
               except Exception:
                   return []
 
           def load(path):
               try:
-                  with open(
-                      path,
-                      encoding="utf-8-sig"
-                  ) as f:
-
-                      x = json.load(f)
-
-                      return (
-                          x
-                          if isinstance(x, list)
-                          else x.get("items", [])
-                      )
-
+                  with open(path, encoding="utf-8-sig") as f:
+                      x=json.load(f)
+                  return x if isinstance(x,list) else x.get("items",[])
               except Exception:
                   return []
 
           def save(path, x):
-              with open(
-                  path,
-                  "w",
-                  encoding="utf-8"
-              ) as f:
-
+              with open(path,"w",encoding="utf-8") as f:
                   json.dump(
                       x,
                       f,
                       ensure_ascii=False,
-                      indent=2
+                      separators=(",",":")
                   )
 
-          def safe_get(
-              url,
-              timeout=90,
-              **kw
-          ):
+          def safe_get(url, timeout=90, **kw):
               try:
-                  r = S.get(
-                      url,
-                      timeout=timeout,
-                      **kw
-                  )
-
+                  r=S.get(url,timeout=timeout,**kw)
                   r.raise_for_status()
-
                   return r
-
               except Exception as e:
-                  print(
-                      "GET FAILED",
-                      url,
-                      e
-                  )
-
+                  print("GET FAILED", url, e)
                   return None
 
+          def decode_bytes(raw):
+              for enc in ("utf-8-sig","utf-8","cp950","big5"):
+                  try:
+                      return raw.decode(enc)
+                  except Exception:
+                      pass
+              return None
+
           # ==================================================
-          # 找出 Git 歷史中每個資料庫筆數最多的版本
+          # Recover largest historical version of every DB
           # ==================================================
 
-          baseline = {}
+          baseline={}
 
           for fn in FILES:
-              best = load(fn)
-              source = "current"
+              best=load(fn)
+              source="current"
 
               try:
-                  commits = subprocess.check_output(
+                  commits=subprocess.check_output(
                       [
                           "git",
                           "log",
@@ -205,32 +145,30 @@ jobs:
                       ],
                       text=True
                   ).splitlines()
-
               except Exception:
-                  commits = []
+                  commits=[]
 
               for c in commits[:120]:
 
                   try:
-                      raw = subprocess.check_output(
-                          [
-                              "git",
-                              "show",
-                              f"{c}:{fn}"
-                          ],
-                          stderr=subprocess.DEVNULL
+                      arr=load_bytes(
+                          subprocess.check_output(
+                              [
+                                  "git",
+                                  "show",
+                                  f"{c}:{fn}"
+                              ],
+                              stderr=subprocess.DEVNULL
+                          )
                       )
-
-                      arr = load_bytes(raw)
-
                   except Exception:
                       continue
 
-                  if len(arr) > len(best):
-                      best = arr
-                      source = c[:8]
+                  if len(arr)>len(best):
+                      best=arr
+                      source=c[:8]
 
-              baseline[fn] = best
+              baseline[fn]=best
 
               print(
                   f"BASELINE {fn}: "
@@ -238,21 +176,43 @@ jobs:
               )
 
           # ==================================================
-          # 安全合併
+          # Merge helpers
           # ==================================================
 
-          def key(x):
-              return (
-                  norm(
-                      x.get("brand")
-                      or x.get("store")
-                      or ""
-                  ),
-                  norm(
-                      x.get("name")
-                      or x.get("product")
-                      or ""
+          def item_key(x):
+              brand=norm(
+                  x.get("brand")
+                  or x.get("store")
+                  or ""
+              )
+
+              name=norm(
+                  x.get("name")
+                  or x.get("product")
+                  or ""
+              )
+
+              # 加工食品同名但可能有不同包裝
+              if (
+                  x.get("sourceType")=="processed-official"
+                  or
+                  x.get("source")=="TFDA食品追溯追蹤"
+              ):
+                  return (
+                      brand,
+                      name,
+                      norm(
+                          x.get("package")
+                          or x.get("unit")
+                          or x.get("serving")
+                          or ""
+                      )
                   )
+
+              return (
+                  brand,
+                  name,
+                  ""
               )
 
           def present(v):
@@ -260,44 +220,41 @@ jobs:
                   v is not None
                   and v != ""
                   and not (
-                      isinstance(v, float)
+                      isinstance(v,float)
                       and pd.isna(v)
                   )
               )
 
-          def merge_item(old, new):
-              out = dict(old)
+          def merge_item(old,new):
+              out=dict(old)
 
-              for k, v in new.items():
+              for k,v in new.items():
 
-                  # 沒有資料就不要寫入
-                  # 特別避免 null 被當成 0
+                  # 空值不覆蓋舊資料
+                  # 避免 None 被誤認成 0
                   if not present(v):
                       continue
 
-                  if k == "aliases":
-                      vals = []
+                  if k=="aliases":
+                      vals=[]
 
                       for z in (
-                          old.get("aliases", []),
-                          new.get("aliases", [])
+                          old.get("aliases",[]),
+                          new.get("aliases",[])
                       ):
                           vals += (
                               z
-                              if isinstance(z, list)
+                              if isinstance(z,list)
                               else ([z] if z else [])
                           )
 
-                      seen = set()
-                      out[k] = []
+                      seen=set()
+                      out[k]=[]
 
                       for a in vals:
-                          n = norm(a)
+                          n=norm(a)
 
-                          if (
-                              n
-                              and n not in seen
-                          ):
+                          if n and n not in seen:
                               seen.add(n)
                               out[k].append(
                                   clean(a)
@@ -310,143 +267,128 @@ jobs:
                           "protein",
                           "carbs",
                           "fat",
-                          "serving"
+                          "serving",
+                          "unit"
                       )
                   ):
-                      out[k] = v
+                      out[k]=v
 
               return out
 
-          def merge(base, new):
-              d = {}
+          def merge(base,new):
+              d={}
 
               for x in base:
                   if (
-                      isinstance(x, dict)
-                      and key(x)[1]
+                      isinstance(x,dict)
+                      and item_key(x)[1]
                   ):
-                      d[key(x)] = x
+                      d[item_key(x)]=x
 
               for x in new:
                   if (
-                      not isinstance(x, dict)
-                      or not key(x)[1]
+                      not isinstance(x,dict)
+                      or not item_key(x)[1]
                   ):
                       continue
 
-                  k = key(x)
+                  k=item_key(x)
 
                   if k in d:
-                      d[k] = merge_item(
+                      d[k]=merge_item(
                           d[k],
                           x
                       )
-
                   else:
-                      d[k] = x
+                      d[k]=x
 
-              return list(
-                  d.values()
-              )
+              return list(d.values())
+
+          def exact_col(df, names):
+              by={
+                  norm(c):c
+                  for c in df.columns
+              }
+
+              for n in names:
+                  if norm(n) in by:
+                      return by[norm(n)]
+
+              return None
 
           # ==================================================
           # 臺北市食材登錄
-          # 使用官方完整 CSV
           # ==================================================
 
-          new_taipei = []
+          new_taipei=[]
 
-          TAIPEI = (
+          TAIPEI=(
               "https://data.taipei/"
               "api/frontstage/tpeod/"
               "dataset/resource.download?"
               "rid=29869b6f-1cd3-4ce8-8c78-eb85aeea8583"
           )
 
-          r = safe_get(TAIPEI)
+          r=safe_get(TAIPEI)
 
           if r:
-
-              text = None
-
-              for enc in (
-                  "utf-8-sig",
-                  "utf-8",
-                  "cp950",
-                  "big5"
-              ):
-
-                  try:
-                      text = r.content.decode(enc)
-                      break
-
-                  except Exception:
-                      pass
+              text=decode_bytes(
+                  r.content
+              )
 
               if text:
-
                   try:
-                      df = pd.read_csv(
+                      df=pd.read_csv(
                           io.StringIO(text),
                           dtype=str,
                           keep_default_na=False
                       )
 
-                      print(
-                          "TAIPEI COLUMNS:",
-                          list(df.columns)
+                      c_company=exact_col(
+                          df,
+                          ["公司名稱"]
                       )
 
-                      def col(name):
-                          for c in df.columns:
-
-                              if (
-                                  norm(c)
-                                  == norm(name)
-                              ):
-                                  return c
-
-                          return None
-
-                      c_company = col(
-                          "公司名稱"
+                      c_brand=exact_col(
+                          df,
+                          ["品牌名稱"]
                       )
 
-                      c_brand = col(
-                          "品牌名稱"
+                      c_product=exact_col(
+                          df,
+                          ["產品名稱"]
                       )
 
-                      c_product = col(
-                          "產品名稱"
+                      c_serv=exact_col(
+                          df,
+                          ["每一份量"]
                       )
 
-                      c_serv = col(
-                          "每一份量"
+                      c_cal=exact_col(
+                          df,
+                          ["熱量大卡"]
                       )
 
-                      c_cal = col(
-                          "熱量大卡"
-                      )
-
-                      c_url = col(
-                          "相關資訊連結"
+                      c_url=exact_col(
+                          df,
+                          ["相關資訊連結"]
                       )
 
                       if not c_product:
                           raise RuntimeError(
-                              "找不到官方欄位：產品名稱"
+                              "找不到產品名稱欄位"
                           )
 
-                      for _, row in df.iterrows():
+                      for _,row in df.iterrows():
 
-                          name = clean(
+                          name=clean(
                               row.get(c_product)
                           )
 
                           if not name:
                               continue
 
-                          brand = (
+                          brand=(
                               clean(
                                   row.get(c_brand)
                               )
@@ -454,7 +396,7 @@ jobs:
                               else ""
                           )
 
-                          company = (
+                          company=(
                               clean(
                                   row.get(c_company)
                               )
@@ -462,16 +404,8 @@ jobs:
                               else ""
                           )
 
-                          cal = (
-                              num(
-                                  row.get(c_cal)
-                              )
-                              if c_cal
-                              else None
-                          )
-
                           new_taipei.append({
-                              "name": name,
+                              "name":name,
 
                               "brand":
                                   brand or company,
@@ -479,7 +413,7 @@ jobs:
                               "store":
                                   brand or company,
 
-                              "aliases": [
+                              "aliases":[
                                   x
                                   for x in [
                                       company,
@@ -488,13 +422,16 @@ jobs:
                                   if x
                               ],
 
-                              "calories": cal,
+                              "calories":
+                                  num(
+                                      row.get(c_cal)
+                                  )
+                                  if c_cal
+                                  else None,
 
-                              # 沒有資料就是 None
-                              # 絕對不填 0
-                              "protein": None,
-                              "carbs": None,
-                              "fat": None,
+                              "protein":None,
+                              "carbs":None,
+                              "fat":None,
 
                               "serving":
                                   clean(
@@ -517,7 +454,7 @@ jobs:
                                       row.get(c_url)
                                   )
                                   if c_url
-                                  else TAIPEI
+                                  else TAIPEI,
                           })
 
                   except Exception as e:
@@ -535,21 +472,20 @@ jobs:
           # TFDA 食品營養成分
           # ==================================================
 
-          new_tfda = []
+          new_tfda=[]
 
-          r = safe_get(
+          r=safe_get(
               "https://data.fda.gov.tw/"
               "data/opendata/export/20/csv"
           )
 
           if r:
-
               try:
-                  z = zipfile.ZipFile(
+                  z=zipfile.ZipFile(
                       io.BytesIO(r.content)
                   )
 
-                  names = [
+                  names=[
                       n
                       for n in z.namelist()
                       if n.lower().endswith(
@@ -557,139 +493,127 @@ jobs:
                       )
                   ] or z.namelist()
 
-                  raw = z.read(
-                      names[0]
-                  )
+                  tmp={}
 
-                  text = None
+                  for zname in names:
 
-                  for enc in (
-                      "utf-8-sig",
-                      "utf-8",
-                      "cp950",
-                      "big5"
-                  ):
+                      text=decode_bytes(
+                          z.read(zname)
+                      )
 
-                      try:
-                          text = raw.decode(enc)
-                          break
+                      if not text:
+                          continue
 
-                      except Exception:
-                          pass
+                      df=pd.read_csv(
+                          io.StringIO(text),
+                          dtype=str,
+                          keep_default_na=False
+                      )
 
-                  df = pd.read_csv(
-                      io.StringIO(text),
-                      dtype=str,
-                      keep_default_na=False
-                  )
+                      def find(*words):
+                          for c in df.columns:
+                              if all(
+                                  w in str(c)
+                                  for w in words
+                              ):
+                                  return c
+                          return None
 
-                  def find(*words):
-                      for c in df.columns:
+                      food=(
+                          find("樣品名稱")
+                          or find("食品名稱")
+                          or find("名稱")
+                      )
 
-                          if all(
-                              w in str(c)
-                              for w in words
-                          ):
-                              return c
+                      alias=(
+                          find("俗名")
+                          or find("別名")
+                      )
 
-                  food = (
-                      find("樣品名稱")
-                      or find("食品名稱")
-                      or find("名稱")
-                  )
+                      cat=(
+                          find("食品分類")
+                          or find("分類")
+                      )
 
-                  alias = (
-                      find("俗名")
-                      or find("別名")
-                  )
+                      nutrient=find(
+                          "分析項"
+                      )
 
-                  cat = (
-                      find("食品分類")
-                      or find("分類")
-                  )
+                      per100=(
+                          find("每100克")
+                          or find("每100公克")
+                          or find("每100")
+                      )
 
-                  nutrient = find(
-                      "分析項"
-                  )
+                      if not (
+                          food
+                          and nutrient
+                          and per100
+                      ):
+                          continue
 
-                  per100 = (
-                      find("每100克")
-                      or find("每100公克")
-                      or find("每100")
-                  )
+                      for _,row in df.iterrows():
 
-                  tmp = {}
-
-                  if (
-                      food
-                      and nutrient
-                      and per100
-                  ):
-
-                      for _, row in df.iterrows():
-
-                          name = clean(
+                          name=clean(
                               row.get(food)
                           )
 
                           if not name:
                               continue
 
-                          k = norm(name)
+                          k=norm(name)
 
-                          item = tmp.setdefault(
+                          item=tmp.setdefault(
                               k,
                               {
-                                  "name": name,
-                                  "brand": "",
+                                  "name":name,
+                                  "brand":"",
                                   "store":
                                       "食藥署資料庫",
-                                  "aliases": [],
+                                  "aliases":[],
                                   "category":
                                       clean(
                                           row.get(cat)
                                       )
                                       if cat
                                       else "",
-                                  "calories": None,
-                                  "protein": None,
-                                  "carbs": None,
-                                  "fat": None,
+                                  "calories":None,
+                                  "protein":None,
+                                  "carbs":None,
+                                  "fat":None,
                                   "serving":
                                       "每100g",
                                   "quality":
                                       "official",
-                                  "source":
-                                      "TFDA",
+                                  "source":"TFDA",
                                   "sourceType":
                                       "official"
                               }
                           )
 
-                          if alias:
-
-                              alias_value = clean(
+                          a=(
+                              clean(
                                   row.get(alias)
                               )
+                              if alias
+                              else ""
+                          )
 
-                              if (
-                                  alias_value
-                                  and alias_value
-                                  not in item[
-                                      "aliases"
-                                  ]
-                              ):
-                                  item[
-                                      "aliases"
-                                  ].append(
-                                      alias_value
-                                  )
+                          if (
+                              a
+                              and a not in item[
+                                  "aliases"
+                              ]
+                          ):
+                              item[
+                                  "aliases"
+                              ].append(a)
 
-                          n = clean(
+                          n=clean(
                               row.get(nutrient)
                           )
 
-                          v = num(
+                          v=num(
                               row.get(per100)
                           )
 
@@ -699,38 +623,32 @@ jobs:
                           if "熱量" in n:
                               item[
                                   "calories"
-                              ] = v
+                              ]=v
 
                           elif "蛋白質" in n:
                               item[
                                   "protein"
-                              ] = v
+                              ]=v
 
-                          elif (
-                              "碳水化合物"
-                              in n
-                          ):
+                          elif "碳水化合物" in n:
                               item[
                                   "carbs"
-                              ] = v
+                              ]=v
 
                           elif "脂肪" in n:
                               item[
                                   "fat"
-                              ] = v
+                              ]=v
 
-                  new_tfda = [
+                  new_tfda=[
                       x
                       for x in tmp.values()
-
                       if (
                           x["calories"]
                           is not None
-
                           or any(
                               x[k]
                               is not None
-
                               for k in (
                                   "protein",
                                   "carbs",
@@ -742,7 +660,7 @@ jobs:
 
               except Exception as e:
                   print(
-                      "TFDA FAILED",
+                      "TFDA NUTRIENTS FAILED",
                       e
                   )
 
@@ -752,134 +670,512 @@ jobs:
           )
 
           # ==================================================
-          # 教育部校園食材登錄
-          #
-          # 這裡只補「品項名稱」
-          # 沒有可靠營養資料就維持 None
+          # v9 NEW:
+          # TFDA 加工食品／包裝食品
+          # 泡麵、餅乾、罐頭、飲料等
           # ==================================================
 
-          new_school = []
+          new_processed=[]
 
-          OPENAPI = (
-              "https://fatraceschool.k12ea.gov.tw/"
-              "cateringservice/web/openapi_doc/"
-              "v1/openapi.json"
+          PROCESSED_URL=(
+              "https://data.fda.gov.tw/"
+              "data/opendata/export/188/csv"
           )
 
-          rr = safe_get(
-              OPENAPI,
-              timeout=30,
-              headers={
-                  "Referer":
-                      "https://fatraceschool.k12ea.gov.tw/"
-                      "cateringservice/web/"
-                      "openapi_doc/v1/index.html"
-              }
+          r=safe_get(
+              PROCESSED_URL,
+              timeout=180
           )
 
-          if rr:
+          if r:
+              try:
+                  z=zipfile.ZipFile(
+                      io.BytesIO(r.content)
+                  )
+
+                  csvs=[
+                      n
+                      for n in z.namelist()
+                      if n.lower().endswith(
+                          ".csv"
+                      )
+                  ] or z.namelist()
+
+                  for zname in csvs:
+
+                      text=decode_bytes(
+                          z.read(zname)
+                      )
+
+                      if not text:
+                          continue
+
+                      df=pd.read_csv(
+                          io.StringIO(text),
+                          dtype=str,
+                          keep_default_na=False,
+                          low_memory=False
+                      )
+
+                      c_cat=exact_col(
+                          df,
+                          ["產品分類"]
+                      )
+
+                      c_company=exact_col(
+                          df,
+                          ["公司名稱"]
+                      )
+
+                      c_name=exact_col(
+                          df,
+                          ["產品名稱"]
+                      )
+
+                      c_pack=exact_col(
+                          df,
+                          ["包裝規格"]
+                      )
+
+                      c_serv=exact_col(
+                          df,
+                          ["每一份量"]
+                      )
+
+                      c_cal=exact_col(
+                          df,
+                          ["每份熱量"]
+                      )
+
+                      c_pro=exact_col(
+                          df,
+                          ["每份蛋白質"]
+                      )
+
+                      c_fat=exact_col(
+                          df,
+                          ["每份脂肪"]
+                      )
+
+                      c_carb=exact_col(
+                          df,
+                          ["每份碳水化合物"]
+                      )
+
+                      c_cal100g=exact_col(
+                          df,
+                          ["每100公克熱量"]
+                      )
+
+                      c_pro100g=exact_col(
+                          df,
+                          ["每100公克蛋白質"]
+                      )
+
+                      c_fat100g=exact_col(
+                          df,
+                          ["每100公克脂肪"]
+                      )
+
+                      c_carb100g=exact_col(
+                          df,
+                          ["每100公克碳水化合物"]
+                      )
+
+                      c_cal100m=exact_col(
+                          df,
+                          ["每100毫升熱量"]
+                      )
+
+                      c_pro100m=exact_col(
+                          df,
+                          ["每100毫升蛋白質"]
+                      )
+
+                      c_fat100m=exact_col(
+                          df,
+                          ["每100毫升脂肪"]
+                      )
+
+                      c_carb100m=exact_col(
+                          df,
+                          ["每100毫升碳水化合物"]
+                      )
+
+                      if not c_name:
+                          raise RuntimeError(
+                              "加工食品資料找不到產品名稱欄位"
+                          )
+
+                      for _,row in df.iterrows():
+
+                          name=clean(
+                              row.get(c_name)
+                          )
+
+                          if not name:
+                              continue
+
+                          company=(
+                              clean(
+                                  row.get(c_company)
+                              )
+                              if c_company
+                              else ""
+                          )
+
+                          category=(
+                              clean(
+                                  row.get(c_cat)
+                              )
+                              if c_cat
+                              else ""
+                          )
+
+                          package=(
+                              clean(
+                                  row.get(c_pack)
+                              )
+                              if c_pack
+                              else ""
+                          )
+
+                          serving=(
+                              clean(
+                                  row.get(c_serv)
+                              )
+                              if c_serv
+                              else ""
+                          )
+
+                          cal=(
+                              num(
+                                  row.get(c_cal)
+                              )
+                              if c_cal
+                              else None
+                          )
+
+                          pro=(
+                              num(
+                                  row.get(c_pro)
+                              )
+                              if c_pro
+                              else None
+                          )
+
+                          fat=(
+                              num(
+                                  row.get(c_fat)
+                              )
+                              if c_fat
+                              else None
+                          )
+
+                          carb=(
+                              num(
+                                  row.get(c_carb)
+                              )
+                              if c_carb
+                              else None
+                          )
+
+                          unit=(
+                              serving
+                              or package
+                              or "每份"
+                          )
+
+                          # 每份沒有資料時
+                          # 才使用每100g資料
+                          if (
+                              cal is None
+                              and c_cal100g
+                          ):
+
+                              cal=num(
+                                  row.get(c_cal100g)
+                              )
+
+                              pro=(
+                                  num(
+                                      row.get(
+                                          c_pro100g
+                                      )
+                                  )
+                                  if c_pro100g
+                                  else None
+                              )
+
+                              fat=(
+                                  num(
+                                      row.get(
+                                          c_fat100g
+                                      )
+                                  )
+                                  if c_fat100g
+                                  else None
+                              )
+
+                              carb=(
+                                  num(
+                                      row.get(
+                                          c_carb100g
+                                      )
+                                  )
+                                  if c_carb100g
+                                  else None
+                              )
+
+                              if cal is not None:
+                                  unit="每100g"
+
+                          # 再沒有才使用每100ml
+                          if (
+                              cal is None
+                              and c_cal100m
+                          ):
+
+                              cal=num(
+                                  row.get(c_cal100m)
+                              )
+
+                              pro=(
+                                  num(
+                                      row.get(
+                                          c_pro100m
+                                      )
+                                  )
+                                  if c_pro100m
+                                  else None
+                              )
+
+                              fat=(
+                                  num(
+                                      row.get(
+                                          c_fat100m
+                                      )
+                                  )
+                                  if c_fat100m
+                                  else None
+                              )
+
+                              carb=(
+                                  num(
+                                      row.get(
+                                          c_carb100m
+                                      )
+                                  )
+                                  if c_carb100m
+                                  else None
+                              )
+
+                              if cal is not None:
+                                  unit="每100ml"
+
+                          new_processed.append({
+                              "name":name,
+                              "brand":company,
+                              "store":
+                                  company
+                                  or "TFDA加工食品",
+
+                              "aliases":[
+                                  x
+                                  for x in [
+                                      company,
+                                      category,
+                                      package
+                                  ]
+                                  if x
+                              ],
+
+                              "category":category,
+                              "package":package,
+
+                              "calories":cal,
+                              "protein":pro,
+                              "carbs":carb,
+                              "fat":fat,
+
+                              "serving":unit,
+                              "unit":unit,
+
+                              "quality":
+                                  "official-public",
+
+                              "source":
+                                  "TFDA食品追溯追蹤",
+
+                              "sourceType":
+                                  "processed-official",
+
+                              "sourceUrl":
+                                  "https://data.gov.tw/dataset/33575",
+                          })
+
+              except Exception as e:
+                  print(
+                      "PROCESSED FOOD FAILED",
+                      e
+                  )
+
+          print(
+              "NEW PROCESSED",
+              len(new_processed)
+          )
+
+          # ==================================================
+          # v9 FIX:
+          # 校園菜色
+          #
+          # 不再抓 OpenAPI 說明文件
+          # 改抓政府公開 CSV
+          #
+          # 沒營養資料一律 None
+          # 不得填 0
+          # ==================================================
+
+          new_school=[]
+
+          SCHOOL_DATASET=(
+              "https://data.gov.tw/"
+              "dataset/46750"
+          )
+
+          school_urls=[]
+
+          page=safe_get(
+              SCHOOL_DATASET,
+              timeout=45
+          )
+
+          if page:
+              try:
+                  soup=BeautifulSoup(
+                      page.text,
+                      "html.parser"
+                  )
+
+                  for a in soup.find_all(
+                      "a",
+                      href=True
+                  ):
+
+                      href=urljoin(
+                          SCHOOL_DATASET,
+                          a.get("href")
+                      )
+
+                      if (
+                          "k12ea.gov.tw" in href
+                          and ".csv"
+                          in href.lower()
+                      ):
+                          school_urls.append(
+                              href
+                          )
+
+              except Exception as e:
+                  print(
+                      "SCHOOL RESOURCE DISCOVERY FAILED",
+                      e
+                  )
+
+          # 如果政府資料頁版型改掉
+          # 使用教育部官方歷史 CSV 當備援
+          if not school_urls:
+
+              school_urls=[
+                  "https://www.k12ea.gov.tw/files/common_unit/0c24bbae-0b0d-4d62-b3b9-ce4277402c38/doc/107%E5%B9%B41%E6%9C%88%E5%9C%8B%E4%B8%AD%E5%B0%8F%E5%8D%88%E9%A4%90%E8%8F%9C%E8%89%B2%E8%B3%87%E6%96%99_%E6%96%B0%E5%8C%97%E5%B8%82.csv",
+                  "https://www.k12ea.gov.tw/files/common_unit/0c24bbae-0b0d-4d62-b3b9-ce4277402c38/doc/107%E5%B9%B41%E6%9C%88%E9%AB%98%E4%B8%AD%E8%81%B7%E5%8D%88%E9%A4%90%E8%8F%9C%E8%89%B2%E8%B3%87%E6%96%99_%E6%96%B0%E5%8C%97%E5%B8%82.csv",
+              ]
+
+          seen_school=set()
+
+          for u in school_urls[:40]:
+
+              rr=safe_get(
+                  u,
+                  timeout=45
+              )
+
+              if not rr:
+                  continue
+
+              text=decode_bytes(
+                  rr.content
+              )
+
+              if not text:
+                  continue
 
               try:
-                  spec = rr.json()
+                  df=pd.read_csv(
+                      io.StringIO(text),
+                      dtype=str,
+                      keep_default_na=False
+                  )
 
-                  print(
-                      "MOE OPENAPI paths",
-                      len(
-                          spec.get(
-                              "paths",
-                              {}
-                          )
+                  c_dish=exact_col(
+                      df,
+                      [
+                          "菜色名稱",
+                          "菜名",
+                          "菜色"
+                      ]
+                  )
+
+                  if not c_dish:
+                      continue
+
+                  for _,row in df.iterrows():
+
+                      name=clean(
+                          row.get(c_dish)
                       )
-                  )
 
-                  blob = json.dumps(
-                      spec,
-                      ensure_ascii=False
-                  )
-
-                  vals = re.findall(
-                      r'"([^"\\]{2,30})"',
-                      blob
-                  )
-
-                  bad = (
-                      "學校",
-                      "縣市",
-                      "日期",
-                      "供應商",
-                      "食材",
-                      "欄位",
-                      "參數",
-                      "說明",
-                      "錯誤",
-                      "成功",
-                      "午餐",
-                      "資料"
-                  )
-
-                  for v in vals:
-
-                      v = clean(v)
-
-                      if not re.search(
-                          r"[\u4e00-\u9fff]",
-                          v
-                      ):
+                      if not name:
                           continue
 
-                      if any(
-                          b in v
-                          for b in bad
-                      ):
+                      if norm(name) in seen_school:
                           continue
 
-                      if not any(
-                          k in v
-                          for k in (
-                              "飯",
-                              "麵",
-                              "雞",
-                              "豬",
-                              "牛",
-                              "魚",
-                              "蛋",
-                              "菜",
-                              "湯",
-                              "豆腐",
-                              "排",
-                              "粥",
-                              "瓜",
-                              "肉"
-                          )
-                      ):
-                          continue
+                      seen_school.add(
+                          norm(name)
+                      )
 
                       new_school.append({
-                          "name": v,
-                          "brand": "",
+                          "name":name,
+                          "brand":"",
                           "store":
                               "教育部校園菜色",
-                          "aliases": [],
 
-                          # 不知道就是 None
-                          "calories": None,
-                          "protein": None,
-                          "carbs": None,
-                          "fat": None,
+                          "aliases":[],
 
-                          "serving": "",
-                          "quality": "index",
+                          "calories":None,
+                          "protein":None,
+                          "carbs":None,
+                          "fat":None,
+
+                          "serving":"",
+
+                          "quality":"index",
+
                           "source":
-                              "教育部校園食材登錄平台2.0",
+                              "教育部校園午餐菜色公開資料",
+
                           "sourceType":
                               "official-index",
+
                           "sourceUrl":
-                              "https://fatraceschool.k12ea.gov.tw/"
+                              SCHOOL_DATASET,
                       })
 
               except Exception as e:
                   print(
-                      "MOE OPENAPI PARSE FAILED",
+                      "SCHOOL CSV FAILED",
+                      u,
                       e
                   )
 
@@ -889,10 +1185,10 @@ jobs:
           )
 
           # ==================================================
-          # 從臺北大型資料庫建立速食分類
+          # 從臺北食材登錄延伸速食與手搖分類
           # ==================================================
 
-          fast_kw = [
+          fast_kw=[
               "麥當勞",
               "mcdonald",
               "肯德基",
@@ -913,11 +1209,7 @@ jobs:
               "21plus"
           ]
 
-          # ==================================================
-          # 手搖飲品牌
-          # ==================================================
-
-          drink_kw = [
+          drink_kw=[
               "50嵐",
               "五十嵐",
               "coco",
@@ -941,20 +1233,19 @@ jobs:
               "先喝道"
           ]
 
-          def hit(x, kws):
-
-              t = norm(
+          def hit(x,kws):
+              t=norm(
                   (
                       x.get("brand")
                       or ""
                   )
-                  + " "
-                  + (
+                  +" "+
+                  (
                       x.get("store")
                       or ""
                   )
-                  + " "
-                  + (
+                  +" "+
+                  (
                       x.get("name")
                       or ""
                   )
@@ -965,7 +1256,7 @@ jobs:
                   for k in kws
               )
 
-          new_fast = [
+          new_fast=[
               x
               for x in new_taipei
               if hit(
@@ -974,7 +1265,7 @@ jobs:
               )
           ]
 
-          new_drink = [
+          new_drink=[
               x
               for x in new_taipei
               if hit(
@@ -983,15 +1274,13 @@ jobs:
               )
           ]
 
-          # 臺北公開資料中的速食品牌
-          # 同時補進官方品牌索引
-          new_official = new_fast[:]
+          new_official=new_fast[:]
 
           # ==================================================
-          # 最終 SAFE MERGE
+          # SAFE MERGE
           # ==================================================
 
-          finals = {
+          finals={
               "convenience-foods.json":
                   baseline[
                       "convenience-foods.json"
@@ -1011,6 +1300,14 @@ jobs:
                           "drink-shop-foods.json"
                       ],
                       new_drink
+                  ),
+
+              "processed-foods.json":
+                  merge(
+                      baseline[
+                          "processed-foods.json"
+                      ],
+                      new_processed
                   ),
 
               "taipei-foods.json":
@@ -1043,34 +1340,35 @@ jobs:
                           "school-foods.json"
                       ],
                       new_school
-                  )
+                  ),
           }
 
           # ==================================================
-          # 防縮水
+          # 防止資料庫縮水
           # ==================================================
 
           print(
               "\n=== SAFETY CHECK ==="
           )
 
-          for fn, data in finals.items():
+          for fn,data in finals.items():
 
-              old = len(
+              old=len(
                   baseline[fn]
               )
 
-              new = len(data)
+              new=len(data)
 
               print(
                   f"{fn}: "
                   f"{old} -> {new}"
               )
 
-              if new < old:
+              if new<old:
                   raise RuntimeError(
                       f"SAFETY STOP: "
-                      f"{fn} shrank"
+                      f"{fn} shrank "
+                      f"from {old} to {new}"
                   )
 
               save(
@@ -1078,72 +1376,106 @@ jobs:
                   data
               )
 
+          # 新增資料庫第一次執行時
+          # 若完全是空的，直接停止
+          # 不准提交假空資料
+          if (
+              len(
+                  finals[
+                      "processed-foods.json"
+                  ]
+              )
+              ==0
+          ):
+              raise RuntimeError(
+                  "SAFETY STOP: "
+                  "processed-foods.json "
+                  "is empty"
+              )
+
+          if (
+              len(
+                  finals[
+                      "school-foods.json"
+                  ]
+              )
+              ==0
+          ):
+              raise RuntimeError(
+                  "SAFETY STOP: "
+                  "school-foods.json "
+                  "is empty"
+              )
+
           print(
-              "\nV8 SAFE MERGE COMPLETE"
+              "\nV9 SAFE MERGE COMPLETE"
           )
 
           PY
 
-      # ======================================================
-      # 顯示各資料庫筆數
-      # ======================================================
-
-      - name: Show database counts
+      - name: Show database counts and sizes
+        shell: bash
         run: |
           python - <<'PY'
-          import json
+          import json, os
 
-          files = [
+          files=[
               "convenience-foods.json",
               "fastfood-foods.json",
               "drink-shop-foods.json",
+              "processed-foods.json",
               "taipei-foods.json",
               "tfda-foods.json",
               "official-chain-foods.json",
               "school-foods.json"
           ]
 
-          print("")
-          print("============================")
-          print(" FOOD DATABASE COUNTS")
-          print("============================")
+          print(
+              "==============================="
+          )
+
+          print(
+              " FOOD DATABASE COUNTS / SIZES"
+          )
+
+          print(
+              "==============================="
+          )
 
           for f in files:
 
-              try:
-                  with open(
-                      f,
-                      encoding="utf-8-sig"
-                  ) as h:
+              with open(
+                  f,
+                  encoding="utf-8-sig"
+              ) as h:
+                  x=json.load(h)
 
-                      x = json.load(h)
-
-                  data = (
-                      x
-                      if isinstance(x, list)
-                      else x.get(
-                          "items",
-                          []
-                      )
+              data=(
+                  x
+                  if isinstance(x,list)
+                  else x.get(
+                      "items",
+                      []
                   )
+              )
 
-                  print(
-                      f"{f}: "
-                      f"{len(data)}"
-                  )
+              mb=(
+                  os.path.getsize(f)
+                  /1024
+                  /1024
+              )
 
-              except Exception as e:
+              print(
+                  f"{f}: "
+                  f"{len(data):,} rows / "
+                  f"{mb:.2f} MB"
+              )
 
-                  print(
-                      f"{f}: ERROR {e}"
-                  )
+          print(
+              "==============================="
+          )
 
-          print("============================")
           PY
-
-      # ======================================================
-      # 暫存結果
-      # ======================================================
 
       - name: Save generated databases
         run: |
@@ -1152,10 +1484,6 @@ jobs:
           cp *-foods.json \
             "$RUNNER_TEMP/fooddb/" \
             2>/dev/null || true
-
-      # ======================================================
-      # Retry-safe push
-      # ======================================================
 
       - name: Commit updated databases retry safe
         shell: bash
@@ -1172,7 +1500,6 @@ jobs:
 
           for attempt in 1 2 3 4 5
           do
-
             echo "Push attempt $attempt"
 
             git fetch origin main
@@ -1186,6 +1513,7 @@ jobs:
               convenience-foods.json \
               fastfood-foods.json \
               drink-shop-foods.json \
+              processed-foods.json \
               taipei-foods.json \
               tfda-foods.json \
               official-chain-foods.json \
@@ -1198,7 +1526,7 @@ jobs:
             fi
 
             git commit \
-              -m "Update food databases v8 expanded safe merge"
+              -m "Update food databases v9 processed foods and school dishes"
 
             if git push origin HEAD:main
             then
@@ -1208,7 +1536,6 @@ jobs:
 
             echo "Push conflict, retrying..."
             sleep 5
-
           done
 
           echo "Push failed after retries"
