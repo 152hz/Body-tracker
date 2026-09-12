@@ -455,6 +455,316 @@ body{padding-top:calc(86px + env(safe-area-inset-top))!important}
 @media(max-width:760px){body{padding-top:calc(78px + env(safe-area-inset-top))!important}.motivation-bar{height:calc(70px + env(safe-area-inset-top))!important;padding-left:66px!important;padding-right:12px!important}.motivation-viewport{font-size:23px!important;line-height:1.05!important}.menu-toggle,.menu-toggle.show{left:8px!important;top:calc(env(safe-area-inset-top) + 11px)!important;width:46px!important;height:46px!important}.mockup-quote-banner{height:235px!important;padding:12px 12px 15px!important}.mockup-banner-top{gap:8px}.mockup-date-pill{padding:5px 7px!important}.mockup-date-pill .mobile-date-wrap{min-width:106px!important}.mockup-date-pill input[type="date"]{width:108px!important;font-size:11px!important}.weather-hero-card{max-width:140px;min-height:48px;padding:7px 9px;border-radius:15px}.weather-hero-card strong{font-size:12px;max-width:88px}.weather-hero-card small{font-size:9.5px;max-width:92px}.weather-hero-icon{font-size:20px}.mockup-quote-copy{max-width:68%;padding-left:2px}.mockup-quote-main{font-size:27px!important}.mockup-better-me{font-size:31px!important;right:6%!important;top:48%!important}.wrap{padding-bottom:calc(112px + env(safe-area-inset-bottom))!important}.app-bottom-nav{height:calc(82px + env(safe-area-inset-bottom))!important;padding:7px 6px calc(7px + env(safe-area-inset-bottom))!important;gap:5px!important}.app-bottom-nav button{min-height:60px!important;border-radius:15px!important}.app-bottom-nav button span{font-size:20px!important}.app-bottom-nav button b{font-size:9.5px!important}.app-subpage-head{top:calc(70px + env(safe-area-inset-top))!important}.weather-backdrop{padding:calc(72px + env(safe-area-inset-top)) 9px 9px!important}}
 @media(max-width:390px){.motivation-viewport{font-size:21px!important}.mockup-quote-main{font-size:25px!important}.weather-hero-card{max-width:126px}.weather-hero-card .weather-badge-copy strong{max-width:77px}.weather-hero-card .weather-badge-copy small{max-width:82px}.mockup-better-me{font-size:28px!important}}
 
+
+
+/* ===== 2026.09.12.13 popup tools + cleaner weather hero ===== */
+/* 首頁天氣主卡：拿掉 Better Me 後讓文案完整使用寬度 */
+.mockup-better-me{display:none!important}
+.mockup-quote-copy{max-width:none!important;width:100%!important;padding:0 2px 3px!important}
+.mockup-quote-main{max-width:760px!important}
+.mockup-quote-sub{display:inline-block!important;max-width:100%!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.45!important;background:rgba(255,255,255,.20)!important;border:1px solid rgba(255,255,255,.38)!important;border-radius:999px!important;padding:7px 11px!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+
+/* 日期與氣象使用一致的 iOS 玻璃感半透明卡 */
+.mockup-date-pill,.weather-hero-card{
+  background:rgba(255,255,255,.18)!important;
+  border:1px solid rgba(255,255,255,.46)!important;
+  box-shadow:0 8px 22px rgba(37,97,137,.10)!important;
+  backdrop-filter:blur(16px) saturate(135%)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(135%)!important;
+  color:#fff!important;
+}
+.mockup-date-pill>span{filter:drop-shadow(0 1px 4px rgba(42,87,118,.16))}
+.mockup-date-pill input[type="date"]{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  text-shadow:0 1px 5px rgba(36,82,115,.18)!important;
+  color-scheme:dark;
+}
+.mockup-date-pill input[type="date"]::-webkit-calendar-picker-indicator{filter:brightness(0) invert(1);opacity:.9}
+.weather-hero-card small{color:rgba(255,255,255,.95)!important}
+
+/* 底部四功能改成真正彈出視窗，不再切換成另一頁 */
+.app-modal-backdrop{
+  position:fixed;inset:0;z-index:10070;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:18px 14px 0;
+  background:rgba(31,56,74,.25);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+}
+.app-modal-backdrop.open{opacity:1;pointer-events:auto}
+.app-modal-sheet{
+  width:min(900px,100%);max-height:min(88vh,920px);
+  display:flex;flex-direction:column;overflow:hidden;
+  background:rgba(250,253,255,.98);
+  border:1px solid rgba(205,231,248,.95);
+  border-radius:28px 28px 0 0;
+  box-shadow:0 -18px 56px rgba(39,91,126,.20);
+  transform:translateY(28px);transition:transform .22s ease;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.app-modal-backdrop.open .app-modal-sheet{transform:translateY(0)}
+.app-modal-handle{width:42px;height:5px;border-radius:999px;background:#bdd7e8;margin:9px auto 2px;flex:0 0 auto}
+.app-modal-head{
+  flex:0 0 auto;height:58px;display:grid;grid-template-columns:44px 1fr 44px;
+  align-items:center;gap:8px;padding:0 14px;
+  border-bottom:1px solid #dcecf6;
+  background:linear-gradient(180deg,rgba(235,248,255,.96),rgba(247,252,255,.96));
+}
+.app-modal-back{width:40px;height:40px;border:1px solid #cfe5f4;border-radius:13px;background:#fff;color:#2a5875;font-size:30px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 14px rgba(64,109,141,.07)}
+.app-modal-title{text-align:center;font-size:18px;font-weight:950;color:#23465e}
+.app-modal-head-spacer{width:40px}
+.app-modal-body{overflow:auto;-webkit-overflow-scrolling:touch;padding:14px;display:grid;gap:14px;overscroll-behavior:contain}
+.app-modal-body>.card,.app-modal-body>.dashboard-analysis-block{margin:0!important;width:100%!important;display:block!important}
+.app-modal-body>.dashboard-analysis-block{display:grid!important}
+.app-modal-body>#mealEntryCard,.app-modal-body>#weightRecordCard{display:block!important}
+body.app-modal-open{overflow:hidden}
+
+/* 原本頁面切換容器不再使用 */
+.app-subpage{display:none!important}
+
+@media(min-width:761px){
+  .app-modal-backdrop{align-items:center;padding:28px}
+  .app-modal-sheet{border-radius:28px;max-height:min(86vh,900px)}
+}
+@media(max-width:760px){
+  .mockup-quote-banner{height:248px!important;padding:12px 12px 14px!important}
+  .mockup-banner-top{align-items:stretch!important}
+  .mockup-date-pill,.weather-hero-card{min-height:50px!important;border-radius:16px!important}
+  .mockup-date-pill{flex:1 1 52%!important;padding:7px 9px!important}
+  .weather-hero-card{flex:0 1 45%!important;max-width:none!important}
+  .mockup-date-pill .mobile-date-wrap{min-width:0!important;width:100%!important}
+  .mockup-date-pill input[type="date"]{width:100%!important;font-size:12px!important}
+  .mockup-quote-copy{max-width:100%!important;width:100%!important;margin-top:auto!important}
+  .mockup-quote-main{font-size:26px!important;line-height:1.18!important}
+  .mockup-quote-sub{font-size:12px!important;width:auto!important;max-width:100%!important;margin-top:9px!important;padding:6px 10px!important}
+  .app-modal-backdrop{padding:10px 0 0!important}
+  .app-modal-sheet{width:100%!important;max-height:91vh!important;border-radius:26px 26px 0 0!important}
+  .app-modal-body{padding:12px!important}
+}
+@media(max-width:390px){
+  .mockup-quote-main{font-size:24px!important}
+  .mockup-quote-sub{font-size:11.5px!important;letter-spacing:-.01em!important}
+  .weather-hero-card{padding:7px 8px!important}
+  .weather-hero-card strong{max-width:74px!important}
+  .weather-hero-card small{max-width:82px!important}
+}
+
+
+/* ===== 2026.09.12.14 mobile body summary ===== */
+.mockup-stat-card-tdee{background:linear-gradient(180deg,#f7fcff 0%,#edf8ff 100%);border-color:#cfe9fa}
+@media(max-width:760px){
+  .mockup-stat-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    overflow:visible!important;
+    gap:8px!important;
+    padding-bottom:0!important;
+  }
+  .mockup-stat-card{
+    min-width:0!important;
+    min-height:118px!important;
+    padding:12px 11px!important;
+    border-radius:17px!important;
+  }
+  .mockup-stat-head{font-size:12px!important;gap:6px}
+  .mockup-stat-head i{font-size:16px!important}
+  .mockup-stat-value{margin-top:10px!important;gap:3px}
+  .mockup-stat-value b{font-size:25px!important;line-height:1.05}
+  .mockup-stat-value small{font-size:11px!important}
+  .mockup-stat-delta{font-size:12px!important;margin-top:5px!important}
+  .mockup-stat-note{font-size:10px!important;line-height:1.3;margin-top:3px!important}
+  .mockup-bmi-pill{font-size:10px!important;padding:4px 9px!important;margin-top:7px!important}
+  .mockup-stat-card-tdee{
+    grid-column:1 / -1;
+    min-height:86px!important;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-rows:auto auto;
+    align-items:center;
+    column-gap:12px;
+  }
+  .mockup-stat-card-tdee .mockup-stat-head{grid-column:1;grid-row:1;margin:0}
+  .mockup-stat-card-tdee .mockup-stat-value{grid-column:2;grid-row:1 / span 2;margin:0!important;justify-self:end}
+  .mockup-stat-card-tdee .mockup-stat-note{grid-column:1;grid-row:2;margin-top:2px!important}
+}
+
+
+/* ===== 2026.09.12.15 compact mobile hero + five stats in one row ===== */
+@media(max-width:760px){
+  /* 首頁天氣主卡改成手機友善的淺薄橫幅，日期/天氣維持左右兩個玻璃小卡 */
+  .mockup-quote-banner{
+    height:176px!important;
+    min-height:176px!important;
+    padding:8px 9px 10px!important;
+    border-radius:23px!important;
+    margin-bottom:9px!important;
+  }
+  .mockup-banner-top{
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    gap:7px!important;
+  }
+  .mockup-date-pill{
+    flex:0 0 auto!important;
+    width:124px!important;
+    min-height:39px!important;
+    height:39px!important;
+    padding:4px 6px!important;
+    border-radius:13px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:4px!important;
+  }
+  .mockup-date-pill>span{font-size:13px!important;flex:0 0 auto}
+  .mockup-date-pill .mobile-date-wrap{
+    width:95px!important;
+    min-width:0!important;
+    height:30px!important;
+    border:0!important;
+    background:transparent!important;
+    overflow:visible!important;
+  }
+  .mockup-date-pill input[type="date"]{
+    width:95px!important;
+    height:30px!important;
+    min-height:30px!important;
+    padding:0!important;
+    font-size:10px!important;
+    line-height:30px!important;
+    font-weight:800!important;
+    text-align:center!important;
+    text-align-last:center!important;
+  }
+  .weather-hero-card{
+    flex:0 0 auto!important;
+    width:119px!important;
+    max-width:119px!important;
+    min-height:39px!important;
+    height:39px!important;
+    padding:4px 7px!important;
+    border-radius:13px!important;
+    gap:5px!important;
+  }
+  .weather-hero-icon{font-size:16px!important}
+  .weather-hero-card .weather-badge-copy{line-height:1!important}
+  .weather-hero-card strong{font-size:10.5px!important;max-width:78px!important}
+  .weather-hero-card small{font-size:8.8px!important;margin-top:3px!important;max-width:82px!important}
+
+  /* 文案壓縮高度，保留現在的視覺但不佔滿整個手機 */
+  .mockup-quote-copy{
+    width:100%!important;
+    margin-top:auto!important;
+    padding:0 0 1px 1px!important;
+  }
+  .mockup-quote-main{
+    font-size:20px!important;
+    line-height:1.08!important;
+    letter-spacing:.01em!important;
+    max-width:76%!important;
+  }
+  .mockup-quote-sub{
+    font-size:9.8px!important;
+    line-height:1.2!important;
+    margin-top:5px!important;
+    padding:4px 7px!important;
+    border-radius:999px!important;
+    white-space:nowrap!important;
+    max-width:94%!important;
+  }
+  .weather-sun-orb{width:72px!important;height:72px!important;right:10%!important;top:23%!important}
+  .weather-cloud{width:104px!important;height:33px!important}
+  .weather-cloud::before{width:43px!important;height:43px!important;left:18px!important}
+  .weather-cloud::after{width:54px!important;height:54px!important;right:13px!important}
+
+  /* 五個指標固定同一排，不換行、不橫向滑動 */
+  .mockup-stat-grid{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:4px!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0 0 10px!important;
+  }
+  .mockup-stat-card,
+  .mockup-stat-card-tdee{
+    grid-column:auto!important;
+    display:block!important;
+    min-width:0!important;
+    min-height:88px!important;
+    height:88px!important;
+    padding:7px 5px!important;
+    border-radius:13px!important;
+    overflow:hidden!important;
+    box-shadow:0 4px 12px rgba(64,111,145,.07)!important;
+  }
+  .mockup-stat-head,
+  .mockup-stat-card-tdee .mockup-stat-head{
+    display:flex!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:2px!important;
+    margin:0!important;
+    font-size:9px!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+  }
+  .mockup-stat-head i{font-size:10px!important;line-height:1!important;flex:0 0 auto!important}
+  .mockup-stat-value,
+  .mockup-stat-card-tdee .mockup-stat-value{
+    display:flex!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    justify-self:auto!important;
+    align-items:baseline!important;
+    justify-content:flex-start!important;
+    gap:2px!important;
+    margin:9px 0 0!important;
+    white-space:nowrap!important;
+  }
+  .mockup-stat-value b{font-size:17px!important;line-height:1!important;letter-spacing:-.035em!important}
+  .mockup-stat-value small{font-size:7.5px!important;line-height:1!important;font-weight:800!important}
+  .mockup-stat-delta{font-size:8.7px!important;line-height:1.1!important;margin-top:6px!important;white-space:nowrap!important}
+  .mockup-stat-note,
+  .mockup-stat-card-tdee .mockup-stat-note{
+    display:block!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    margin-top:3px!important;
+    font-size:7px!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .mockup-bmi-pill{
+    margin-top:7px!important;
+    padding:3px 5px!important;
+    font-size:7.5px!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+  }
+}
+
+@media(max-width:390px){
+  .mockup-quote-banner{height:166px!important;min-height:166px!important}
+  .mockup-date-pill{width:116px!important}
+  .mockup-date-pill .mobile-date-wrap,.mockup-date-pill input[type="date"]{width:88px!important}
+  .weather-hero-card{width:110px!important;max-width:110px!important}
+  .mockup-quote-main{font-size:18px!important;max-width:78%!important}
+  .mockup-quote-sub{font-size:9px!important;padding:3px 6px!important}
+  .mockup-stat-grid{gap:3px!important}
+  .mockup-stat-card,.mockup-stat-card-tdee{height:82px!important;min-height:82px!important;padding:6px 4px!important;border-radius:12px!important}
+  .mockup-stat-head{font-size:8px!important}
+  .mockup-stat-head i{font-size:9px!important}
+  .mockup-stat-value b{font-size:15px!important}
+  .mockup-stat-value small{font-size:6.7px!important}
+  .mockup-stat-delta{font-size:7.8px!important;margin-top:5px!important}
+  .mockup-stat-note{font-size:6.3px!important}
+  .mockup-bmi-pill{font-size:6.8px!important;padding:2px 4px!important}
+}
+
 </style>
 </head>
 <body>
@@ -536,14 +846,14 @@ body{padding-top:calc(86px + env(safe-area-inset-top))!important}
         <div class="mockup-quote-main">慢一點沒關係，<br><strong>但不要停止 ♡</strong></div>
         <div class="mockup-quote-sub">今天也往喜歡的自己靠近一點 ✨</div>
       </div>
-      <div class="mockup-better-me">Better<br>Me <span>♥</span></div>
     </section>
 
     <section class="mockup-stat-grid" aria-label="體態摘要">
       <article class="mockup-stat-card"><div class="mockup-stat-head"><span>體重</span><i>⚖️</i></div><div class="mockup-stat-value"><b id="dashWeight">—</b><small>kg</small></div><div class="mockup-stat-delta" id="dashWeightDelta">—</div><div class="mockup-stat-note">較上次</div></article>
       <article class="mockup-stat-card"><div class="mockup-stat-head"><span>體脂率</span><i>🎀</i></div><div class="mockup-stat-value"><b id="dashBodyFat">—</b><small>%</small></div><div class="mockup-stat-delta" id="dashBodyFatDelta">—</div><div class="mockup-stat-note">較上次</div></article>
       <article class="mockup-stat-card"><div class="mockup-stat-head"><span>BMI</span><i>▥</i></div><div class="mockup-stat-value"><b id="dashBmi">—</b></div><div class="mockup-bmi-pill" id="dashBmiLabel">—</div></article>
-      <article class="mockup-stat-card"><div class="mockup-stat-head"><span>基礎代謝</span><i>🔥</i></div><div class="mockup-stat-value"><b id="dashBmr">—</b><small>kcal</small></div><div class="mockup-stat-note">每日估算</div></article>
+      <article class="mockup-stat-card"><div class="mockup-stat-head"><span>基礎代謝</span><i>🔥</i></div><div class="mockup-stat-value"><b id="dashBmr">—</b><small>kcal</small></div><div class="mockup-stat-note">BMR・每日基礎消耗</div></article>
+      <article class="mockup-stat-card mockup-stat-card-tdee"><div class="mockup-stat-head"><span>TDEE</span><i>⚡</i></div><div class="mockup-stat-value"><b id="dashTdee">—</b><small>kcal</small></div><div class="mockup-stat-note">依活動量估算每日總消耗</div></article>
     </section>
 
     <section class="dashboard-analysis-block" id="dashboardAnalysisBlock">
@@ -593,14 +903,17 @@ body{padding-top:calc(86px + env(safe-area-inset-top))!important}
 
   </main>
 
-  <section class="app-subpage" id="appSubpage" hidden aria-live="polite">
-    <div class="app-subpage-head">
-      <button type="button" class="app-back-btn" id="appBackBtn" aria-label="返回主畫面">‹</button>
-      <div class="app-subpage-title" id="appSubpageTitle">功能</div>
-      <div class="app-subpage-spacer" aria-hidden="true"></div>
-    </div>
-    <div class="app-subpage-body" id="appSubpageBody"></div>
-  </section>
+  <div class="app-modal-backdrop" id="appModalBackdrop" aria-hidden="true">
+    <section class="app-modal-sheet" id="appModalSheet" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+      <div class="app-modal-handle" aria-hidden="true"></div>
+      <div class="app-modal-head">
+        <button type="button" class="app-modal-back" id="appModalBack" aria-label="返回主畫面">‹</button>
+        <div class="app-modal-title" id="appModalTitle">功能</div>
+        <div class="app-modal-head-spacer" aria-hidden="true"></div>
+      </div>
+      <div class="app-modal-body" id="appModalBody"></div>
+    </section>
+  </div>
 
   <nav class="app-bottom-nav" id="appBottomNav" aria-label="主要功能">
     <button type="button" data-app-page="meal"><span>🍴</span><b>新增飲食</b></button>
@@ -745,7 +1058,7 @@ body{padding-top:calc(86px + env(safe-area-inset-top))!important}
   </section>
 </div>
 <script>
-const APP_VERSION = "2026.09.12.12";
+const APP_VERSION = "2026.09.12.15";
 const VERSION_FILE = "./version.json";
 let __latestAppVersion = APP_VERSION;
 
@@ -2169,7 +2482,8 @@ function renderMockupDashboard(){
   const latest=weights.at(-1),prev=weights.at(-2);const bf=weights.filter(x=>dashHasNum(x.bodyFat));const latestBf=bf.at(-1),prevBf=bf.at(-2);
   const w=latest&&dashHasNum(latest.weight)?Number(latest.weight):(dashHasNum(p.weight)?Number(p.weight):null),h=dashHasNum(p.height)?Number(p.height):null,a=dashHasNum(p.age)?Number(p.age):null;
   const bmi=w&&h?w/Math.pow(h/100,2):null;const bmr=(w&&h&&a)?(p.sex==="male"?10*w+6.25*h-5*a+5:10*w+6.25*h-5*a-161):null;
-  if($("dashWeight"))$("dashWeight").textContent=w!==null?w.toFixed(1):"—";if($("dashBodyFat"))$("dashBodyFat").textContent=latestBf?Number(latestBf.bodyFat).toFixed(1):"—";if($("dashBmi"))$("dashBmi").textContent=bmi!==null?bmi.toFixed(1):"—";if($("dashBmiLabel"))$("dashBmiLabel").textContent=dashBmiText(bmi);if($("dashBmr"))$("dashBmr").textContent=bmr!==null?Math.round(bmr).toLocaleString():"—";
+  const activity=dashHasNum(p.activity)?Number(p.activity):null;const tdee=(bmr!==null&&activity!==null)?bmr*activity:null;
+  if($("dashWeight"))$("dashWeight").textContent=w!==null?w.toFixed(1):"—";if($("dashBodyFat"))$("dashBodyFat").textContent=latestBf?Number(latestBf.bodyFat).toFixed(1):"—";if($("dashBmi"))$("dashBmi").textContent=bmi!==null?bmi.toFixed(1):"—";if($("dashBmiLabel"))$("dashBmiLabel").textContent=dashBmiText(bmi);if($("dashBmr"))$("dashBmr").textContent=bmr!==null?Math.round(bmr).toLocaleString():"—";if($("dashTdee"))$("dashTdee").textContent=tdee!==null?Math.round(tdee).toLocaleString():"—";
   dashDelta("dashWeightDelta",latest&&prev?Number(latest.weight)-Number(prev.weight):null,"kg");dashDelta("dashBodyFatDelta",latestBf&&prevBf?Number(latestBf.bodyFat)-Number(prevBf.bodyFat):null,"%");
   const selected=$("date")?.value||today,rows=(data.meals||[]).filter(x=>x.date===selected),eaten=rows.reduce((s,x)=>s+(dashHasNum(x.cal)?Number(x.cal):0),0),target=currentTarget();
   if($("dashEatenCal"))$("dashEatenCal").textContent=Math.round(eaten).toLocaleString();if($("dashTargetCal"))$("dashTargetCal").textContent=target?Math.round(target).toLocaleString():"—";if($("dashCalorieDonut"))$("dashCalorieDonut").style.setProperty("--p",dashPct(eaten,target));
@@ -2226,38 +2540,44 @@ function restoreAppElement(id){
 }
 function restoreAllAppElements(){["mealEntryCard","weightRecordCard","dashboardAnalysisBlock"].forEach(restoreAppElement);}
 function renderMyFoodsPage(query=""){
-  const host=$("appSubpageBody");if(!host)return;const q=normalize(query);const rows=[...(data.customFoods||[])].filter(x=>!q||normalize(x.name).includes(q)).sort((a,b)=>(Number(b.updatedAt)||0)-(Number(a.updatedAt)||0));
+  const host=$("appModalBody");if(!host)return;const q=normalize(query);const rows=[...(data.customFoods||[])].filter(x=>!q||normalize(x.name).includes(q)).sort((a,b)=>(Number(b.updatedAt)||0)-(Number(a.updatedAt)||0));
   host.innerHTML=`<section class="my-foods-page-card"><div class="my-foods-search"><input id="myFoodsSearch" autocomplete="off" placeholder="搜尋我的食物"></div><div class="my-foods-list" id="myFoodsList">${rows.length?rows.map((x,i)=>`<div class="my-food-row"><div><div class="my-food-name">${esc(x.name)}</div><div class="my-food-meta">使用 ${Number(x.uses)||1} 次</div></div><div class="my-food-cal">${dashHasNum(x.cal)?Number(x.cal).toFixed(0)+" kcal":"—"}</div><button type="button" class="my-food-del" data-my-food-name="${esc(x.name)}" aria-label="刪除 ${esc(x.name)}">×</button></div>`).join(""):'<div class="my-food-empty">還沒有「我的食物」紀錄。手動新增餐點後會自動記住 💙</div>'}</div></section>`;
   if($("myFoodsSearch"))$("myFoodsSearch").value=query;
   $("myFoodsSearch")?.addEventListener("input",e=>{const value=e.target.value;clearTimeout(window.__myFoodTimer);window.__myFoodTimer=setTimeout(()=>renderMyFoodsPage(value),120);});
   host.querySelectorAll("[data-my-food-name]").forEach(btn=>btn.addEventListener("click",()=>{const name=btn.dataset.myFoodName;if(!confirm(`要從「我的食物」刪除 ${name} 嗎？`))return;data.customFoods=(data.customFoods||[]).filter(x=>x.name!==name);save();renderMyFoodsPage($("myFoodsSearch")?.value||"");}));
 }
 function setBottomNavActive(page){document.querySelectorAll("[data-app-page]").forEach(b=>{const on=b.dataset.appPage===page;b.classList.toggle("active",on);b.setAttribute("aria-current",on?"page":"false");});}
-function closeAppPage(scroll=true){
+function closeAppPage(){
   restoreAllAppElements();activeAppPage=null;
-  const sub=$("appSubpage"),dash=$("mockupDashboard"),host=$("appSubpageBody");
-  if(sub)sub.hidden=true;if(dash)dash.hidden=false;if(host)host.replaceChildren();
-  setBottomNavActive(null);document.body.classList.remove("app-subpage-open");
-  if(scroll)window.scrollTo({top:0,behavior:"smooth"});
+  const backdrop=$("appModalBackdrop"),host=$("appModalBody");
+  if(backdrop){backdrop.classList.remove("open");backdrop.setAttribute("aria-hidden","true");}
+  if(host)host.replaceChildren();
+  setBottomNavActive(null);document.body.classList.remove("app-modal-open");
   requestAnimationFrame(()=>{renderMockupDashboard();drawDashboardActiveChart();});
 }
 function openAppPage(page){
   if(!APP_PAGE_TITLES[page])return;
+  if(activeAppPage)closeAppPage();
   restoreAllAppElements();
-  const sub=$("appSubpage"),dash=$("mockupDashboard"),host=$("appSubpageBody");
-  if(!sub||!dash||!host)return;
-  host.replaceChildren();activeAppPage=page;dash.hidden=true;sub.hidden=false;document.body.classList.add("app-subpage-open");
-  $("appSubpageTitle").textContent=APP_PAGE_TITLES[page];
+  const backdrop=$("appModalBackdrop"),host=$("appModalBody"),sheet=$("appModalSheet");
+  if(!backdrop||!host)return;
+  host.replaceChildren();activeAppPage=page;
+  $("appModalTitle").textContent=APP_PAGE_TITLES[page];
   if(page==="meal"){const el=$("mealEntryCard");if(el)host.appendChild(el);renderMeals();}
   else if(page==="weight"){const el=$("weightRecordCard");if(el)host.appendChild(el);renderWeights();}
   else if(page==="analysis"){const el=$("dashboardAnalysisBlock");if(el)host.appendChild(el);requestAnimationFrame(()=>{setDashboardChart(activeDashboardChart||"bodyfat");drawDashboardActiveChart();});}
   else if(page==="foods")renderMyFoodsPage();
-  setBottomNavActive(page);window.scrollTo({top:0,behavior:"auto"});
+  setBottomNavActive(page);document.body.classList.add("app-modal-open");
+  backdrop.classList.add("open");backdrop.setAttribute("aria-hidden","false");
+  if(sheet)sheet.scrollTop=0;
 }
 function initAppNavigation(){
   ["mealEntryCard","weightRecordCard","dashboardAnalysisBlock"].forEach(rememberAppHome);
   document.body.classList.add("app-nav-ready");
-  $("appBackBtn")?.addEventListener("click",()=>closeAppPage(true));
+  $("appModalBack")?.addEventListener("click",closeAppPage);
+  $("appModalBackdrop")?.addEventListener("click",e=>{if(e.target===$("appModalBackdrop"))closeAppPage();});
+  $("appModalSheet")?.addEventListener("click",e=>e.stopPropagation());
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("appModalBackdrop")?.classList.contains("open"))closeAppPage();});
   document.querySelectorAll("[data-app-page]").forEach(btn=>btn.addEventListener("click",()=>openAppPage(btn.dataset.appPage)));
 }
 window.addEventListener("resize",()=>{clearTimeout(window.__bfDashResize);window.__bfDashResize=setTimeout(drawDashboardActiveChart,150);});
