@@ -233,22 +233,27 @@
 }
 
 
-/* 版本更新提示：畫面正中央 */
+/* 頂部激勵列：固定底色＋隨機減脂文案 */
+.motivation-bar{position:sticky;top:0;z-index:10010;height:58px;margin:0 0 14px;background:#263746;color:#fff;border-radius:0 0 18px 18px;display:flex;align-items:center;padding:0 16px 0 70px;box-shadow:0 7px 20px rgba(30,48,64,.16);overflow:hidden}
+.motivation-viewport{width:100%;overflow:hidden;white-space:nowrap;text-align:center;font-size:14px;font-weight:850;letter-spacing:.02em}
+.motivation-text{display:inline-block;max-width:100%;vertical-align:middle}
+.motivation-text.marquee{max-width:none;padding-left:100%;animation:motivationMarquee 13s linear infinite}
+@keyframes motivationMarquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media(max-width:520px){.motivation-bar{height:54px;margin:0 -10px 12px;padding-left:64px;padding-right:12px;border-radius:0 0 16px 16px}.motivation-viewport{font-size:13px}}
+
+/* 版本更新提示：明亮卡片＋更新內容 */
 .update-banner{
   position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(calc(100vw - 32px),420px);z-index:10080;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-  padding:24px 22px;border:1px solid rgba(85,125,160,.22);border-radius:22px;background:rgba(255,255,255,.98);
-  box-shadow:0 24px 70px rgba(31,54,75,.28);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  color:#29445b;font-size:16px;font-weight:900;text-align:center;
+  width:min(calc(100vw - 32px),430px);z-index:10080;display:flex;flex-direction:column;align-items:stretch;gap:14px;
+  padding:22px;border:1px solid #d8e8f5;border-radius:22px;background:#fff;
+  box-shadow:0 22px 64px rgba(31,54,75,.20);color:#29445b;text-align:left;
 }
-.update-banner::before{content:"";position:fixed;inset:-100vh -100vw;z-index:-1;background:rgba(24,35,46,.28)}
+.update-banner::before{content:"";position:fixed;inset:-100vh -100vw;z-index:-1;background:rgba(34,51,66,.16);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
 .update-banner[hidden]{display:none!important}
-.update-banner button{
-  min-width:132px;border:0;border-radius:13px;padding:11px 18px;background:#cfe8ff;color:#29445b;font-weight:900;
-  font-size:15px;cursor:pointer;white-space:nowrap;
-}
-.update-banner button:active{transform:scale(.98)}
-
+.update-title{font-size:19px;font-weight:950;text-align:center}
+.update-notes{background:#f5faff;border:1px solid #dcecf9;border-radius:14px;padding:12px 13px;color:#425b70;font-size:13px;font-weight:650;line-height:1.65;white-space:pre-line;max-height:180px;overflow:auto}
+.update-banner button{align-self:center;min-width:148px;border:1px solid #b9d9f4;border-radius:13px;padding:11px 20px;background:#dcefff;color:#29445b;font-weight:900;font-size:15px;cursor:pointer;white-space:nowrap;box-shadow:none}
+.update-banner button:active{transform:scale(.98);background:#cfe8ff}
 
 /* 主畫面日期切換 */
 .main-date-card{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px}
@@ -270,8 +275,8 @@
 .menu-toggle{
   position:fixed;left:14px;top:calc(14px + env(safe-area-inset-top));z-index:10020;
   width:46px;height:46px;border:1px solid rgba(85,125,160,.22);border-radius:14px;
-  background:rgba(255,255,255,.96);box-shadow:0 8px 24px rgba(44,78,106,.16);
-  color:#29445b;font-size:0;line-height:1;display:flex;align-items:center;justify-content:center;
+  background:#263746;box-shadow:none;
+  color:#fff;font-size:0;line-height:1;display:flex;align-items:center;justify-content:center;
   cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
 }
 .menu-toggle::before{content:"";width:22px;height:16px;background:linear-gradient(to bottom,currentColor 0 2px,transparent 2px 7px,currentColor 7px 9px,transparent 9px 14px,currentColor 14px 16px);border-radius:2px}
@@ -307,6 +312,7 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
 </style>
 </head>
 <body>
+<div class="motivation-bar" id="motivationBar" aria-live="off"><div class="motivation-viewport" id="motivationViewport"><span class="motivation-text" id="motivationText"></span></div></div>
 <button type="button" class="menu-toggle" id="menuToggle" aria-label="開啟功能選單" aria-expanded="false">☰</button>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 <aside class="side-menu" id="sideMenu" aria-hidden="true">
@@ -326,7 +332,8 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
 
 <div class="wrap">
   <div id="updateBanner" class="update-banner" hidden aria-live="polite">
-    <span id="updateText">✨ 有新版程式可用</span>
+    <div class="update-title" id="updateText">✨ 有新版程式可用</div>
+    <div class="update-notes" id="updateNotes">正在讀取此次更新內容…</div>
     <button type="button" id="updateNowBtn">立即更新</button>
   </div>
   <header class="hero-card">
@@ -480,7 +487,7 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
   </section>
 </div>
 <script>
-const APP_VERSION = "2026.09.12.5";
+const APP_VERSION = "2026.09.12.6";
 const VERSION_FILE = "./version.json";
 let __latestAppVersion = APP_VERSION;
 
@@ -488,6 +495,37 @@ function freshLocalUrl(path){
   const sep=path.includes("?")?"&":"?";
   return `${path}${sep}v=${encodeURIComponent(APP_VERSION)}&t=${Date.now()}`;
 }
+
+const MOTIVATION_MESSAGES = [
+  "今天不用完美，只要比昨天更靠近目標一點。",
+  "每一餐都是一次選擇，不是一場考試。",
+  "慢慢瘦沒關係，穩穩往前才是真的進度。",
+  "記錄不是限制自己，是讓努力看得見。",
+  "少一點勉強，多一點能長久做到的習慣。",
+  "今天照顧好自己，就是在替未來的自己加分。",
+  "不用餓肚子證明努力，吃得剛好也能往目標前進。",
+  "體重會波動，但你累積的好習慣不會白費。",
+  "想吃可以吃，記得份量，下一餐繼續就好。",
+  "把目標拆成今天：今天做到一點，就算贏。",
+  "不是追求最快，而是找到你真的能維持的方法。",
+  "你不需要每天都有動力，只需要讓習慣接手。",
+  "一餐吃多不會毀掉進度，下一餐正常吃就好。",
+  "今天的選擇，是在替想要的體態投票。",
+  "有記錄就有線索，有線索就能越調越適合自己。",
+  "不用跟別人的速度比，只看自己的趨勢。",
+  "先做到七十分，再慢慢把七十分變成日常。",
+  "睡飽、吃夠、動一點，減脂不必靠硬撐。"
+];
+function setRandomMotivation(){
+  const el=document.getElementById("motivationText"), vp=document.getElementById("motivationViewport");
+  if(!el||!vp)return;
+  let last=sessionStorage.getItem("lastMotivation")||"";
+  let pool=MOTIVATION_MESSAGES.filter(x=>x!==last);
+  const msg=pool[Math.floor(Math.random()*pool.length)]||MOTIVATION_MESSAGES[0];
+  sessionStorage.setItem("lastMotivation",msg); el.textContent=msg; el.classList.remove("marquee");
+  requestAnimationFrame(()=>{ if(el.scrollWidth>vp.clientWidth){el.classList.add("marquee");} });
+}
+window.addEventListener("resize",()=>{const el=document.getElementById("motivationText"),vp=document.getElementById("motivationViewport");if(!el||!vp)return;el.classList.remove("marquee");requestAnimationFrame(()=>{if(el.scrollWidth>vp.clientWidth)el.classList.add("marquee");});});
 
 async function checkAppVersion(){
   try{
@@ -499,8 +537,10 @@ async function checkAppVersion(){
     __latestAppVersion=latest;
     const banner=document.getElementById("updateBanner");
     const text=document.getElementById("updateText");
+    const notes=document.getElementById("updateNotes");
     if(latest!==APP_VERSION){
       if(text)text.textContent=`✨ 發現新版 ${latest}`;
+      if(notes)notes.textContent=String(info.notes||"這次有新的功能與修正，建議立即更新。").trim();
       if(banner)banner.hidden=false;
     }else if(banner){
       banner.hidden=true;
@@ -529,6 +569,7 @@ async function applyAppUpdate(){
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
+  setRandomMotivation();
   const btn=document.getElementById("updateNowBtn");
   if(btn)btn.addEventListener("click",applyAppUpdate);
 });
