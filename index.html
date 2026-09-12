@@ -480,7 +480,7 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
   </section>
 </div>
 <script>
-const APP_VERSION = "2026.09.12.3";
+const APP_VERSION = "2026.09.12.5";
 const VERSION_FILE = "./version.json";
 let __latestAppVersion = APP_VERSION;
 
@@ -510,9 +510,18 @@ async function checkAppVersion(){
   }
 }
 
-function applyAppUpdate(){
+async function applyAppUpdate(){
   const latest=__latestAppVersion||Date.now();
-  try{localStorage.setItem("bodyTrackerAppVersion",String(latest));}catch(e){}
+  try{
+    // 更新前先備份目前本機資料；若已登入則先把待同步資料送上雲端。
+    localStorage.setItem(KEY+":backup",JSON.stringify(data));
+    localStorage.setItem(KEY+":backupAt",new Date().toISOString());
+    if(cloudUser && cloudReady){
+      clearTimeout(cloudSyncTimer); cloudSyncTimer=null; cloudDirty=true;
+      await writeCloudSnapshot();
+    }
+    localStorage.setItem("bodyTrackerAppVersion",String(latest));
+  }catch(e){ console.warn("更新前備份/同步未完成，本機資料仍保留",e); }
   const url=new URL(window.location.href);
   url.searchParams.set("appv",String(latest));
   url.searchParams.set("refresh",String(Date.now()));
@@ -650,8 +659,14 @@ async function loadCloudAfterLogin(){
     const migratedKey="bodyTrackerCloudMigrated:"+cloudUser.id;
     const migrated=localStorage.getItem(migratedKey)==="1";
     suppressCloudSync=true;
+    // 永遠合併，不允許較舊的雲端快照整包覆蓋本機新紀錄。
+    // 先留下同步前備份，萬一任何一步失敗仍可復原。
+    try{
+      localStorage.setItem(KEY+":backup",JSON.stringify(data));
+      localStorage.setItem(KEY+":backupAt",new Date().toISOString());
+    }catch(e){}
     if(remote && (remote.profileSaved||remote.meals.length||remote.weights.length||remote.customFoods.length)){
-      data = (!migrated && hasMeaningfulLocalData(data)) ? mergeLocalRemote(data,remote) : remote;
+      data = mergeLocalRemote(data,remote);
     }
     localStorage.setItem(KEY,JSON.stringify(data));
     suppressCloudSync=false;
@@ -823,6 +838,12 @@ function syncTodayToCurrentDate(){
 
 function save(){
   try{
+    // 每次寫入前保留上一份可復原快照，避免更新/同步異常造成紀錄消失。
+    const previous=localStorage.getItem(KEY);
+    if(previous){
+      localStorage.setItem(KEY+":backup",previous);
+      localStorage.setItem(KEY+":backupAt",new Date().toISOString());
+    }
     localStorage.setItem(KEY,JSON.stringify(data));
     queueCloudSync();
     return true;
@@ -1218,6 +1239,8 @@ async function loadFoodDatabases(){
     tf=await loadTFDARemote();
   }
 
+  rebuildFoodSearchIndex();
+
   const parts=[];
   parts.push(cv.ok ? `超商 ${cv.count.toLocaleString()} 筆` : `超商備援 ${cv.count} 筆`);
   if(ff.ok) parts.push(`速食 ${ff.count.toLocaleString()} 筆`);
@@ -1244,23 +1267,49 @@ async function loadFoodDatabases(){
   if($("food")?.value?.trim()) onFoodInput();
 }
 
-function localFoods(){
-  const custom=(data.customFoods||[]).map((f,i)=>({
+let STATIC_FOOD_SEARCH_INDEX=[];
+let foodInputTimer=null;
+
+function hasNumeric(v){
+  return v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v));
+}
+
+function prepareSearchFood(f){
+  const aliases=Array.isArray(f.aliases)?f.aliases:[];
+  const name=normalize(f.name||"");
+  const alias=normalize(f.alias||"");
+  const aliasAll=normalize(aliases.join(" "));
+  const store=normalize(f.store||"");
+  const brand=normalize(f.brand||"");
+  const all=normalize([
+    f.store,f.brand,f.name,f.alias,...aliases,
+    f.category,f.size,f.unit,f.source
+  ].filter(Boolean).join(" "));
+  return {f,name,alias,aliasAll,store,brand,all};
+}
+
+function rebuildFoodSearchIndex(){
+  const staticFoods=[
+    ...OFFICIAL_CHAIN_FOODS,
+    ...CONVENIENCE_FOODS,
+    ...FASTFOOD_FOODS,
+    ...DRINKSHOP_FOODS,
+    ...PROCESSED_FOODS,
+    ...TAIPEI_FOODS,
+    ...SCHOOL_FOODS,
+    ...TFDA_FOODS,
+    ...COMMON_TW_FOODS
+  ];
+  STATIC_FOOD_SEARCH_INDEX=staticFoods.map(prepareSearchFood);
+}
+
+function customSearchIndex(){
+  return (data.customFoods||[]).map((f,i)=>prepareSearchFood({
     ...f,
     id:f.id||("custom"+i),
     store:"我的食物",
-    source:"custom",
-    search:normalize([f.name,f.alias,...(Array.isArray(f.aliases)?f.aliases:[])].filter(Boolean).join(" "))
+    source:"custom"
   }));
-  return [...custom,...OFFICIAL_CHAIN_FOODS,...CONVENIENCE_FOODS,...FASTFOOD_FOODS,...DRINKSHOP_FOODS,...PROCESSED_FOODS,...TAIPEI_FOODS,...SCHOOL_FOODS,...TFDA_FOODS,...COMMON_TW_FOODS];
-}
-
-function foodSearchText(f){
-  return normalize([
-    f.store,f.brand,f.name,f.alias,
-    ...(Array.isArray(f.aliases)?f.aliases:[]),
-    f.category,f.size,f.unit,f.source
-  ].filter(Boolean).join(" "));
 }
 
 function bigramSimilarity(a,b){
@@ -1268,8 +1317,9 @@ function bigramSimilarity(a,b){
   if(!a||!b)return 0;
   if(a.includes(b)||b.includes(a))return 1;
   if(a.length<2||b.length<2)return 0;
-  const grams=x=>{const out=[];for(let i=0;i<x.length-1;i++)out.push(x.slice(i,i+2));return out;};
-  const ga=grams(a), gb=grams(b); const pool=[...gb]; let hit=0;
+  const ga=[]; for(let i=0;i<a.length-1;i++)ga.push(a.slice(i,i+2));
+  const gb=[]; for(let i=0;i<b.length-1;i++)gb.push(b.slice(i,i+2));
+  const pool=[...gb]; let hit=0;
   for(const g of ga){const i=pool.indexOf(g);if(i>=0){hit++;pool.splice(i,1);}}
   return (2*hit)/(ga.length+gb.length);
 }
@@ -1286,73 +1336,120 @@ function sourcePriority(f){
   return 2;
 }
 
-function scoreFood(f,q){
-  const n=normalize(q); if(!n)return 0;
-  const name=normalize(f.name), alias=normalize(f.alias), store=normalize(f.store), brand=normalize(f.brand);
-  const aliases=normalize(Array.isArray(f.aliases)?f.aliases.join(" "):"");
-  const all=foodSearchText(f);
+function scorePreparedFood(x,q,n,tokens,allowFuzzy=false){
+  const {f,name,alias,aliasAll,store,brand,all}=x;
   let score=0;
-  if(name===n)score=Math.max(score,220);
-  if(store===n||brand===n)score=Math.max(score,205); // 搜品牌時，直接列出該品牌商品
+  if(name===n)score=220;
+  if(store===n||brand===n)score=Math.max(score,205);
   if(name.startsWith(n))score=Math.max(score,185);
   if(store.startsWith(n)||brand.startsWith(n))score=Math.max(score,175);
-  if(alias===n||aliases===n)score=Math.max(score,170);
+  if(alias===n||aliasAll===n)score=Math.max(score,170);
   if(name.includes(n))score=Math.max(score,155);
-  if(alias.includes(n)||aliases.includes(n))score=Math.max(score,145);
+  if(alias.includes(n)||aliasAll.includes(n))score=Math.max(score,145);
   if(store.includes(n)||brand.includes(n))score=Math.max(score,140);
   if(all.includes(n))score=Math.max(score,125);
 
-  // 支援「7 11 雞胸」、「麥當 雞塊」這種多關鍵字搜尋。
-  const tokens=String(q).normalize("NFKC").toLowerCase().split(/[\s,，、/]+/).map(normalize).filter(Boolean);
   if(tokens.length>1){
-    const hits=tokens.filter(t=>all.includes(t)).length;
+    let hits=0;
+    for(const t of tokens) if(all.includes(t)) hits++;
     if(hits===tokens.length)score=Math.max(score,135+hits*4);
     else if(hits)score=Math.max(score,70+hits*10);
   }
 
-  // 容錯搜尋：少打一個字、繁複品名仍有機會找到；一字查詢不啟用避免雜訊。
-  if(n.length>=2){
-    const sim=Math.max(bigramSimilarity(name,n),bigramSimilarity(store+name,n),bigramSimilarity(brand+name,n));
-    if(sim>=0.72)score=Math.max(score,85+Math.round(sim*20));
+  // 大資料庫下，只有直接命中不足時才做模糊比對，避免每打一個字就對十萬筆做 bigram。
+  if(!score && allowFuzzy && n.length>=3){
+    const sim=Math.max(
+      bigramSimilarity(name,n),
+      bigramSimilarity(store+name,n),
+      bigramSimilarity(brand+name,n)
+    );
+    if(sim>=0.76)score=85+Math.round(sim*20);
   }
   return score?score+sourcePriority(f):0;
 }
 
 function searchLocal(q,limit=24){
-  if(!normalize(q))return[];
+  const n=normalize(q);
+  if(!n)return[];
+  const tokens=String(q).normalize("NFKC").toLowerCase().split(/[\s,，、/]+/).map(normalize).filter(Boolean);
+  const index=[...customSearchIndex(),...STATIC_FOOD_SEARCH_INDEX];
   const seen=new Set();
-  return localFoods()
-    .map(f=>({f,s:scoreFood(f,q)}))
-    .filter(x=>x.s>0)
+  let best=[];
+
+  // 第一輪只做便宜的字串比對。
+  for(const x of index){
+    const s=scorePreparedFood(x,q,n,tokens,false);
+    if(!s)continue;
+    const f=x.f;
+    const k=normalize(`${f.store}|${f.name}|${hasNumeric(f.cal)?f.cal:""}`);
+    if(seen.has(k))continue;
+    seen.add(k);
+    best.push({f,s});
+    if(best.length>96){
+      best.sort((a,b)=>b.s-a.s||sourcePriority(b.f)-sourcePriority(a.f)||String(a.f.name).length-String(b.f.name).length);
+      best=best.slice(0,48);
+    }
+  }
+
+  // 只有直接命中太少時才做較貴的容錯搜尋，而且限制候選範圍。
+  if(best.length<8 && n.length>=3){
+    const fuzzyPool=index.filter(x=>
+      x.name.includes(n.slice(0,1)) ||
+      x.store.includes(n.slice(0,1)) ||
+      x.brand.includes(n.slice(0,1))
+    ).slice(0,5000);
+    for(const x of fuzzyPool){
+      const s=scorePreparedFood(x,q,n,tokens,true);
+      if(!s)continue;
+      const f=x.f;
+      const k=normalize(`${f.store}|${f.name}|${hasNumeric(f.cal)?f.cal:""}`);
+      if(seen.has(k))continue;
+      seen.add(k);
+      best.push({f,s});
+    }
+  }
+
+  return best
     .sort((a,b)=>b.s-a.s||sourcePriority(b.f)-sourcePriority(a.f)||String(a.f.name).length-String(b.f.name).length)
-    .filter(x=>{const k=normalize(`${x.f.store}|${x.f.name}|${x.f.cal}`);if(seen.has(k))return false;seen.add(k);return true;})
     .slice(0,limit)
     .map(x=>x.f);
 }
+
 async function searchOFF(q){
   if(normalize(q).length<2)return[];
   try{ const u="https://world.openfoodfacts.org/cgi/search.pl?search_terms="+encodeURIComponent(q)+"&search_simple=1&action=process&json=1&page_size=8"; const r=await fetch(u); if(!r.ok)return[]; const j=await r.json(); return (j.products||[]).map((p,i)=>{const name=p.product_name_zh||p.product_name_zh_tw||p.product_name||""; const cal=p.nutriments?.['energy-kcal_100g']; if(!name||!Number.isFinite(cal))return null; return {id:"off"+i,store:"Open Food Facts",name,alias:(p.brands||""),cal:Math.round(cal*10)/10,unit:"每100g",source:"off",search:normalize(name+" "+(p.brands||""))};}).filter(Boolean); }catch(e){return[];}
 }
-function renderSuggestions(items){ const box=$("foodSuggest"); if(!items.length){box.hidden=true;box.innerHTML="";return;} box.innerHTML=items.map((f,i)=>{
-  const hasNum=v=>v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v));
-  const kcal=hasNum(f.cal) ? `${f.quality==="exact"?"":"約 "}${esc(f.cal)} kcal` : "熱量 — kcal";
-  const macro=`蛋白 ${hasNum(f.protein)?Number(f.protein).toFixed(1)+"g":"—"}・碳水 ${hasNum(f.carbs)?Number(f.carbs).toFixed(1)+"g":"—"}・脂肪 ${hasNum(f.fat)?Number(f.fat).toFixed(1)+"g":"—"}`;
-  const q=(f.quality==="exact"||f.quality==="official")?"・官方標示":f.quality==="official-public"?"・公開熱量":f.quality==="approx"?"・估算值":f.quality==="index"?"・官方名稱索引":"";
-  return `<div class="food-option" data-i="${i}"><div class="name">${esc(f.name)} <span class="pill">${esc(f.store)}</span></div><div class="meta">${kcal}${f.unit?"・"+esc(f.unit):""}${q}<br>${esc(macro)}</div></div>`;
-}).join(""); box.hidden=false; [...box.querySelectorAll('.food-option')].forEach((el,i)=>el.onclick=()=>chooseFood(items[i])); }
-function chooseFood(f){ selectedFood=f; $("food").value=f.name; if(Number.isFinite(Number(f.cal))) $("calories").value=f.cal; else $("calories").value=""; $("foodMatch").textContent=Number.isFinite(Number(f.cal))?`已帶入：${f.name}｜${f.cal} kcal｜來源：${f.store}`:`已找到：${f.name}｜來源：${f.store}；目前沒有可靠熱量，請手動輸入或稍候線上補查。`; $("foodSuggest").hidden=true; }
-async function onFoodInput(){
-  selectedFood=null;
-  $("foodMatch").textContent="";
-  const q=$("food").value.trim();
-  clearTimeout(offTimer);
-  if(!q){renderSuggestions([]);return;}
 
+function renderSuggestions(items){
+  const box=$("foodSuggest");
+  if(!items.length){box.hidden=true;box.innerHTML="";return;}
+  box.innerHTML=items.map((f,i)=>{
+    const kcal=hasNumeric(f.cal) ? `${f.quality==="exact"?"":"約 "}${esc(f.cal)} kcal` : "熱量 — kcal";
+    const macro=`蛋白 ${hasNumeric(f.protein)?Number(f.protein).toFixed(1)+"g":"—"}・碳水 ${hasNumeric(f.carbs)?Number(f.carbs).toFixed(1)+"g":"—"}・脂肪 ${hasNumeric(f.fat)?Number(f.fat).toFixed(1)+"g":"—"}`;
+    const q=(f.quality==="exact"||f.quality==="official")?"・官方標示":f.quality==="official-public"?"・公開熱量":f.quality==="approx"?"・估算值":f.quality==="index"?"・官方名稱索引":"";
+    return `<div class="food-option" data-i="${i}"><div class="name">${esc(f.name)} <span class="pill">${esc(f.store)}</span></div><div class="meta">${kcal}${f.unit?"・"+esc(f.unit):""}${q}<br>${esc(macro)}</div></div>`;
+  }).join("");
+  box.hidden=false;
+  [...box.querySelectorAll('.food-option')].forEach((el,i)=>el.onclick=()=>chooseFood(items[i]));
+}
+
+function chooseFood(f){
+  selectedFood=f;
+  $("food").value=f.name;
+  if(hasNumeric(f.cal)) $("calories").value=f.cal;
+  else $("calories").value="";
+  $("foodMatch").textContent=hasNumeric(f.cal)
+    ? `已帶入：${f.name}｜${f.cal} kcal｜來源：${f.store}`
+    : `已找到：${f.name}｜來源：${f.store}；目前沒有可靠熱量，請手動輸入或稍候線上補查。`;
+  $("foodSuggest").hidden=true;
+}
+
+async function runFoodSearch(q){
   const local=searchLocal(q,24);
   renderSuggestions(local);
-
-  // 本地已經很充足就不必再等待外部查詢；否則用 OFF 補查。
   if(local.length>=12||normalize(q).length<2)return;
+
+  clearTimeout(offTimer);
   offTimer=setTimeout(async()=>{
     const off=await searchOFF(q);
     const merged=[...local,...off.filter(o=>!local.some(l=>normalize(l.name)===normalize(o.name)&&normalize(l.store)===normalize(o.store)))].slice(0,24);
@@ -1360,9 +1457,25 @@ async function onFoodInput(){
       renderSuggestions(merged);
       if(!merged.length)$("foodMatch").textContent="資料庫暫時找不到；你仍可直接輸入熱量並新增，之後會自動記進『我的食物』。";
     }
-  },350);
+  },450);
 }
-$("food").addEventListener("input",onFoodInput); document.addEventListener("click",e=>{if(!e.target.closest('.food-search'))$("foodSuggest").hidden=true;});
+
+function onFoodInput(){
+  selectedFood=null;
+  $("foodMatch").textContent="";
+  const q=$("food").value.trim();
+  clearTimeout(foodInputTimer);
+  clearTimeout(offTimer);
+  if(!q){renderSuggestions([]);return;}
+
+  // 120ms debounce：打字時不會每個按鍵都掃描十萬筆資料。
+  foodInputTimer=setTimeout(()=>{
+    if($("food").value.trim()===q) runFoodSearch(q);
+  },120);
+}
+
+$("food").addEventListener("input",onFoodInput);
+document.addEventListener("click",e=>{if(!e.target.closest('.food-search'))$("foodSuggest").hidden=true;});
 function rememberCustomFood(name,cal){
   const key=normalize(name);
   if(!key)return false;
