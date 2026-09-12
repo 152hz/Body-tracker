@@ -233,13 +233,22 @@
 }
 
 
+/* 辰宇落雁體 2.0（OFL 1.1） */
+@font-face{
+  font-family:"ChenYuluoyan";
+  src:url("https://cdn.jsdelivr.net/gh/Chenyu-otf/chenyuluoyan_thin@main/ChenYuluoyan-2.0-Thin.ttf") format("truetype");
+  font-display:swap;
+  font-style:normal;
+  font-weight:400;
+}
+
 /* 頂部激勵列：固定底色＋隨機減脂文案 */
-.motivation-bar{position:sticky;top:0;z-index:10010;height:58px;margin:0 0 14px;background:#263746;color:#fff;border-radius:0 0 18px 18px;display:flex;align-items:center;padding:0 16px 0 70px;box-shadow:0 7px 20px rgba(30,48,64,.16);overflow:hidden}
-.motivation-viewport{width:100%;overflow:hidden;white-space:nowrap;text-align:center;font-size:14px;font-weight:850;letter-spacing:.02em}
+.motivation-bar{position:sticky;top:0;z-index:10010;height:66px;margin:0 0 14px;background:#263746;color:#fff;border-radius:0 0 18px 18px;display:flex;align-items:center;padding:0 16px 0 70px;box-shadow:0 7px 20px rgba(30,48,64,.16);overflow:hidden}
+.motivation-viewport{width:100%;overflow:hidden;white-space:nowrap;text-align:center;font-size:22px;font-weight:400;letter-spacing:.045em;line-height:1.25;font-family:"ChenYuluoyan","PingFang TC","Noto Sans TC","Apple Color Emoji","Segoe UI Emoji",cursive}
 .motivation-text{display:inline-block;max-width:100%;vertical-align:middle}
 .motivation-text.marquee{max-width:none;padding-left:100%;animation:motivationMarquee 13s linear infinite}
 @keyframes motivationMarquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-@media(max-width:520px){.motivation-bar{height:54px;margin:0 -10px 12px;padding-left:64px;padding-right:12px;border-radius:0 0 16px 16px}.motivation-viewport{font-size:13px}}
+@media(max-width:520px){.motivation-bar{height:62px;margin:0 -10px 12px;padding-left:64px;padding-right:12px;border-radius:0 0 16px 16px}.motivation-viewport{font-size:20px;letter-spacing:.035em}}
 
 /* 版本更新提示：明亮卡片＋更新內容 */
 .update-banner{
@@ -309,11 +318,44 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
 @media(max-width:520px){.utility-modal-backdrop{padding:10px;align-items:flex-end}.utility-modal{width:100%;max-height:90vh;border-radius:22px 22px 10px 10px}.utility-modal-body{padding:14px;max-height:calc(90vh - 69px)}}
 @media(max-width:520px){.menu-toggle{left:10px;top:calc(10px + env(safe-area-inset-top));width:44px;height:44px}.side-menu{width:min(86vw,310px)}}
 
+
+/* ===== 2026.09.12.8 mockup-inspired baby-blue UI ===== */
+:root{--bg:#f4faff;--card:#ffffff;--text:#203246;--muted:#70879b;--line:#dceaf6;--primary:#9fd5ff;--primary2:#82c6f6;--success:#43a67a;--shadow:0 10px 26px rgba(76,127,168,.10)}
+body{background:linear-gradient(180deg,#edf8ff 0,#f7fbff 210px,#f5f9fc 100%);padding-top:calc(82px + env(safe-area-inset-top));}
+.wrap{max-width:980px;padding-top:18px}
+.motivation-bar{position:fixed;top:0;left:0;right:0;z-index:10010;height:calc(72px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0 78px;margin:0;border-radius:0;background:linear-gradient(135deg,#253748 0%,#30485d 100%);box-shadow:0 7px 22px rgba(22,52,76,.22);display:flex;align-items:center;overflow:hidden}
+.motivation-viewport{padding:0 58px 0 8px;text-align:left;font-size:26px;line-height:1.05;color:#fff;font-family:"ChenYuluoyan","PingFang TC","Noto Sans TC","Apple Color Emoji","Segoe UI Emoji",cursive;font-weight:400;letter-spacing:.03em}
+.motivation-text{filter:drop-shadow(0 1px 0 rgba(0,0,0,.08))}
+.menu-toggle,.menu-toggle.show{display:flex;position:absolute;left:18px;top:calc(env(safe-area-inset-top) + 14px);width:48px;height:48px;padding:0;align-items:center;justify-content:center;border:0;background:transparent;color:#fff;border-radius:14px;font-size:0;box-shadow:none;z-index:2}
+.menu-toggle::before{width:30px;height:22px;background:linear-gradient(to bottom,currentColor 0 3px,transparent 3px 9px,currentColor 9px 12px,transparent 12px 19px,currentColor 19px 22px)}
+.top-badge{position:absolute;right:16px;top:calc(env(safe-area-inset-top) + 15px);width:44px;height:44px;border-radius:14px;background:rgba(207,232,255,.16);display:grid;place-items:center;font-size:21px;border:1px solid rgba(255,255,255,.12)}
+.hero-card{background:transparent;box-shadow:none;border-radius:0;padding:4px 0 12px;margin-bottom:2px;color:var(--text)}
+.hero-eyebrow{display:none}.hero-title{font-size:27px;color:#203246;margin:0 0 3px}.hero-subtitle{color:#7b91a3;font-size:13px}
+.hero-stats{gap:10px;margin-top:16px}
+.hero-stat{position:relative;background:rgba(255,255,255,.96);border:1px solid #e1eef8;border-radius:21px;padding:15px 14px 16px;box-shadow:0 8px 22px rgba(79,130,169,.09)}
+.hero-stat::after{content:"";position:absolute;right:13px;top:13px;width:28px;height:28px;border-radius:10px;background:#dff1ff}
+.hero-stat:nth-child(1)::before{content:"⚖️"}.hero-stat:nth-child(2)::before{content:"📏"}.hero-stat:nth-child(3)::before{content:"🔥"}.hero-stat:nth-child(4)::before{content:"🎯"}
+.hero-stat::before{position:absolute;z-index:1;right:17px;top:16px;font-size:15px}
+.hero-stat .k{font-size:12px;color:#7890a3;margin-bottom:9px;padding-right:30px}.hero-stat .v{font-size:23px;color:#1f3447}
+.card,.auth-card{border:1px solid #e0edf7;background:rgba(255,255,255,.97);box-shadow:0 9px 24px rgba(77,126,166,.08);border-radius:22px}
+.card h2{font-size:20px;color:#263d51}.card h2::after{content:"";display:block;width:38px;height:4px;background:#b9e2ff;border-radius:999px;margin-top:8px}
+.main-date-card{background:#e8f6ff;border-color:#d2eaff;box-shadow:none}.main-date-label{color:#35546d;font-weight:900}
+.today-card{background:linear-gradient(135deg,#f9fdff 0%,#edf8ff 100%)}
+.today-card .cal-track{background:#dfeef8}.today-card .cal-fill{background:linear-gradient(90deg,#79c5f4,#a9ddff)}
+.btn:not(.light):not(.danger),.btn.secondary{background:linear-gradient(135deg,#a9ddff,#83c9f8);color:#17364c;box-shadow:0 6px 14px rgba(85,169,224,.20)}
+.btn.light{background:#edf7ff;color:#34536a;border:1px solid #d7ebf8}
+input,select{border-color:#d6e6f2;background:#fbfdff;border-radius:13px}input:focus,select:focus{border-color:#88cbf6;box-shadow:0 0 0 3px rgba(132,202,247,.18)}
+.stat{background:linear-gradient(180deg,#fbfdff,#f3faff);border-color:#dcebf6;border-radius:18px;padding:14px 13px}.stat .k{font-size:12px;color:#7990a3}.stat .v{font-size:21px;color:#20374a}.bodyfat-stat{background:linear-gradient(180deg,#fffafd,#fff1f6);border-color:#f4dfe8}.bodyfat-stat .v{color:#b85f80}.trend-good{color:#2f9f77!important}.trend-up{color:#cf6d78!important}
+.weight-summary{grid-template-columns:repeat(6,1fr);gap:9px}
+.chart-card{background:linear-gradient(180deg,#fcfeff 0%,#f1f9ff 100%);border-color:#d8eaf7;border-radius:20px;padding:16px 12px 10px;box-shadow:inset 0 1px 0 #fff}.chart-title{font-size:16px;color:#2a4357}.chart-sub{color:#8195a5}
+.food-suggest{border-color:#d7e7f2;border-radius:16px;box-shadow:0 16px 32px rgba(43,87,120,.15)}.food-option:hover{background:#eef8ff}
+.update-banner{background:#fff!important;border:1px solid #dceaf5!important;color:#263d50!important;box-shadow:0 18px 50px rgba(36,75,105,.18)!important}.update-notes{background:#f3f9fe!important;color:#587187!important;border:1px solid #e1eef7!important}.update-banner button{background:linear-gradient(135deg,#a9ddff,#86caf7)!important;color:#17364b!important}
+@media(max-width:720px){body{padding-top:calc(74px + env(safe-area-inset-top))}.wrap{padding:12px 11px calc(26px + env(safe-area-inset-bottom))}.motivation-bar{height:calc(66px + env(safe-area-inset-top));padding-left:67px;padding-right:10px}.motivation-viewport{font-size:22px;padding-right:50px}.menu-toggle,.menu-toggle.show{left:10px;top:calc(env(safe-area-inset-top) + 11px);width:44px;height:44px}.top-badge{right:10px;top:calc(env(safe-area-inset-top) + 11px);width:42px;height:42px}.hero-title{font-size:24px}.hero-stats{grid-template-columns:1fr 1fr;gap:8px}.hero-stat{padding:13px;border-radius:18px}.hero-stat .v{font-size:20px}.card,.auth-card{border-radius:19px}.weight-summary{grid-template-columns:1fr 1fr;gap:8px}.weight-summary .stat{min-height:82px}.chart-card{margin-top:10px}canvas{height:255px!important}}
+
 </style>
 </head>
 <body>
-<div class="motivation-bar" id="motivationBar" aria-live="off"><div class="motivation-viewport" id="motivationViewport"><span class="motivation-text" id="motivationText"></span></div></div>
-<button type="button" class="menu-toggle" id="menuToggle" aria-label="開啟功能選單" aria-expanded="false">☰</button>
+<div class="motivation-bar" id="motivationBar" aria-live="off"><button type="button" class="menu-toggle" id="menuToggle" aria-label="開啟功能選單" aria-expanded="false">☰</button><div class="motivation-viewport" id="motivationViewport"><span class="motivation-text" id="motivationText"></span></div><div class="top-badge" aria-hidden="true">💧</div></div>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 <aside class="side-menu" id="sideMenu" aria-hidden="true">
   <div class="side-menu-head"><div class="side-menu-title">功能選單</div><button type="button" class="side-menu-close" id="sideMenuClose" aria-label="關閉選單">×</button></div>
@@ -476,7 +518,8 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
       <div class="stat"><div class="k">最新體重</div><div class="v" id="latestWeight">—</div></div>
       <div class="stat"><div class="k">最新體脂</div><div class="v" id="latestBodyFat">—</div></div>
       <div class="stat"><div class="k">距離目標</div><div class="v" id="goalDiff">—</div></div>
-      <div class="stat"><div class="k">近 7 筆變化</div><div class="v" id="recentChange">—</div></div>
+      <div class="stat"><div class="k">體重近 7 筆</div><div class="v" id="recentChange">—</div></div>
+      <div class="stat bodyfat-stat"><div class="k">體脂近 7 筆</div><div class="v" id="recentBodyFatChange">—</div></div>
       <div class="stat"><div class="k">最低紀錄</div><div class="v" id="minWeight">—</div></div>
     </div>
     <div class="chart-card">
@@ -487,7 +530,7 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
   </section>
 </div>
 <script>
-const APP_VERSION = "2026.09.12.6";
+const APP_VERSION = "2026.09.12.8";
 const VERSION_FILE = "./version.json";
 let __latestAppVersion = APP_VERSION;
 
@@ -497,10 +540,10 @@ function freshLocalUrl(path){
 }
 
 const MOTIVATION_MESSAGES = [
-  "今天不用完美，只要比昨天更靠近目標一點。",
-  "每一餐都是一次選擇，不是一場考試。",
-  "慢慢瘦沒關係，穩穩往前才是真的進度。",
-  "記錄不是限制自己，是讓努力看得見。",
+  "✨ 今天不用完美，只要比昨天更靠近目標一點 💙",
+  "🥗 每一餐都是一次選擇，不是一場考試",
+  "🌱 慢慢瘦沒關係，穩穩往前才是真的進度",
+  "📖 記錄不是限制自己，是讓努力看得見",
   "少一點勉強，多一點能長久做到的習慣。",
   "今天照顧好自己，就是在替未來的自己加分。",
   "不用餓肚子證明努力，吃得剛好也能往目標前進。",
@@ -1655,8 +1698,13 @@ function renderWeights(){
     $("latestBodyFat").textContent=latestWithBodyFat?`${Number(latestWithBodyFat.bodyFat).toFixed(1)} %`:"—";
     $("goalDiff").textContent=goal?`${Math.abs(num(latest.weight)-goal).toFixed(1)} kg`:"—";
     $("recentChange").textContent=recent.length>1?`${change>0?"+":""}${change.toFixed(1)} kg`:"—";
+    const bfRecent=asc.filter(x=>x.bodyFat!=null && x.bodyFat!=="").slice(-7);
+    const bfChange=bfRecent.length>1?Number(bfRecent[bfRecent.length-1].bodyFat)-Number(bfRecent[0].bodyFat):null;
+    $("recentBodyFatChange").textContent=bfChange==null?"—":`${bfChange>0?"+":""}${bfChange.toFixed(1)} %`;
+    $("recentBodyFatChange").classList.toggle("trend-good",bfChange!=null&&bfChange<0);
+    $("recentBodyFatChange").classList.toggle("trend-up",bfChange!=null&&bfChange>0);
     $("minWeight").textContent=`${min.toFixed(1)} kg`;
-  }else ["latestWeight","latestBodyFat","goalDiff","recentChange","minWeight"].forEach(id=>$(id).textContent="—");
+  }else ["latestWeight","latestBodyFat","goalDiff","recentChange","recentBodyFatChange","minWeight"].forEach(id=>$(id).textContent="—");
   drawChart();
 }
 function drawChart(){
