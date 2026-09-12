@@ -438,7 +438,7 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
       <div><label>熱量 kcal</label><input id="calories" type="number" step="any" placeholder="可自動帶入"></div>
       <div class="meal-submit"><button type="button" class="btn" onclick="addMeal()">＋ 新增一餐</button></div>
     </div>
-    <div class="hint">💡 搜尋順序包含：我的食物、超商、速食店、手搖飲、連鎖早餐、咖啡廳、賣場、拉麵、連鎖餐飲、夜市、美食街、團膳、校園菜色、伴手禮、食藥署、台灣常見食品；不足時再用 Open Food Facts 線上補查。<br>🧠 手動輸入資料庫沒有的食物後，會自動記到「我的食物」，下次可直接搜尋並帶入熱量。</div>
+    <div class="hint">💡 搜尋順序包含：我的食物、超商、速食店、手搖飲、TFDA加工食品（泡麵／餅乾／罐頭／飲料／冷凍食品等）、連鎖早餐、咖啡廳、賣場、拉麵、連鎖餐飲、夜市、美食街、團膳、校園菜色、伴手禮、食藥署、台灣常見食品；不足時再用 Open Food Facts 線上補查。<br>🧠 手動輸入資料庫沒有的食物後，會自動記到「我的食物」，下次可直接搜尋並帶入熱量。</div>
     <div id="dbStatus" class="status">食物資料庫載入中…</div>
     <div class="table-wrap meal-table-wrap"><table class="mobile-table meal-table"><thead><tr><th>餐別</th><th>食物</th><th>熱量</th><th>來源</th><th style="width:72px;text-align:right">刪除</th></tr></thead><tbody id="mealBody"></tbody></table></div>
 
@@ -480,7 +480,7 @@ body.menu-open,body.utility-modal-open{overflow:hidden}
   </section>
 </div>
 <script>
-const APP_VERSION = "2026.09.12.2";
+const APP_VERSION = "2026.09.12.3";
 const VERSION_FILE = "./version.json";
 let __latestAppVersion = APP_VERSION;
 
@@ -1029,6 +1029,7 @@ let FASTFOOD_FOODS=[];
 let DRINKSHOP_FOODS=[];
 let TAIPEI_FOODS=[];
 let SCHOOL_FOODS=[];
+let PROCESSED_FOODS=[];
 let OFFICIAL_CHAIN_FOODS=[];
 
 function normalizeChainItem(x,i,type){
@@ -1104,6 +1105,12 @@ async function loadTaipeiFoodDB(){
 async function loadSchoolFoodDB(){
   const r=await loadJsonFoodDB(freshLocalUrl("./school-foods.json"),"school",true);
   SCHOOL_FOODS=r.items;
+  return r;
+}
+
+async function loadProcessedFoodDB(){
+  const r=await loadJsonFoodDB(freshLocalUrl("./processed-foods.json"),"processed",true);
+  PROCESSED_FOODS=r.items;
   return r;
 }
 
@@ -1192,12 +1199,13 @@ async function loadTFDARemote(){
 async function loadFoodDatabases(){
   const status=$("dbStatus");
   status.className="status";
-  status.textContent="正在載入超商、速食、手搖飲、台北食材登錄、校園菜色與食藥署資料庫…";
+  status.textContent="正在載入超商、速食、手搖飲、加工食品、台北食材登錄、校園菜色與食藥署資料庫…";
 
-  const [cv,ff,ds,tp,sc,oc] = await Promise.all([
+  const [cv,ff,ds,pf,tp,sc,oc] = await Promise.all([
     loadConvenienceDB(),
     loadFastFoodDB(),
     loadDrinkShopDB(),
+    loadProcessedFoodDB(),
     loadTaipeiFoodDB(),
     loadSchoolFoodDB(),
     loadOfficialChainDB()
@@ -1216,6 +1224,8 @@ async function loadFoodDatabases(){
   else parts.push("速食資料尚未上傳");
   if(ds.ok) parts.push(`手搖飲 ${ds.count.toLocaleString()} 筆`);
   else parts.push("手搖飲資料尚未上傳");
+  if(pf.ok) parts.push(`加工食品 ${pf.count.toLocaleString()} 筆`);
+  else parts.push("加工食品資料尚未上傳");
   if(tp.ok) parts.push(`台北食材登錄 ${tp.count.toLocaleString()} 筆`);
   else parts.push("台北食材登錄資料尚未上傳");
   if(sc.ok) parts.push(`校園菜色 ${sc.count.toLocaleString()} 筆`);
@@ -1223,7 +1233,7 @@ async function loadFoodDatabases(){
   else parts.push("官方品牌索引尚未上傳");
   if(tf.ok) parts.push(`食藥署 ${tf.count.toLocaleString()} 筆`);
 
-  if(tf.ok || cv.ok || ff.ok || ds.ok || tp.ok || sc.ok || oc.ok){
+  if(tf.ok || cv.ok || ff.ok || ds.ok || pf.ok || tp.ok || sc.ok || oc.ok){
     status.className="status ok";
     status.textContent=`✅ ${parts.join("＋")} 已可搜尋；另有「我的食物」與 Open Food Facts 補查${usedRemote&&tf.ok?"（本次食藥署使用官方線上來源）":""}`;
   }else{
@@ -1242,7 +1252,7 @@ function localFoods(){
     source:"custom",
     search:normalize([f.name,f.alias,...(Array.isArray(f.aliases)?f.aliases:[])].filter(Boolean).join(" "))
   }));
-  return [...custom,...OFFICIAL_CHAIN_FOODS,...CONVENIENCE_FOODS,...FASTFOOD_FOODS,...DRINKSHOP_FOODS,...TAIPEI_FOODS,...SCHOOL_FOODS,...TFDA_FOODS,...COMMON_TW_FOODS];
+  return [...custom,...OFFICIAL_CHAIN_FOODS,...CONVENIENCE_FOODS,...FASTFOOD_FOODS,...DRINKSHOP_FOODS,...PROCESSED_FOODS,...TAIPEI_FOODS,...SCHOOL_FOODS,...TFDA_FOODS,...COMMON_TW_FOODS];
 }
 
 function foodSearchText(f){
@@ -1270,6 +1280,7 @@ function sourcePriority(f){
   if(["7-ELEVEN","全家","萊爾富"].includes(store))return 7;
   if(f.source==="official-brand")return 7;
   if(f.brand||/麥當勞|摩斯|肯德基|漢堡王|SUBWAY|必勝客|達美樂|拿坡里|頂呱呱|21世紀/i.test(store))return 6;
+  if(f.source==="TFDA食品追溯追蹤"||f.sourceType==="processed-official")return 5;
   if(store==="食藥署資料庫")return 4;
   if(store==="常見台灣食品")return 3;
   return 2;
