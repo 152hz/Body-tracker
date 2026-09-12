@@ -854,6 +854,48 @@ body.app-modal-open .app-bottom-nav{visibility:hidden!important;pointer-events:n
   .mockup-speech{font-size:9px!important;max-width:142px!important;padding:6px 7px!important}
 }
 
+
+
+/* v17：記錄體重日期改用自訂置中文字層，避開 iOS 原生 date 文字偏移 */
+#weightRecordCard .mobile-date-wrap{position:relative!important}
+#weightDate{
+  position:relative!important;z-index:2!important;color:transparent!important;-webkit-text-fill-color:transparent!important;
+  caret-color:transparent!important;background:transparent!important;text-align:center!important;padding:0!important;
+}
+#weightDate::-webkit-datetime-edit,
+#weightDate::-webkit-date-and-time-value{color:transparent!important;-webkit-text-fill-color:transparent!important;text-align:center!important}
+#weightDate::-webkit-calendar-picker-indicator{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;opacity:0!important;cursor:pointer!important
+}
+#weightDate + .mobile-date-display{
+  display:flex!important;position:absolute!important;inset:0!important;z-index:1!important;align-items:center!important;justify-content:center!important;
+  pointer-events:none!important;color:#263d50!important;font-size:16px!important;font-weight:700!important;letter-spacing:.01em!important;
+  white-space:nowrap!important;text-align:center!important
+}
+
+/* v17：我的食物新增編輯功能 */
+.my-food-row{grid-template-columns:minmax(0,1fr) auto 38px 38px!important}
+.my-food-edit,.my-food-del{
+  border:0;background:#edf6fc;color:#66869d;width:38px;height:38px;border-radius:11px;cursor:pointer;
+  display:grid;place-items:center;font-size:16px;line-height:1
+}
+.my-food-edit:active,.my-food-del:active{transform:scale(.96)}
+.my-food-edit{background:#e8f5ff;color:#3d7ea8}
+.my-food-row.is-editing{display:block!important;padding:14px!important;background:#f5fbff!important;border-color:#cfe7f7!important}
+.my-food-edit-form{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(100px,.7fr);gap:10px;align-items:end}
+.my-food-edit-form label{margin:0 0 6px!important;color:#567086;font-size:12px!important}
+.my-food-edit-form input{height:44px!important;background:#fff!important}
+.my-food-edit-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
+.my-food-edit-actions button{height:42px;border:0;border-radius:12px;font-weight:850;cursor:pointer}
+.my-food-edit-cancel{background:#eef4f8;color:#627b8e}
+.my-food-edit-save{background:linear-gradient(135deg,#a9ddff,#82c8f5);color:#17364b}
+@media(max-width:520px){
+  #weightDate + .mobile-date-display{font-size:15px!important}
+  .my-food-row{grid-template-columns:minmax(0,1fr) auto 36px 36px!important;gap:7px!important}
+  .my-food-edit,.my-food-del{width:36px;height:36px;border-radius:10px}
+  .my-food-edit-form{grid-template-columns:1fr!important}
+  .my-food-edit-actions{grid-column:1!important}
+}
 </style>
 </head>
 <body>
@@ -1149,7 +1191,7 @@ body.app-modal-open .app-bottom-nav{visibility:hidden!important;pointer-events:n
   </section>
 </div>
 <script>
-const APP_VERSION = "2026.09.12.16";
+const APP_VERSION = "2026.09.12.17";
 const VERSION_FILE = "./version.json";
 let __latestAppVersion = APP_VERSION;
 
@@ -2683,12 +2725,86 @@ function restoreAppElement(id){
   home.marker.parentNode.insertBefore(home.el,home.marker.nextSibling);
 }
 function restoreAllAppElements(){["mealEntryCard","weightRecordCard","dashboardAnalysisBlock"].forEach(restoreAppElement);}
+let myFoodEditingKey="";
 function renderMyFoodsPage(query=""){
-  const host=$("appModalBody");if(!host)return;const q=normalize(query);const rows=[...(data.customFoods||[])].filter(x=>!q||normalize(x.name).includes(q)).sort((a,b)=>(Number(b.updatedAt)||0)-(Number(a.updatedAt)||0));
-  host.innerHTML=`<section class="my-foods-page-card"><div class="my-foods-search"><input id="myFoodsSearch" autocomplete="off" placeholder="搜尋我的食物"></div><div class="my-foods-list" id="myFoodsList">${rows.length?rows.map((x,i)=>`<div class="my-food-row"><div><div class="my-food-name">${esc(x.name)}</div><div class="my-food-meta">使用 ${Number(x.uses)||1} 次</div></div><div class="my-food-cal">${dashHasNum(x.cal)?Number(x.cal).toFixed(0)+" kcal":"—"}</div><button type="button" class="my-food-del" data-my-food-name="${esc(x.name)}" aria-label="刪除 ${esc(x.name)}">×</button></div>`).join(""):'<div class="my-food-empty">還沒有「我的食物」紀錄。手動新增餐點後會自動記住 💙</div>'}</div></section>`;
+  const host=$("appModalBody");
+  if(!host)return;
+  const q=normalize(query);
+  const rows=[...(data.customFoods||[])]
+    .filter(x=>!q||normalize(x.name).includes(q))
+    .sort((a,b)=>(Number(b.updatedAt)||0)-(Number(a.updatedAt)||0));
+
+  const listHtml=rows.length?rows.map(x=>{
+    const key=normalize(x.name);
+    if(myFoodEditingKey===key){
+      return `<div class="my-food-row is-editing" data-editing-food="${esc(x.name)}">
+        <div class="my-food-edit-form">
+          <div><label>食物名稱</label><input id="myFoodEditName" value="${esc(x.name)}" autocomplete="off" maxlength="80"></div>
+          <div><label>熱量 kcal</label><input id="myFoodEditCal" type="number" min="0" step="1" inputmode="decimal" value="${hasNumeric(x.cal)?esc(x.cal):""}" placeholder="例如 250"></div>
+          <div class="my-food-edit-actions">
+            <button type="button" class="my-food-edit-cancel" id="myFoodEditCancel">取消</button>
+            <button type="button" class="my-food-edit-save" id="myFoodEditSave" data-old-name="${esc(x.name)}">儲存修改</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `<div class="my-food-row">
+      <div><div class="my-food-name">${esc(x.name)}</div><div class="my-food-meta">使用 ${Number(x.uses)||1} 次</div></div>
+      <div class="my-food-cal">${dashHasNum(x.cal)?Number(x.cal).toFixed(0)+" kcal":"—"}</div>
+      <button type="button" class="my-food-edit" data-my-food-edit="${esc(x.name)}" aria-label="編輯 ${esc(x.name)}">✎</button>
+      <button type="button" class="my-food-del" data-my-food-name="${esc(x.name)}" aria-label="刪除 ${esc(x.name)}">×</button>
+    </div>`;
+  }).join(""):'<div class="my-food-empty">還沒有「我的食物」紀錄。手動新增餐點後會自動記住 💙</div>';
+
+  host.innerHTML=`<section class="my-foods-page-card">
+    <div class="my-foods-search"><input id="myFoodsSearch" autocomplete="off" placeholder="搜尋我的食物"></div>
+    <div class="my-foods-list" id="myFoodsList">${listHtml}</div>
+  </section>`;
+
   if($("myFoodsSearch"))$("myFoodsSearch").value=query;
-  $("myFoodsSearch")?.addEventListener("input",e=>{const value=e.target.value;clearTimeout(window.__myFoodTimer);window.__myFoodTimer=setTimeout(()=>renderMyFoodsPage(value),120);});
-  host.querySelectorAll("[data-my-food-name]").forEach(btn=>btn.addEventListener("click",()=>{const name=btn.dataset.myFoodName;if(!confirm(`要從「我的食物」刪除 ${name} 嗎？`))return;data.customFoods=(data.customFoods||[]).filter(x=>x.name!==name);save();renderMyFoodsPage($("myFoodsSearch")?.value||"");}));
+  $("myFoodsSearch")?.addEventListener("input",e=>{
+    const value=e.target.value;
+    clearTimeout(window.__myFoodTimer);
+    window.__myFoodTimer=setTimeout(()=>{myFoodEditingKey="";renderMyFoodsPage(value);},120);
+  });
+
+  host.querySelectorAll("[data-my-food-edit]").forEach(btn=>btn.addEventListener("click",()=>{
+    myFoodEditingKey=normalize(btn.dataset.myFoodEdit);
+    renderMyFoodsPage($("myFoodsSearch")?.value||query||"");
+    requestAnimationFrame(()=>$("myFoodEditName")?.focus());
+  }));
+
+  $("myFoodEditCancel")?.addEventListener("click",()=>{
+    myFoodEditingKey="";
+    renderMyFoodsPage($("myFoodsSearch")?.value||query||"");
+  });
+
+  $("myFoodEditSave")?.addEventListener("click",()=>{
+    const oldName=$("myFoodEditSave")?.dataset.oldName||"";
+    const newName=$("myFoodEditName")?.value.trim()||"";
+    const calRaw=$("myFoodEditCal")?.value.trim()??"";
+    const newCal=Number(calRaw);
+    if(!newName){alert("食物名稱不能空白");return;}
+    if(calRaw===""||!Number.isFinite(newCal)||newCal<0){alert("請輸入正確的熱量");return;}
+    const oldKey=normalize(oldName),newKey=normalize(newName);
+    const duplicate=(data.customFoods||[]).some(x=>normalize(x.name)===newKey&&normalize(x.name)!==oldKey);
+    if(duplicate){alert("「我的食物」裡已經有同名品項，請換一個名稱。");return;}
+    const idx=(data.customFoods||[]).findIndex(x=>normalize(x.name)===oldKey);
+    if(idx<0){alert("找不到這筆食物，請重新整理後再試一次。");return;}
+    data.customFoods[idx]={...data.customFoods[idx],name:newName,cal:newCal,updatedAt:Date.now()};
+    if(!save())return;
+    myFoodEditingKey="";
+    renderMyFoodsPage("");
+  });
+
+  host.querySelectorAll("[data-my-food-name]").forEach(btn=>btn.addEventListener("click",()=>{
+    const name=btn.dataset.myFoodName;
+    if(!confirm(`要從「我的食物」刪除 ${name} 嗎？`))return;
+    data.customFoods=(data.customFoods||[]).filter(x=>normalize(x.name)!==normalize(name));
+    myFoodEditingKey="";
+    save();
+    renderMyFoodsPage($("myFoodsSearch")?.value||"");
+  }));
 }
 function setBottomNavActive(page){document.querySelectorAll("[data-app-page]").forEach(b=>{const on=b.dataset.appPage===page;b.classList.toggle("active",on);b.setAttribute("aria-current",on?"page":"false");});}
 function closeAppPage(){
